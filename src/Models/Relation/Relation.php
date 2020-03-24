@@ -2,10 +2,16 @@
 
 namespace Fluent\Models\Relation;
 
+use Closure;
 use Fluent\Models\Model;
 use Fluent\Support\Traits\ForwardsCalls;
 use CodeIgniter\Database\BaseBuilder;
+use ReflectionException;
 
+/**
+ * Class Relation
+ * @package Fluent\Models\Relation
+ */
 abstract class Relation
 {
     use ForwardsCalls;
@@ -58,10 +64,10 @@ abstract class Relation
     /**
      * Run a callback with constraints disabled on the relation.
      *
-     * @param  \Closure  $callback
+     * @param  Closure  $callback
      * @return mixed
      */
-    public static function noConstraints(\Closure $callback)
+    public static function noConstraints(Closure $callback)
     {
         $previous = static::$constraints;
         static::$constraints = false;
@@ -139,7 +145,7 @@ abstract class Relation
     /**
      * Touch all of the related models for the relationship.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function touch()
     {
@@ -157,7 +163,7 @@ abstract class Relation
      *
      * @param array $attributes
      * @return bool
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function rawUpdate(array $attributes = [])
     {
@@ -194,7 +200,7 @@ abstract class Relation
     /**
      * Get the parent model of the relation.
      *
-     * @return \Fluent\Models\Model
+     * @return Model
      */
     public function getParent()
     {
@@ -204,7 +210,7 @@ abstract class Relation
     /**
      * Get the related model of the relation.
      *
-     * @return \Fluent\Models\Model
+     * @return Model
      */
     public function getRelated()
     {

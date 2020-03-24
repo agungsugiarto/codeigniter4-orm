@@ -2,6 +2,8 @@
 
 namespace Fluent\Models;
 
+use Closure;
+use Exception;
 use Fluent\Models\Concerns\GuardsAttributes;
 use Fluent\Models\Concerns\HasAttributes;
 use Fluent\Models\Concerns\HasRelations;
@@ -13,6 +15,7 @@ use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\Model as BaseModel;
 use CodeIgniter\Validation\ValidationInterface;
+use ReflectionException;
 
 class Model extends BaseModel implements \JsonSerializable
 {
@@ -45,6 +48,14 @@ class Model extends BaseModel implements \JsonSerializable
      * @var bool
      */
     public $exists = false;
+    /**
+     * @var array|void
+     */
+    private $removedScopes;
+    /**
+     * @var void
+     */
+    private $scopes;
 
     /**
      * BaseModel constructor.
@@ -66,7 +77,7 @@ class Model extends BaseModel implements \JsonSerializable
      */
     public function populateFromArray(array $data)
     {
-        $classSet = \Closure::bind(function ($key, $value) {
+        $classSet = Closure::bind(function ($key, $value) {
             $this->$key = $value;
         }, $this, get_class($this));
         foreach (array_keys($data) as $key)
@@ -79,12 +90,12 @@ class Model extends BaseModel implements \JsonSerializable
     /**
      * Create a new pivot model instance.
      *
-     * @param  \Fluent\Models\Model  $parent
+     * @param Model $parent
      * @param  array  $attributes
      * @param  string  $table
      * @param  bool  $exists
      * @param  string|null  $using
-     * @return \Fluent\Models\Relation\Pivot
+     * @return Pivot
      */
     public function newPivot(self $parent, array $attributes, $table, $exists, $using = null)
     {
@@ -118,7 +129,7 @@ class Model extends BaseModel implements \JsonSerializable
      * @param  array  $attributes
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function fill(array $attributes)
     {
@@ -133,7 +144,7 @@ class Model extends BaseModel implements \JsonSerializable
             if ($this->isFillable($key)) {
                 $this->setAttribute($key, $value);
             } elseif ($totallyGuarded) {
-                throw new \Exception(sprintf(
+                throw new Exception(sprintf(
                     'Add [%s] to fillable property to allow mass assignment on [%s].',
                     $key, get_class($this)
                 ));
@@ -205,7 +216,7 @@ class Model extends BaseModel implements \JsonSerializable
         return $models;
     }
 
-    protected function eagerLoadRelation(array $models, $name, \Closure $constraints)
+    protected function eagerLoadRelation(array $models, $name, Closure $constraints)
     {
         // First we will "back up" the existing where conditions on the query so we can
         // add our eager constraints. Then we will merge the wheres that were on the
@@ -229,7 +240,7 @@ class Model extends BaseModel implements \JsonSerializable
      * Get the relation instance for the given relation name.
      *
      * @param  string  $name
-     * @return \Fluent\Models\Relation\Relation
+     * @return Relation
      */
     public function getRelation($name)
     {
@@ -351,7 +362,7 @@ class Model extends BaseModel implements \JsonSerializable
      *
      * @param null $data
      * @return bool
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function save($data = null): bool
     {
@@ -373,7 +384,7 @@ class Model extends BaseModel implements \JsonSerializable
      * @param null $data
      * @param bool $returnID
      * @return $this|bool|int|string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function insert($data = null, bool $returnID = true)
     {
@@ -484,7 +495,7 @@ class Model extends BaseModel implements \JsonSerializable
                 // If the scope is a Closure we will just go ahead and call the scope with the
                 // builder instance. The "callScope" method will properly group the clauses
                 // that are added to this query so "where" clauses maintain proper logic.
-                if ($scope instanceof \Closure) {
+                if ($scope instanceof Closure) {
                     $scope($builder);
                 }
             });
@@ -521,7 +532,7 @@ class Model extends BaseModel implements \JsonSerializable
     public function withoutGlobalScopes(array $scopes = null)
     {
         if (! is_array($scopes)) {
-            $scopes = array_keys($this->scopes);
+            $scopes = array_keys((array)$this->scopes);
         }
 
         foreach ($scopes as $scope) {
@@ -580,7 +591,7 @@ class Model extends BaseModel implements \JsonSerializable
      * Get the value of the model's primary key.
      *
      * @return mixed|void
-     * @throws \Exception
+     * @throws Exception
      */
     public function getKey()
     {
@@ -697,7 +708,7 @@ class Model extends BaseModel implements \JsonSerializable
      * Update the model's update timestamp.
      *
      * @return bool
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function touch()
     {
@@ -808,7 +819,7 @@ class Model extends BaseModel implements \JsonSerializable
      *
      * @param string $key
      * @return mixed|void
-     * @throws \Exception
+     * @throws Exception
      */
     public function __get($key)
     {

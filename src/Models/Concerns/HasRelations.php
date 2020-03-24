@@ -10,6 +10,10 @@ use Fluent\Models\Relation\HasManyThrough;
 use Fluent\Models\Relation\HasOne;
 use CodeIgniter\Database\BaseBuilder;
 
+/**
+ * Trait HasRelations
+ * @package Fluent\Models\Concerns
+ */
 trait HasRelations
 {
     /**
@@ -199,7 +203,7 @@ trait HasRelations
      * @param  string  $relatedPivotKey
      * @param  string  $parentKey
      * @param  string  $relatedKey
-     * @return \App\Models\Relation\BelongsToMany
+     * @return BelongsToMany
      */
     public function belongsToMany(string $relation, string $related, string $table = null, string $foreignPivotKey = null, string $relatedPivotKey = null,
                                   string $parentKey = null, string $relatedKey = null)
@@ -230,16 +234,16 @@ trait HasRelations
     /**
      * Instantiate a new BelongsToMany relationship.
      *
-     * @param  BaseBuilder  $query
-     * @param  \App\Models\Model  $related
-     * @param  \App\Models\Model  $parent
-     * @param  string  $table
-     * @param  string  $foreignPivotKey
-     * @param  string  $relatedPivotKey
-     * @param  string  $parentKey
-     * @param  string  $relatedKey
-     * @param  string  $relationName
-     * @return \App\Models\Relation\BelongsToMany
+     * @param BaseBuilder $query
+     * @param Model $related
+     * @param Model $parent
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param string $relationName
+     * @return BelongsToMany
      */
     protected function newBelongsToMany(BaseBuilder $query, Model $related, Model $parent, string $table, string $foreignPivotKey, string $relatedPivotKey,
                                         string $parentKey, string $relatedKey, string $relationName = null)
@@ -262,7 +266,7 @@ trait HasRelations
      * Get the joining table name for a many-to-many relation.
      *
      * @param  string  $related
-     * @param  \App\Models\Model|null  $instance
+     * @param  Model|null  $instance
      * @return string
      */
     public function joiningTable(string $related, $instance = null)

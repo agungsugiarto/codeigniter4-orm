@@ -2,6 +2,7 @@
 
 namespace Fluent\Models\Concerns;
 
+use Exception;
 use Fluent\Models\Model;
 use Fluent\Models\Relation\Relation;
 use Carbon\Carbon;
@@ -9,6 +10,10 @@ use Carbon\CarbonInterface;
 use Carbon\Traits\Date;
 use DateTimeInterface;
 
+/**
+ * Trait HasAttributes
+ * @package Fluent\Models\Concerns
+ */
 trait HasAttributes
 {
     /**
@@ -121,7 +126,7 @@ trait HasAttributes
      *
      * @param $key
      * @return mixed|void
-     * @throws \Exception
+     * @throws Exception
      */
     public function getAttribute($key)
     {
@@ -205,7 +210,7 @@ trait HasAttributes
      *
      * @param $attributes
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function only($attributes)
     {
@@ -412,7 +417,7 @@ trait HasAttributes
      *
      * @param $key
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getRelationValue($key)
     {
@@ -437,7 +442,7 @@ trait HasAttributes
      * @param  string  $method
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getRelationshipFromMethod($method)
     {
@@ -445,12 +450,12 @@ trait HasAttributes
 
         if (! $relation instanceof Relation) {
             if (is_null($relation)) {
-                throw new \Exception(sprintf(
+                throw new Exception(sprintf(
                     '%s::%s must return a relationship instance, but "null" was returned. Was the "return" keyword used?', static::class, $method
                 ));
             }
 
-            throw new \Exception(sprintf(
+            throw new Exception(sprintf(
                 '%s::%s must return a relationship instance.', static::class, $method
             ));
         }

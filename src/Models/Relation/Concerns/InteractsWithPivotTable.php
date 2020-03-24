@@ -2,11 +2,17 @@
 
 namespace Fluent\Models\Relation\Concerns;
 
+use Exception;
 use Fluent\Models\Model;
 use Carbon\Traits\Date;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\ResultInterface;
+use Fluent\Models\Relation\Pivot;
 
+/**
+ * Trait InteractsWithPivotTable
+ * @package Fluent\Models\Relation\Concerns
+ */
 trait InteractsWithPivotTable
 {
     /**
@@ -121,7 +127,7 @@ trait InteractsWithPivotTable
      * @param $ids
      * @param array $attributes
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function formatAttachRecords($ids, array $attributes)
     {
@@ -150,7 +156,7 @@ trait InteractsWithPivotTable
      * @param $attributes
      * @param $hasTimestamps
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function formatAttachRecord($key, $value, $attributes, $hasTimestamps)
     {
@@ -311,7 +317,7 @@ trait InteractsWithPivotTable
      *
      * @param  array  $attributes
      * @param  bool   $exists
-     * @return \Fluent\Models\Relation\Pivot
+     * @return Pivot
      */
     public function newPivot(array $attributes = [], $exists = false)
     {
@@ -326,7 +332,7 @@ trait InteractsWithPivotTable
      * Create a new existing pivot model instance.
      *
      * @param  array  $attributes
-     * @return \Fluent\Models\Relation\Pivot
+     * @return Pivot
      */
     public function newExistingPivot(array $attributes = [])
     {
@@ -338,7 +344,7 @@ trait InteractsWithPivotTable
      *
      * @param $attributes
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function castAttributes($attributes)
     {

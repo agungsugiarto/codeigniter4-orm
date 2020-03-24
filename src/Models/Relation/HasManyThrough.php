@@ -2,22 +2,28 @@
 
 namespace Fluent\Models\Relation;
 
+use Exception;
 use Fluent\Models\Model;
 use CodeIgniter\Database\BaseBuilder;
+use ReflectionException;
 
+/**
+ * Class HasManyThrough
+ * @package Fluent\Models\Relation
+ */
 class HasManyThrough extends Relation
 {
     /**
      * The "through" parent model instance.
      *
-     * @var \Fluent\Models\Model
+     * @var Model
      */
     protected $throughParent;
 
     /**
      * The far parent model instance.
      *
-     * @var \Fluent\Models\Model
+     * @var Model
      */
     protected $farParent;
 
@@ -215,7 +221,7 @@ class HasManyThrough extends Relation
      *
      * @param array $attributes
      * @return Model
-     * @throws \Exception
+     * @throws Exception
      */
     public function firstOrNew(array $attributes)
     {
@@ -233,7 +239,8 @@ class HasManyThrough extends Relation
      * @param array $attributes
      * @param array $values
      * @return Model
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -346,7 +353,7 @@ class HasManyThrough extends Relation
      * Prepare the query builder for query execution.
      *
      * @param  array  $columns
-     * @return Model
+     * @return BaseBuilder
      */
     protected function prepareQueryBuilder($columns = ['*'])
     {

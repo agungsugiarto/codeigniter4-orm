@@ -2,6 +2,10 @@
 
 namespace Fluent\Models\Concerns;
 
+/**
+ * Trait GuardsAttributes
+ * @package Fluent\Models\Concerns
+ */
 trait GuardsAttributes
 {
     /**

@@ -2,9 +2,14 @@
 
 namespace Fluent\Models\Relation;
 
+use Exception;
 use Fluent\Models\Model;
 use Fluent\Models\Relation\Concerns\SupportsDefaultModels;
 
+/**
+ * Class HasOne
+ * @package Fluent\Models\Relation
+ */
 class HasOne extends HasOneOrMany
 {
     use SupportsDefaultModels;
@@ -12,8 +17,8 @@ class HasOne extends HasOneOrMany
     /**
      * Get the results of the relationship.
      *
-     * @return \Fluent\Models\Model|mixed|null
-     * @throws \Exception
+     * @return Model|mixed|null
+     * @throws Exception
      */
     public function getResults()
     {

@@ -2,8 +2,13 @@
 
 namespace Fluent\Models\Relation\Concerns;
 
+use Closure;
 use Fluent\Models\Model;
 
+/**
+ * Trait SupportsDefaultModels
+ * @package Fluent\Models\Relation\Concerns
+ */
 trait SupportsDefaultModels
 {
     /**
@@ -11,7 +16,7 @@ trait SupportsDefaultModels
      *
      * Alternatively, may be a Closure or array.
      *
-     * @var \Closure|array|bool
+     * @var Closure|array|bool
      */
     protected $withDefault;
 
@@ -26,7 +31,7 @@ trait SupportsDefaultModels
     /**
      * Return a new model instance in case the relationship does not exist.
      *
-     * @param  \Closure|array|bool  $callback
+     * @param  Closure|array|bool  $callback
      * @return $this
      */
     public function withDefault($callback = true)
@@ -40,7 +45,7 @@ trait SupportsDefaultModels
      * Get the default value for this relation.
      *
      * @param  Model  $parent
-     * @return Model|null
+     * @return void|Model
      */
     protected function getDefaultFor(Model $parent)
     {

@@ -5,12 +5,16 @@ namespace Fluent\Models\Relation\Concerns;
 use Fluent\Models\Model;
 use CodeIgniter\Database\BaseBuilder;
 
+/**
+ * Trait AsPivot
+ * @package Fluent\Models\Relation\Concerns
+ */
 trait AsPivot
 {
     /**
      * The parent model of the relationship.
      *
-     * @var \Fluent\Models\Model
+     * @var Model
      */
     public $pivotParent;
 
@@ -31,7 +35,7 @@ trait AsPivot
     /**
      * Create a new pivot model instance.
      *
-     * @param  \Fluent\Models\Model  $parent
+     * @param Model $parent
      * @param  array   $attributes
      * @param  string  $table
      * @param  bool    $exists
@@ -63,7 +67,7 @@ trait AsPivot
     /**
      * Create a new pivot model from raw values returned from a query.
      *
-     * @param  \Fluent\Models\Model  $parent
+     * @param Model $parent
      * @param  array   $attributes
      * @param  string  $table
      * @param  bool    $exists

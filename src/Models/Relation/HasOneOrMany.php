@@ -2,9 +2,15 @@
 
 namespace Fluent\Models\Relation;
 
+use Exception;
 use Fluent\Models\Model;
 use CodeIgniter\Database\BaseBuilder;
+use ReflectionException;
 
+/**
+ * Class HasOneOrMany
+ * @package Fluent\Models\Relation
+ */
 abstract class HasOneOrMany extends Relation
 {
     /**
@@ -51,7 +57,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param array $attributes
      * @return Model
-     * @throws \Exception
+     * @throws Exception
      */
     public function make(array $attributes = [])
     {
@@ -66,7 +72,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Set the base constraints on the relation query.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function addConstraints()
     {
@@ -195,7 +201,7 @@ abstract class HasOneOrMany extends Relation
      * @param $id
      * @param array $columns
      * @return Model
-     * @throws \Exception
+     * @throws Exception
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -228,7 +234,7 @@ abstract class HasOneOrMany extends Relation
      * @param array $attributes
      * @param array $values
      * @return Model
-     * @throws \Exception
+     * @throws Exception
      */
     public function firstOrNew(array $attributes, array $values = [])
     {
@@ -248,7 +254,7 @@ abstract class HasOneOrMany extends Relation
      * @param array $attributes
      * @param array $values
      * @return Model
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function firstOrCreate(array $attributes, array $values = [])
     {
@@ -265,7 +271,7 @@ abstract class HasOneOrMany extends Relation
      * @param array $attributes
      * @param array $values
      * @return Model
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -282,7 +288,8 @@ abstract class HasOneOrMany extends Relation
      *
      * @param Model $model
      * @return Model|bool
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function save(Model $model)
     {
@@ -296,7 +303,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param $models
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function saveMany($models)
     {
@@ -312,7 +319,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param array $attributes
      * @return Model
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function create(array $attributes = [])
     {
@@ -332,7 +339,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param array $records
      * @return array
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function createMany(array $records)
     {
@@ -349,7 +356,7 @@ abstract class HasOneOrMany extends Relation
      * Set the foreign ID for creating a related model.
      *
      * @param Model $model
-     * @throws \Exception
+     * @throws Exception
      */
     protected function setForeignAttributesForCreate(Model $model)
     {
@@ -370,7 +377,7 @@ abstract class HasOneOrMany extends Relation
      * Get the key value of the parent's local key.
      *
      * @return mixed|void
-     * @throws \Exception
+     * @throws Exception
      */
     public function getParentKey()
     {

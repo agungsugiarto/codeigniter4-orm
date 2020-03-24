@@ -5,7 +5,12 @@ namespace Fluent\Models\Relation;
 use Fluent\Models\Model;
 use Fluent\Models\Relation\Concerns\InteractsWithPivotTable;
 use CodeIgniter\Database\BaseBuilder;
+use ReflectionException;
 
+/**
+ * Class BelongsToMany
+ * @package Fluent\Models\Relation
+ */
 class BelongsToMany extends Relation
 {
     use InteractsWithPivotTable;
@@ -376,7 +381,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or return new instance of the related model.
      *
      * @param  mixed  $id
-     * @return \Fluent\Models\Model
+     * @return Model
      */
     public function findOrNew($id)
     {
@@ -391,7 +396,7 @@ class BelongsToMany extends Relation
      * Get the first related model record matching the attributes or instantiate it.
      *
      * @param  array  $attributes
-     * @return \Fluent\Models\Model
+     * @return Model
      */
     public function firstOrNew(array $attributes)
     {
@@ -410,7 +415,7 @@ class BelongsToMany extends Relation
      * @param array $joining
      * @param bool $touch
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function firstOrCreate(array $attributes, array $joining = [], $touch = true)
     {
@@ -429,7 +434,7 @@ class BelongsToMany extends Relation
      * @param array $joining
      * @param bool $touch
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function updateOrCreate(array $attributes, array $values = [], array $joining = [], $touch = true)
     {
@@ -448,7 +453,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array  $columns
-     * @return \Fluent\Models\Model|[\Fluent\Models\Model]|null
+     * @return Model|[\Fluent\Models\Model]|null
      */
     public function find($id, $columns = ['*'])
     {
@@ -492,7 +497,7 @@ class BelongsToMany extends Relation
      * @param array $joining
      * @param bool $touch
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function create(array $attributes = [], array $joining = [], $touch = true)
     {
@@ -517,7 +522,7 @@ class BelongsToMany extends Relation
      * @param array $pivotAttributes
      * @param bool $touch
      * @return Model
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function save(Model $model, array $pivotAttributes = [], $touch = true)
     {
@@ -607,7 +612,7 @@ class BelongsToMany extends Relation
     /**
      * Get the pivot attributes from a model.
      *
-     * @param  \Fluent\Models\Model  $model
+     * @param Model $model
      * @return array
      */
     protected function migratePivotAttributes(Model $model)
@@ -631,7 +636,7 @@ class BelongsToMany extends Relation
     /**
      * If we're touching the parent model, touch.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function touchIfTouching()
     {

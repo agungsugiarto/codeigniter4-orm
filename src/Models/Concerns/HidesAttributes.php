@@ -2,6 +2,10 @@
 
 namespace Fluent\Models\Concerns;
 
+/**
+ * Trait HidesAttributes
+ * @package Fluent\Models\Concerns
+ */
 trait HidesAttributes
 {
     /**

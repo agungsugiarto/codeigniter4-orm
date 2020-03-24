@@ -2,13 +2,21 @@
 
 namespace Fluent\Models\Relation;
 
+use CodeIgniter\Database\ResultInterface;
+use Exception;
+use Fluent\Models\Model;
+
+/**
+ * Class HasMany
+ * @package Fluent\Models\Relation
+ */
 class HasMany extends HasOneOrMany
 {
     /**
      * Get the results of the relationship.
      *
-     * @return \Fluent\Models\Model|\CodeIgniter\Database\ResultInterface|mixed
-     * @throws \Exception
+     * @return Model|ResultInterface|mixed
+     * @throws Exception
      */
     public function getResults()
     {

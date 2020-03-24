@@ -2,10 +2,15 @@
 
 namespace Fluent\Models\Relation;
 
+use Exception;
 use Fluent\Models\Model;
 use Fluent\Models\Relation\Concerns\SupportsDefaultModels;
 use CodeIgniter\Database\BaseBuilder;
 
+/**
+ * Class BelongsTo
+ * @package Fluent\Models\Relation
+ */
 class BelongsTo extends Relation
 {
     use SupportsDefaultModels;
@@ -205,7 +210,7 @@ class BelongsTo extends Relation
      *
      * @param $model
      * @return Model
-     * @throws \Exception
+     * @throws Exception
      */
     public function associate($model)
     {
@@ -225,7 +230,7 @@ class BelongsTo extends Relation
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return \App\Models\Model
+     * @return Model
      */
     public function dissociate()
     {
@@ -237,8 +242,8 @@ class BelongsTo extends Relation
     /**
      * Make a new related instance for the given model.
      *
-     * @param  \App\Models\Model  $parent
-     * @return \App\Models\Model
+     * @param Model $parent
+     * @return Model
      */
     protected function newRelatedInstanceFor(Model $parent)
     {
@@ -248,7 +253,7 @@ class BelongsTo extends Relation
     /**
      * Get the child of the relationship.
      *
-     * @return \App\Models\Model
+     * @return Model
      */
     public function getChild()
     {
