@@ -1,0 +1,44 @@
+{
+    "name": "agungsugiarto/fluent",
+    "description": "A Fluent based model and query builder for CodeIgniter4.",
+    "keywords": [
+        "codeigniter4",
+        "orm",
+        "model",
+        "query",
+        "builder"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Agung Sugiarto",
+            "email": "me.agungsugiarto@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">7.2",
+        "nesbot/carbon": "^2.16"
+    },
+    "require-dev": {
+        "codeigniter4/framework": "^4",
+        "phpunit/phpunit": "8.5.*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Fluent\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "post-update-cmd": [
+          "@composer dump-autoload"
+        ]
+    }
+}
