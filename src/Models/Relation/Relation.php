@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use Fluent\Support\Traits\ForwardsCalls;
 use CodeIgniter\Database\BaseBuilder;
 
@@ -20,14 +20,14 @@ abstract class Relation
     /**
      * The parent model instance.
      *
-     * @var BaseModel
+     * @var Model
      */
     protected $parent;
 
     /**
      * The related model instance.
      *
-     * @var BaseModel
+     * @var Model
      */
     protected $related;
 
@@ -42,11 +42,11 @@ abstract class Relation
      * Create a new relation instance.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $parent
-     * @param  BaseModel  $related
+     * @param  Model  $parent
+     * @param  Model  $related
      * @return void
      */
-    public function __construct(BaseBuilder $query, BaseModel $parent, BaseModel $related)
+    public function __construct(BaseBuilder $query, Model $parent, Model $related)
     {
         $this->query = $query;
         $this->parent = $parent;
@@ -194,7 +194,7 @@ abstract class Relation
     /**
      * Get the parent model of the relation.
      *
-     * @return \Fluent\Models\BaseModel
+     * @return \Fluent\Models\Model
      */
     public function getParent()
     {
@@ -204,7 +204,7 @@ abstract class Relation
     /**
      * Get the related model of the relation.
      *
-     * @return \Fluent\Models\BaseModel
+     * @return \Fluent\Models\Model
      */
     public function getRelated()
     {

@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Concerns;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use Fluent\Models\Relation\Relation;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -779,7 +779,7 @@ trait HasAttributes
         foreach ($this->getArrayableRelations() as $key => $value) {
             // If there is an array of models for this relation and there is more
             // than one, then set the relation.
-            if ((is_array($value) && count($value) > 0) || $value instanceof BaseModel) {
+            if ((is_array($value) && count($value) > 0) || $value instanceof Model) {
                 $relation = $value;
             }
 

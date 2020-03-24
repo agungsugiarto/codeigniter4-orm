@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use CodeIgniter\Database\BaseBuilder;
 
 abstract class HasOneOrMany extends Relation
@@ -32,13 +32,13 @@ abstract class HasOneOrMany extends Relation
      * Create a new has one or many relationship instance.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $parent
-     * @param  BaseModel  $child
+     * @param  Model  $parent
+     * @param  Model  $child
      * @param  string  $foreignKey
      * @param  string  $localKey
      * @return void
      */
-    public function __construct(BaseBuilder $query, BaseModel $parent, BaseModel $child, $foreignKey, $localKey)
+    public function __construct(BaseBuilder $query, Model $parent, Model $child, $foreignKey, $localKey)
     {
         $this->localKey = $localKey;
         $this->foreignKey = $foreignKey;
@@ -50,7 +50,7 @@ abstract class HasOneOrMany extends Relation
      * Create and return an un-saved instance of the related model.
      *
      * @param array $attributes
-     * @return BaseModel
+     * @return Model
      * @throws \Exception
      */
     public function make(array $attributes = [])
@@ -194,7 +194,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param $id
      * @param array $columns
-     * @return BaseModel
+     * @return Model
      * @throws \Exception
      */
     public function findOrNew($id, $columns = ['*'])
@@ -227,7 +227,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param array $attributes
      * @param array $values
-     * @return BaseModel
+     * @return Model
      * @throws \Exception
      */
     public function firstOrNew(array $attributes, array $values = [])
@@ -247,7 +247,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param array $attributes
      * @param array $values
-     * @return BaseModel
+     * @return Model
      * @throws \ReflectionException
      */
     public function firstOrCreate(array $attributes, array $values = [])
@@ -264,7 +264,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param array $attributes
      * @param array $values
-     * @return BaseModel
+     * @return Model
      * @throws \ReflectionException
      */
     public function updateOrCreate(array $attributes, array $values = [])
@@ -280,11 +280,11 @@ abstract class HasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @param BaseModel $model
-     * @return BaseModel|bool
+     * @param Model $model
+     * @return Model|bool
      * @throws \ReflectionException
      */
-    public function save(BaseModel $model)
+    public function save(Model $model)
     {
         $this->setForeignAttributesForCreate($model);
 
@@ -311,7 +311,7 @@ abstract class HasOneOrMany extends Relation
      * Create a new instance of the related model.
      *
      * @param array $attributes
-     * @return BaseModel
+     * @return Model
      * @throws \ReflectionException
      */
     public function create(array $attributes = [])
@@ -348,10 +348,10 @@ abstract class HasOneOrMany extends Relation
     /**
      * Set the foreign ID for creating a related model.
      *
-     * @param BaseModel $model
+     * @param Model $model
      * @throws \Exception
      */
-    protected function setForeignAttributesForCreate(BaseModel $model)
+    protected function setForeignAttributesForCreate(Model $model)
     {
         $model->setAttribute($this->getForeignKeyName(), $this->getParentKey());
     }

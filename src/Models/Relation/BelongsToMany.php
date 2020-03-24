@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use Fluent\Models\Relation\Concerns\InteractsWithPivotTable;
 use CodeIgniter\Database\BaseBuilder;
 
@@ -126,8 +126,8 @@ class BelongsToMany extends Relation
      * Create a new belongs to many relationship instance.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $related
-     * @param  BaseModel  $parent
+     * @param  Model  $related
+     * @param  Model  $parent
      * @param  string  $table
      * @param  string  $foreignPivotKey
      * @param  string  $relatedPivotKey
@@ -136,7 +136,7 @@ class BelongsToMany extends Relation
      * @param  string  $relationName
      * @return void
      */
-    public function __construct(BaseBuilder $query, BaseModel $related, BaseModel $parent, $table, $foreignPivotKey,
+    public function __construct(BaseBuilder $query, Model $related, Model $parent, $table, $foreignPivotKey,
                                 $relatedPivotKey, $parentKey, $relatedKey, $relationName = null)
     {
         $this->parentKey = $parentKey;
@@ -163,7 +163,7 @@ class BelongsToMany extends Relation
 
         $model = new $table;
 
-        if (! $model instanceof BaseModel) {
+        if (! $model instanceof Model) {
             return $table;
         }
 
@@ -376,7 +376,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or return new instance of the related model.
      *
      * @param  mixed  $id
-     * @return \Fluent\Models\BaseModel
+     * @return \Fluent\Models\Model
      */
     public function findOrNew($id)
     {
@@ -391,7 +391,7 @@ class BelongsToMany extends Relation
      * Get the first related model record matching the attributes or instantiate it.
      *
      * @param  array  $attributes
-     * @return \Fluent\Models\BaseModel
+     * @return \Fluent\Models\Model
      */
     public function firstOrNew(array $attributes)
     {
@@ -448,7 +448,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array  $columns
-     * @return \Fluent\Models\BaseModel|[\Fluent\Models\BaseModel]|null
+     * @return \Fluent\Models\Model|[\Fluent\Models\Model]|null
      */
     public function find($id, $columns = ['*'])
     {
@@ -462,7 +462,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $ids
      * @param  array  $columns
-     * @return [\Fluent\Models\BaseModel]
+     * @return [\Fluent\Models\Model]
      */
     public function findMany($ids, $columns = ['*'])
     {
@@ -513,13 +513,13 @@ class BelongsToMany extends Relation
     /**
      * Save a new model and attach it to the parent model.
      *
-     * @param BaseModel $model
+     * @param Model $model
      * @param array $pivotAttributes
      * @param bool $touch
-     * @return BaseModel
+     * @return Model
      * @throws \ReflectionException
      */
-    public function save(BaseModel $model, array $pivotAttributes = [], $touch = true)
+    public function save(Model $model, array $pivotAttributes = [], $touch = true)
     {
         $model->save();
 
@@ -607,10 +607,10 @@ class BelongsToMany extends Relation
     /**
      * Get the pivot attributes from a model.
      *
-     * @param  \Fluent\Models\BaseModel  $model
+     * @param  \Fluent\Models\Model  $model
      * @return array
      */
-    protected function migratePivotAttributes(BaseModel $model)
+    protected function migratePivotAttributes(Model $model)
     {
         $values = [];
 

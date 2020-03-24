@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use CodeIgniter\Database\BaseBuilder;
 
 class HasManyThrough extends Relation
@@ -10,14 +10,14 @@ class HasManyThrough extends Relation
     /**
      * The "through" parent model instance.
      *
-     * @var \Fluent\Models\BaseModel
+     * @var \Fluent\Models\Model
      */
     protected $throughParent;
 
     /**
      * The far parent model instance.
      *
-     * @var \Fluent\Models\BaseModel
+     * @var \Fluent\Models\Model
      */
     protected $farParent;
 
@@ -60,15 +60,15 @@ class HasManyThrough extends Relation
      * Create a new has many through relationship instance.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $farParent
-     * @param  BaseModel  $throughParent
+     * @param  Model  $farParent
+     * @param  Model  $throughParent
      * @param  string  $firstKey
      * @param  string  $secondKey
      * @param  string  $localKey
      * @param  string  $secondLocalKey
      * @return void
      */
-    public function __construct(BaseBuilder $query, BaseModel $farParent, BaseModel $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
+    public function __construct(BaseBuilder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
         $this->localKey = $localKey;
         $this->firstKey = $firstKey;
@@ -214,7 +214,7 @@ class HasManyThrough extends Relation
      * Get the first related model record matching the attributes or instantiate it.
      *
      * @param array $attributes
-     * @return BaseModel
+     * @return Model
      * @throws \Exception
      */
     public function firstOrNew(array $attributes)
@@ -232,7 +232,7 @@ class HasManyThrough extends Relation
      *
      * @param array $attributes
      * @param array $values
-     * @return BaseModel
+     * @return Model
      * @throws \ReflectionException
      */
     public function updateOrCreate(array $attributes, array $values = [])
@@ -262,7 +262,7 @@ class HasManyThrough extends Relation
      *
      * @param  mixed  $id
      * @param  array  $columns
-     * @return BaseModel|array|null
+     * @return Model|array|null
      */
     public function find($id, $columns = ['*'])
     {
@@ -346,7 +346,7 @@ class HasManyThrough extends Relation
      * Prepare the query builder for query execution.
      *
      * @param  array  $columns
-     * @return BaseModel
+     * @return Model
      */
     protected function prepareQueryBuilder($columns = ['*'])
     {

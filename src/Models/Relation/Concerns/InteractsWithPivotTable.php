@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation\Concerns;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use Carbon\Traits\Date;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\ResultInterface;
@@ -259,7 +259,7 @@ trait InteractsWithPivotTable
      */
     protected function parseIds($value)
     {
-        if ($value instanceof BaseModel) {
+        if ($value instanceof Model) {
             return [$value->{$this->relatedKey}];
         }
 

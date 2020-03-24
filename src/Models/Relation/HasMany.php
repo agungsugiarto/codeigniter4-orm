@@ -7,7 +7,7 @@ class HasMany extends HasOneOrMany
     /**
      * Get the results of the relationship.
      *
-     * @return \Fluent\Models\BaseModel|\CodeIgniter\Database\ResultInterface|mixed
+     * @return \Fluent\Models\Model|\CodeIgniter\Database\ResultInterface|mixed
      * @throws \Exception
      */
     public function getResults()

@@ -79,7 +79,7 @@ class Model extends BaseModel implements \JsonSerializable
     /**
      * Create a new pivot model instance.
      *
-     * @param  \Fluent\Models\BaseModel  $parent
+     * @param  \Fluent\Models\Model  $parent
      * @param  array  $attributes
      * @param  string  $table
      * @param  bool  $exists

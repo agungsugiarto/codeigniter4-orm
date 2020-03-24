@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Concerns;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use Fluent\Models\Relation\BelongsTo;
 use Fluent\Models\Relation\BelongsToMany;
 use Fluent\Models\Relation\HasMany;
@@ -50,13 +50,13 @@ trait HasRelations
      * Instantiate a new HasOne relationship.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $parent
-     * @param  BaseModel  $related
+     * @param  Model  $parent
+     * @param  Model  $related
      * @param  string  $foreignKey
      * @param  string  $localKey
      * @return HasOne
      */
-    protected function newHasOne(BaseBuilder $query, BaseModel $parent, BaseModel $related, string $foreignKey, string $localKey)
+    protected function newHasOne(BaseBuilder $query, Model $parent, Model $related, string $foreignKey, string $localKey)
     {
         return new HasOne($query, $parent, $related, $foreignKey, $localKey);
     }
@@ -98,14 +98,14 @@ trait HasRelations
      * Instantiate a new BelongsTo relationship.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $parent
-     * @param  BaseModel  $child
+     * @param  Model  $parent
+     * @param  Model  $child
      * @param  string  $foreignKey
      * @param  string  $ownerKey
      * @param  string  $relation
      * @return BelongsTo
      */
-    protected function newBelongsTo(BaseBuilder $query, BaseModel $parent, BaseModel $child, string $foreignKey, string $ownerKey, string $relation)
+    protected function newBelongsTo(BaseBuilder $query, Model $parent, Model $child, string $foreignKey, string $ownerKey, string $relation)
     {
         return new BelongsTo($query, $parent, $child, $foreignKey, $ownerKey, $relation);
     }
@@ -136,13 +136,13 @@ trait HasRelations
      * Instantiate a new HasMany relationship.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $parent
-     * @param  BaseModel  $related
+     * @param  Model  $parent
+     * @param  Model  $related
      * @param  string  $foreignKey
      * @param  string  $localKey
      * @return HasMany
      */
-    protected function newHasMany(BaseBuilder $query, BaseModel $parent, BaseModel $related, string $foreignKey, string $localKey)
+    protected function newHasMany(BaseBuilder $query, Model $parent, Model $related, string $foreignKey, string $localKey)
     {
         return new HasMany($query, $parent, $related, $foreignKey, $localKey);
     }
@@ -176,15 +176,15 @@ trait HasRelations
      * Instantiate a new HasManyThrough relationship.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $farParent
-     * @param  BaseModel  $throughParent
+     * @param  Model  $farParent
+     * @param  Model  $throughParent
      * @param  string  $firstKey
      * @param  string  $secondKey
      * @param  string  $localKey
      * @param  string  $secondLocalKey
      * @return HasManyThrough
      */
-    protected function newHasManyThrough(BaseBuilder $query, BaseModel $farParent, BaseModel $throughParent, string $firstKey, string $secondKey, string $localKey, string $secondLocalKey)
+    protected function newHasManyThrough(BaseBuilder $query, Model $farParent, Model $throughParent, string $firstKey, string $secondKey, string $localKey, string $secondLocalKey)
     {
         return new HasManyThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
     }
@@ -231,8 +231,8 @@ trait HasRelations
      * Instantiate a new BelongsToMany relationship.
      *
      * @param  BaseBuilder  $query
-     * @param  \App\Models\BaseModel  $related
-     * @param  \App\Models\BaseModel  $parent
+     * @param  \App\Models\Model  $related
+     * @param  \App\Models\Model  $parent
      * @param  string  $table
      * @param  string  $foreignPivotKey
      * @param  string  $relatedPivotKey
@@ -241,7 +241,7 @@ trait HasRelations
      * @param  string  $relationName
      * @return \App\Models\Relation\BelongsToMany
      */
-    protected function newBelongsToMany(BaseBuilder $query, BaseModel $related, BaseModel $parent, string $table, string $foreignPivotKey, string $relatedPivotKey,
+    protected function newBelongsToMany(BaseBuilder $query, Model $related, Model $parent, string $table, string $foreignPivotKey, string $relatedPivotKey,
                                         string $parentKey, string $relatedKey, string $relationName = null)
     {
         return new BelongsToMany($query, $related, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
@@ -262,7 +262,7 @@ trait HasRelations
      * Get the joining table name for a many-to-many relation.
      *
      * @param  string  $related
-     * @param  \App\Models\BaseModel|null  $instance
+     * @param  \App\Models\Model|null  $instance
      * @return string
      */
     public function joiningTable(string $related, $instance = null)

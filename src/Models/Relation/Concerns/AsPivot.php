@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation\Concerns;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use CodeIgniter\Database\BaseBuilder;
 
 trait AsPivot
@@ -10,7 +10,7 @@ trait AsPivot
     /**
      * The parent model of the relationship.
      *
-     * @var \Fluent\Models\BaseModel
+     * @var \Fluent\Models\Model
      */
     public $pivotParent;
 
@@ -31,13 +31,13 @@ trait AsPivot
     /**
      * Create a new pivot model instance.
      *
-     * @param  \Fluent\Models\BaseModel  $parent
+     * @param  \Fluent\Models\Model  $parent
      * @param  array   $attributes
      * @param  string  $table
      * @param  bool    $exists
      * @return static
      */
-    public static function fromAttributes(BaseModel $parent, $attributes, $table, $exists = false)
+    public static function fromAttributes(Model $parent, $attributes, $table, $exists = false)
     {
         $instance = new static;
 
@@ -63,13 +63,13 @@ trait AsPivot
     /**
      * Create a new pivot model from raw values returned from a query.
      *
-     * @param  \Fluent\Models\BaseModel  $parent
+     * @param  \Fluent\Models\Model  $parent
      * @param  array   $attributes
      * @param  string  $table
      * @param  bool    $exists
      * @return static
      */
-    public static function fromRawAttributes(BaseModel $parent, $attributes, $table, $exists = false)
+    public static function fromRawAttributes(Model $parent, $attributes, $table, $exists = false)
     {
         $instance = static::fromAttributes($parent, [], $table, $exists);
 

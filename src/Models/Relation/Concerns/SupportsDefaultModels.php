@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation\Concerns;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 
 trait SupportsDefaultModels
 {
@@ -18,10 +18,10 @@ trait SupportsDefaultModels
     /**
      * Make a new related instance for the given model.
      *
-     * @param  BaseModel  $parent
-     * @return BaseModel
+     * @param  Model  $parent
+     * @return Model
      */
-    abstract protected function newRelatedInstanceFor(BaseModel $parent);
+    abstract protected function newRelatedInstanceFor(Model $parent);
 
     /**
      * Return a new model instance in case the relationship does not exist.
@@ -39,10 +39,10 @@ trait SupportsDefaultModels
     /**
      * Get the default value for this relation.
      *
-     * @param  BaseModel  $parent
-     * @return BaseModel|null
+     * @param  Model  $parent
+     * @return Model|null
      */
-    protected function getDefaultFor(BaseModel $parent)
+    protected function getDefaultFor(Model $parent)
     {
         if (! $this->withDefault) {
             return;

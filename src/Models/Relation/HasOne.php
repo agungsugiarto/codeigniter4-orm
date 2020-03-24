@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use Fluent\Models\Relation\Concerns\SupportsDefaultModels;
 
 class HasOne extends HasOneOrMany
@@ -12,7 +12,7 @@ class HasOne extends HasOneOrMany
     /**
      * Get the results of the relationship.
      *
-     * @return \Fluent\Models\BaseModel|mixed|null
+     * @return \Fluent\Models\Model|mixed|null
      * @throws \Exception
      */
     public function getResults()
@@ -56,10 +56,10 @@ class HasOne extends HasOneOrMany
     /**
      * Make a new related instance for the given model.
      *
-     * @param  BaseModel  $parent
-     * @return BaseModel
+     * @param  Model  $parent
+     * @return Model
      */
-    public function newRelatedInstanceFor(BaseModel $parent)
+    public function newRelatedInstanceFor(Model $parent)
     {
         return $this->related->newModelQuery()->setAttribute(
             $this->getForeignKeyName(), $parent->{$this->localKey}

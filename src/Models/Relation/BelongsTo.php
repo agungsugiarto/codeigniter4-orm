@@ -2,7 +2,7 @@
 
 namespace Fluent\Models\Relation;
 
-use Fluent\Models\BaseModel;
+use Fluent\Models\Model;
 use Fluent\Models\Relation\Concerns\SupportsDefaultModels;
 use CodeIgniter\Database\BaseBuilder;
 
@@ -47,15 +47,15 @@ class BelongsTo extends Relation
      * Create a new belongs to relationship instance.
      *
      * @param  BaseBuilder  $query
-     * @param  BaseModel  $parent
-     * @param  BaseModel  $child
+     * @param  Model  $parent
+     * @param  Model  $child
      * @param  string  $foreignKey
      * @param  string  $ownerKey
      * @param  string  $relationName
      *
      * @return void
      */
-    public function __construct(BaseBuilder $query, BaseModel $parent, BaseModel $child, $foreignKey, $ownerKey, $relationName)
+    public function __construct(BaseBuilder $query, Model $parent, Model $child, $foreignKey, $ownerKey, $relationName)
     {
         $this->ownerKey = $ownerKey;
         $this->relationName = $relationName;
@@ -204,16 +204,16 @@ class BelongsTo extends Relation
      * Associate the model instance to the given parent.
      *
      * @param $model
-     * @return BaseModel
+     * @return Model
      * @throws \Exception
      */
     public function associate($model)
     {
-        $ownerKey = $model instanceof BaseModel ? $model->getAttribute($this->ownerKey) : $model;
+        $ownerKey = $model instanceof Model ? $model->getAttribute($this->ownerKey) : $model;
 
         $this->child->setAttribute($this->foreignKey, $ownerKey);
 
-        if ($model instanceof BaseModel) {
+        if ($model instanceof Model) {
             $this->child->setLoadedRelation($this->relationName, $model);
         } elseif ($this->child->isDirty($this->foreignKey)) {
             $this->child->unsetLoadedRelation($this->relationName);
@@ -225,7 +225,7 @@ class BelongsTo extends Relation
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return \App\Models\BaseModel
+     * @return \App\Models\Model
      */
     public function dissociate()
     {
@@ -237,10 +237,10 @@ class BelongsTo extends Relation
     /**
      * Make a new related instance for the given model.
      *
-     * @param  \App\Models\BaseModel  $parent
-     * @return \App\Models\BaseModel
+     * @param  \App\Models\Model  $parent
+     * @return \App\Models\Model
      */
-    protected function newRelatedInstanceFor(BaseModel $parent)
+    protected function newRelatedInstanceFor(Model $parent)
     {
         return new $this->related();
     }
@@ -248,7 +248,7 @@ class BelongsTo extends Relation
     /**
      * Get the child of the relationship.
      *
-     * @return \App\Models\BaseModel
+     * @return \App\Models\Model
      */
     public function getChild()
     {

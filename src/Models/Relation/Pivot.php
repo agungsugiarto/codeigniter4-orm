@@ -2,10 +2,10 @@
 
 namespace Fluent\Models\Relation;
 
-use Fluent\Models\BaseModel as Model;
+use Fluent\Models\Model as BaseModel;
 use Fluent\Models\Relation\Concerns\AsPivot;
 
-class Pivot extends Model
+class Pivot extends BaseModel
 {
     use AsPivot;
 
