@@ -228,12 +228,9 @@ abstract class Relation
     {
         $result = null;
 
-        if (method_exists($this->query, $method))
-        {
+        if (method_exists($this->query, $method)) {
             $result = $this->forwardCallTo($this->query, $method, $parameters);
-        }
-        elseif (method_exists($this->related, $method))
-        {
+        } elseif (method_exists($this->related, $method)) {
             $result = $this->forwardCallTo($this->related, $method, $parameters);
         }
 

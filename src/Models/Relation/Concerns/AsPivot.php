@@ -43,7 +43,7 @@ trait AsPivot
      */
     public static function fromAttributes(Model $parent, $attributes, $table, $exists = false)
     {
-        $instance = new static;
+        $instance = new static();
 
         $instance->setUseTimestamps($instance->hasTimestampAttributes($attributes));
 
@@ -95,11 +95,13 @@ trait AsPivot
         $query->where($this->getKeyName(), $this->getKey());
 
         $query->where($this->foreignKey, $this->getOriginal(
-            $this->foreignKey, $this->getAttribute($this->foreignKey)
+            $this->foreignKey,
+            $this->getAttribute($this->foreignKey)
         ));
 
         return $query->where($this->relatedKey, $this->getOriginal(
-            $this->relatedKey, $this->getAttribute($this->relatedKey)
+            $this->relatedKey,
+            $this->getAttribute($this->relatedKey)
         ));
     }
 
@@ -112,7 +114,9 @@ trait AsPivot
     {
         if (! isset($this->table)) {
             $this->setTable(str_replace(
-                '\\', '', str_snake(singular(class_basename($this)))
+                '\\',
+                '',
+                str_snake(singular(class_basename($this)))
             ));
         }
 
@@ -213,8 +217,10 @@ trait AsPivot
 
         return sprintf(
             '%s:%s:%s:%s',
-            $this->foreignKey, $this->getAttribute($this->foreignKey),
-            $this->relatedKey, $this->getAttribute($this->relatedKey)
+            $this->foreignKey,
+            $this->getAttribute($this->foreignKey),
+            $this->relatedKey,
+            $this->getAttribute($this->relatedKey)
         );
     }
 }

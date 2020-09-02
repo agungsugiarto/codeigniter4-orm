@@ -114,7 +114,7 @@ class HasManyThrough extends Relation
 
         $farKey = $this->getQualifiedFarKeyName();
 
-        $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName().' = '.$farKey);
+        $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName() . ' = ' . $farKey);
 
         if ($this->throughParentSoftDeletes()) {
             $query->where($this->throughParent->getQualifiedDeletedAtColumn(), 0);
@@ -150,7 +150,8 @@ class HasManyThrough extends Relation
     public function addEagerConstraints(array $models)
     {
         $this->query->whereIn(
-            $this->getQualifiedFirstKeyName(), $this->getKeys($models, $this->localKey)
+            $this->getQualifiedFirstKeyName(),
+            $this->getKeys($models, $this->localKey)
         );
     }
 
@@ -188,7 +189,8 @@ class HasManyThrough extends Relation
         foreach ($models as $model) {
             if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
                 $model->setRelation(
-                    $relation, $dictionary[$key]
+                    $relation,
+                    $dictionary[$key]
                 );
             }
         }
@@ -278,7 +280,8 @@ class HasManyThrough extends Relation
         }
 
         return $this->where(
-            $this->getRelated()->getQualifiedKeyName(), $id
+            $this->getRelated()->getQualifiedKeyName(),
+            $id
         )->first($columns);
     }
 
@@ -296,7 +299,8 @@ class HasManyThrough extends Relation
         }
 
         return $this->whereIn(
-            $this->getRelated()->getQualifiedKeyName(), $ids
+            $this->getRelated()->getQualifiedKeyName(),
+            $ids
         )->findAll($columns);
     }
 
@@ -343,10 +347,10 @@ class HasManyThrough extends Relation
     protected function shouldSelect(array $columns = ['*'])
     {
         if ($columns == ['*']) {
-            $columns = [$this->related->getTable().'.*'];
+            $columns = [$this->related->getTable() . '.*'];
         }
 
-        return array_merge($columns, [$this->getQualifiedFirstKeyName().' as through_key']);
+        return array_merge($columns, [$this->getQualifiedFirstKeyName() . ' as through_key']);
     }
 
     /**

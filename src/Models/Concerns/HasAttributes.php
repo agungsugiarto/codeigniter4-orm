@@ -104,7 +104,8 @@ trait HasAttributes
             // mutated attribute's actual values. After we finish mutating each of the
             // attributes we will return this final array of the mutated attributes.
             $attributes[$key] = $this->mutateAttribute(
-                $key, $this->{$key}
+                $key,
+                $this->{$key}
             );
         }
 
@@ -137,10 +138,12 @@ trait HasAttributes
         // If the attribute exists in the attribute array or has a "get" mutator we will
         // get the attribute's value. Otherwise, we will proceed as if the developers
         // are asking for a relationship's value. This covers both types of values.
-        if (isset($this->db->$key) ||
+        if (
+            isset($this->db->$key) ||
             isset($this->builder()->$key) ||
             array_key_exists($key, $this->attributes) ||
-            $this->hasGetMutator($key)) {
+            $this->hasGetMutator($key)
+        ) {
             return $this->getAttributeValue($key);
         }
 
@@ -284,7 +287,8 @@ trait HasAttributes
     public function isDirty($attributes = null)
     {
         return $this->hasChanges(
-            $this->getDirty(), is_array($attributes) ? $attributes : func_get_args()
+            $this->getDirty(),
+            is_array($attributes) ? $attributes : func_get_args()
         );
     }
 
@@ -308,7 +312,8 @@ trait HasAttributes
     public function wasChanged($attributes = null)
     {
         return $this->hasChanges(
-            $this->getChanges(), is_array($attributes) ? $attributes : func_get_args()
+            $this->getChanges(),
+            is_array($attributes) ? $attributes : func_get_args()
         );
     }
 
@@ -409,7 +414,7 @@ trait HasAttributes
      */
     protected function setMutatedAttributeValue($key, $value)
     {
-        return $this->{'set'.str_studly($key).'Attribute'}($value);
+        return $this->{'set' . str_studly($key) . 'Attribute'}($value);
     }
 
     /**
@@ -451,12 +456,16 @@ trait HasAttributes
         if (! $relation instanceof Relation) {
             if (is_null($relation)) {
                 throw new Exception(sprintf(
-                    '%s::%s must return a relationship instance, but "null" was returned. Was the "return" keyword used?', static::class, $method
+                    '%s::%s must return a relationship instance, but "null" was returned. Was the "return" keyword used?',
+                    static::class,
+                    $method
                 ));
             }
 
             throw new Exception(sprintf(
-                '%s::%s must return a relationship instance.', static::class, $method
+                '%s::%s must return a relationship instance.',
+                static::class,
+                $method
             ));
         }
 
@@ -539,18 +548,15 @@ trait HasAttributes
      */
     protected function getAttributeFromArray($key)
     {
-        if (array_key_exists($key, $this->attributes))
-        {
+        if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
         }
 
-        if (isset($this->db->$key))
-        {
+        if (isset($this->db->$key)) {
             return $this->db->$key;
         }
 
-        if (isset($this->builder()->$key))
-        {
+        if (isset($this->builder()->$key)) {
             return $this->builder()->$key;
         }
 
@@ -566,7 +572,7 @@ trait HasAttributes
      */
     protected function mutateAttribute($key, $value)
     {
-        return $this->{'get'.str_studly($key).'Attribute'}($value);
+        return $this->{'get' . str_studly($key) . 'Attribute'}($value);
     }
 
     /**
@@ -577,7 +583,7 @@ trait HasAttributes
      */
     public function hasGetMutator($key)
     {
-        return method_exists($this, 'get'.str_studly($key).'Attribute');
+        return method_exists($this, 'get' . str_studly($key) . 'Attribute');
     }
 
     /**
@@ -588,7 +594,7 @@ trait HasAttributes
      */
     public function hasSetMutator($key)
     {
-        return method_exists($this, 'set'.str_studly($key).'Attribute');
+        return method_exists($this, 'set' . str_studly($key) . 'Attribute');
     }
 
     /**
@@ -600,14 +606,14 @@ trait HasAttributes
     protected function addCastAttributesToArray(array $attributes)
     {
         $this->casts[$this->primaryKey] = 'integer'; // Do this for now and do a better way later
-        foreach ($this->casts as $key => $value)
-        {
+        foreach ($this->casts as $key => $value) {
             if (! array_key_exists($key, $attributes)) {
                 continue;
             }
 
             $attributes[$key] = $this->castAttribute(
-                $key, $attributes[$key]
+                $key,
+                $attributes[$key]
             );
         }
 
@@ -627,8 +633,7 @@ trait HasAttributes
             return $value;
         }
 
-        switch ($this->casts[$key])
-        {
+        switch ($this->casts[$key]) {
             case 'int':
             case 'integer':
                 return (int) $value;
@@ -858,7 +863,8 @@ trait HasAttributes
         // when checking the field. We will just return the DateTime right away.
         if ($value instanceof DateTimeInterface) {
             return Date::parse(
-                $value->format('Y-m-d H:i:s.u'), $value->getTimezone()
+                $value->format('Y-m-d H:i:s.u'),
+                $value->getTimezone()
             );
         }
 

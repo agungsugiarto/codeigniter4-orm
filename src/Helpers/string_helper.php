@@ -1,7 +1,6 @@
 <?php
 
-if (! function_exists('str_slug'))
-{
+if (! function_exists('str_slug')) {
     /**
      * Convert string to slug.
      *
@@ -14,8 +13,7 @@ if (! function_exists('str_slug'))
     }
 }
 
-if (! function_exists('str_snake'))
-{
+if (! function_exists('str_snake')) {
     /**
      * Convert string to friendly file name.
      *
@@ -75,8 +73,7 @@ if (! function_exists('str_studly')) {
     }
 }
 
-if (! function_exists('str_contains'))
-{
+if (! function_exists('str_contains')) {
     /**
      * Determine if a given string contains a given substring.
      *
@@ -95,8 +92,7 @@ if (! function_exists('str_contains'))
     }
 }
 
-if (! function_exists('str_camel'))
-{
+if (! function_exists('str_camel')) {
     /**
      * Convert a value to camel case.
      *
@@ -109,8 +105,7 @@ if (! function_exists('str_camel'))
     }
 }
 
-if (! function_exists('str_plural'))
-{
+if (! function_exists('str_plural')) {
     /**
      * Get the plural form of an English word.
      *
@@ -123,8 +118,7 @@ if (! function_exists('str_plural'))
     }
 }
 
-if (! function_exists('str_plural_studly'))
-{
+if (! function_exists('str_plural_studly')) {
     /**
      * Pluralize the last word of an English, studly caps case string.
      *
@@ -137,6 +131,6 @@ if (! function_exists('str_plural_studly'))
 
         $lastWord = array_pop($parts);
 
-        return implode('', $parts).str_plural($lastWord);
+        return implode('', $parts) . str_plural($lastWord);
     }
 }

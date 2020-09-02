@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Fluent\Models;
 
@@ -19,7 +19,10 @@ use ReflectionException;
 
 class Model extends BaseModel implements \JsonSerializable
 {
-    use HasRelations, HasAttributes, HidesAttributes, GuardsAttributes;
+    use HasRelations;
+    use HasAttributes;
+    use HidesAttributes;
+    use GuardsAttributes;
 
     /**
      * Fields to cast.
@@ -80,8 +83,8 @@ class Model extends BaseModel implements \JsonSerializable
         $classSet = Closure::bind(function ($key, $value) {
             $this->$key = $value;
         }, $this, get_class($this));
-        foreach (array_keys($data) as $key)
-        {
+        
+        foreach (array_keys($data) as $key) {
             $classSet($key, $data[$key]);
         }
         return $this;
@@ -99,7 +102,8 @@ class Model extends BaseModel implements \JsonSerializable
      */
     public function newPivot(self $parent, array $attributes, $table, $exists, $using = null)
     {
-        return $using ? $using::fromRawAttributes($parent, $attributes, $table, $exists)
+        return $using
+            ? $using::fromRawAttributes($parent, $attributes, $table, $exists)
             : Pivot::fromAttributes($parent, $attributes, $table, $exists);
     }
 
@@ -146,7 +150,8 @@ class Model extends BaseModel implements \JsonSerializable
             } elseif ($totallyGuarded) {
                 throw new Exception(sprintf(
                     'Add [%s] to fillable property to allow mass assignment on [%s].',
-                    $key, get_class($this)
+                    $key,
+                    get_class($this)
                 ));
             }
         }
@@ -232,7 +237,8 @@ class Model extends BaseModel implements \JsonSerializable
         // of models which have been eagerly hydrated and are readied for return.
         return $relation->match(
             $relation->initRelation($models, $name),
-            $relation->getEager(), $name
+            $relation->getEager(),
+            $name
         );
     }
 
@@ -248,8 +254,7 @@ class Model extends BaseModel implements \JsonSerializable
         // not have to remove these where clauses manually which gets really hacky
         // and error prone. We don't want constraints because we add eager ones.
         $relation = Relation::noConstraints(function () use ($name) {
-            if (! method_exists($this, $name))
-            {
+            if (! method_exists($this, $name)) {
                 throw RelationNotFoundException::make($this, $name);
             }
 
@@ -283,7 +288,7 @@ class Model extends BaseModel implements \JsonSerializable
         // that start with the given top relations and adds them to our arrays.
         foreach ($this->eagerLoad as $name => $constraints) {
             if ($this->isNestedUnder($relation, $name)) {
-                $nested[substr($name, strlen($relation.'.'))] = $constraints;
+                $nested[substr($name, strlen($relation . '.'))] = $constraints;
             }
         }
 
@@ -299,7 +304,7 @@ class Model extends BaseModel implements \JsonSerializable
      */
     protected function isNestedUnder($relation, $name)
     {
-        return strpos($name, '.') !== false && str_starts_with($name, $relation.'.');
+        return strpos($name, '.') !== false && str_starts_with($name, $relation . '.');
     }
 
     /**
@@ -344,10 +349,8 @@ class Model extends BaseModel implements \JsonSerializable
      */
     public function where($key, $value = null, bool $escape = null)
     {
-        if (is_array($key))
-        {
-            foreach ($key as $field => $value)
-            {
+        if (is_array($key)) {
+            foreach ($key as $field => $value) {
                 parent::where($field, $value);
             }
 
@@ -366,8 +369,7 @@ class Model extends BaseModel implements \JsonSerializable
      */
     public function save($data = null): bool
     {
-        if (is_null($data))
-        {
+        if (is_null($data)) {
             $data = $this->getAttributes();
         }
 
@@ -390,8 +392,7 @@ class Model extends BaseModel implements \JsonSerializable
     {
         $id = parent::insert($data, $returnID);
 
-        if ($returnID)
-        {
+        if ($returnID) {
             return $id;
         }
 
@@ -671,7 +672,7 @@ class Model extends BaseModel implements \JsonSerializable
             return $column;
         }
 
-        return $this->getTable().'.'.$column;
+        return $this->getTable() . '.' . $column;
     }
 
     /**
@@ -848,8 +849,7 @@ class Model extends BaseModel implements \JsonSerializable
     public function __call(string $method, array $parameters)
     {
         // Call scopes on query builder
-        if (method_exists($this, $scope = 'scope'.ucfirst($method)))
-        {
+        if (method_exists($this, $scope = 'scope' . ucfirst($method))) {
             return $this->callScope([$this, $scope], $parameters);
         }
 

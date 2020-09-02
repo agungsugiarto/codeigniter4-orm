@@ -141,9 +141,17 @@ class BelongsToMany extends Relation
      * @param  string  $relationName
      * @return void
      */
-    public function __construct(BaseBuilder $query, Model $related, Model $parent, $table, $foreignPivotKey,
-                                $relatedPivotKey, $parentKey, $relatedKey, $relationName = null)
-    {
+    public function __construct(
+        BaseBuilder $query,
+        Model $related,
+        Model $parent,
+        $table,
+        $foreignPivotKey,
+        $relatedPivotKey,
+        $parentKey,
+        $relatedKey,
+        $relationName = null
+    ) {
         $this->parentKey = $parentKey;
         $this->relatedKey = $relatedKey;
         $this->relationName = $relationName;
@@ -166,7 +174,7 @@ class BelongsToMany extends Relation
             return $table;
         }
 
-        $model = new $table;
+        $model = new $table();
 
         if (! $model instanceof Model) {
             return $table;
@@ -234,7 +242,7 @@ class BelongsToMany extends Relation
         // model instance. Then we can set the "where" for the parent models.
         $baseTable = $this->related->getTable();
 
-        $key = $baseTable.'.'.$this->relatedKey;
+        $key = $baseTable . '.' . $this->relatedKey;
 
         $query->join($this->table, "{$key} = {$this->getQualifiedRelatedPivotKeyName()}");
 
@@ -259,7 +267,8 @@ class BelongsToMany extends Relation
         foreach ($models as $model) {
             if (isset($dictionary[$key = $model->{$this->parentKey}])) {
                 $model->setLoadedRelation(
-                    $relation, $dictionary[$key]
+                    $relation,
+                    $dictionary[$key]
                 );
             }
         }
@@ -335,7 +344,7 @@ class BelongsToMany extends Relation
     {
         $this->pivotWheres[] = func_get_args();
 
-        return $this->where($this->table.'.'.$column.' '.$operator, $value);
+        return $this->where($this->table . '.' . $column . ' ' . $operator, $value);
     }
 
     /**
@@ -349,7 +358,7 @@ class BelongsToMany extends Relation
     {
         $this->pivotWhereIns[] = func_get_args();
 
-        return $this->whereIn($this->table.'.'.$column, $values);
+        return $this->whereIn($this->table . '.' . $column, $values);
     }
 
     /**
@@ -362,7 +371,7 @@ class BelongsToMany extends Relation
      */
     public function orWherePivot($column, $operator = '=', $value = null)
     {
-        return $this->orWhere($column.' '.$operator, $value);
+        return $this->orWhere($column . ' ' . $operator, $value);
     }
 
     /**
@@ -458,7 +467,8 @@ class BelongsToMany extends Relation
     public function find($id, $columns = ['*'])
     {
         return is_array($id) ? $this->findMany($id, $columns) : $this->where(
-            $this->getRelated()->getQualifiedKeyName(), $id
+            $this->getRelated()->getQualifiedKeyName(),
+            $id
         )->first($columns);
     }
 
@@ -472,7 +482,8 @@ class BelongsToMany extends Relation
     public function findMany($ids, $columns = ['*'])
     {
         return empty($ids) ? [] : $this->whereIn(
-            $this->getRelated()->getQualifiedKeyName(), $ids
+            $this->getRelated()->getQualifiedKeyName(),
+            $ids
         )->findAll($columns);
     }
 
@@ -585,7 +596,7 @@ class BelongsToMany extends Relation
     protected function shouldSelect(array $columns = ['*'])
     {
         if ($columns == ['*']) {
-            $columns = [$this->related->getTable().'.*'];
+            $columns = [$this->related->getTable() . '.*'];
         }
 
         return array_merge($columns, $this->aliasedPivotColumns());
@@ -715,12 +726,10 @@ class BelongsToMany extends Relation
         $columns = array_merge($defaults, $this->pivotColumns);
         $return = [];
 
-        foreach ($columns as $column)
-        {
-            $fieldName = $this->table.'.'.$column.' as pivot_'.$column;
+        foreach ($columns as $column) {
+            $fieldName = $this->table . '.' . $column . ' as pivot_' . $column;
 
-            if (! in_array($fieldName, $return))
-            {
+            if (! in_array($fieldName, $return)) {
                 $return[] = $fieldName;
             }
         }
@@ -736,7 +745,8 @@ class BelongsToMany extends Relation
     protected function addWhereConstraints()
     {
         $this->query->where(
-            $this->getQualifiedForeignPivotKeyName(), $this->parent->{$this->parentKey}
+            $this->getQualifiedForeignPivotKeyName(),
+            $this->parent->{$this->parentKey}
         );
 
         return $this;
@@ -749,7 +759,7 @@ class BelongsToMany extends Relation
      */
     public function getQualifiedForeignPivotKeyName()
     {
-        return $this->table.'.'.$this->foreignPivotKey;
+        return $this->table . '.' . $this->foreignPivotKey;
     }
 
     /**
@@ -759,7 +769,7 @@ class BelongsToMany extends Relation
      */
     public function getQualifiedRelatedPivotKeyName()
     {
-        return $this->table.'.'.$this->relatedPivotKey;
+        return $this->table . '.' . $this->relatedPivotKey;
     }
 
     /**

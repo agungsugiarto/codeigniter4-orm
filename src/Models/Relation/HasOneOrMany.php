@@ -93,7 +93,8 @@ abstract class HasOneOrMany extends Relation
     public function addEagerConstraints(array $models)
     {
         $this->query->whereIn(
-            $this->foreignKey, $this->getKeys($models, $this->localKey)
+            $this->foreignKey,
+            $this->getKeys($models, $this->localKey)
         );
     }
 
@@ -142,7 +143,8 @@ abstract class HasOneOrMany extends Relation
         foreach ($models as $model) {
             if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
                 $model->setLoadedRelation(
-                    $relation, $this->getRelationValue($dictionary, $key, $type)
+                    $relation,
+                    $this->getRelationValue($dictionary, $key, $type)
                 );
             }
         }
@@ -177,8 +179,7 @@ abstract class HasOneOrMany extends Relation
 
         $dictionary = [];
 
-        foreach ($results as $key => $item)
-        {
+        foreach ($results as $key => $item) {
             $pair = [$item->{$foreign} => $item];
 
             $key = key($pair);

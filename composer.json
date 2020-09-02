@@ -1,6 +1,6 @@
 {
     "name": "agungsugiarto/fluent",
-    "description": "A Fluent based model and query builder for CodeIgniter4.",
+    "description": "A Fluent ORM based model and query builder for CodeIgniter4.",
     "keywords": [
         "codeigniter4",
         "orm",

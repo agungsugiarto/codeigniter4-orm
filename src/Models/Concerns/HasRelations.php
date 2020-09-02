@@ -47,7 +47,7 @@ trait HasRelations
 
         $localKey = $localKey ?: $this->getKeyName();
 
-        return $this->newHasOne($instance->builder(), $this, $instance,$instance->getTable().'.'.$foreignKey, $localKey);
+        return $this->newHasOne($instance->builder(), $this, $instance, $instance->getTable() . '.' . $foreignKey, $localKey);
     }
 
     /**
@@ -85,7 +85,7 @@ trait HasRelations
         // foreign key name by using the name of the relationship function, which
         // when combined with an "_id" should conventionally match the columns.
         if (is_null($foreignKey)) {
-            $foreignKey = str_snake($relation).'_'.$instance->getKeyName();
+            $foreignKey = str_snake($relation) . '_' . $instance->getKeyName();
         }
 
         // Once we have the foreign key names, we'll just create a new Eloquent query
@@ -94,7 +94,12 @@ trait HasRelations
         $ownerKey = $ownerKey ?: $instance->getKeyName();
 
         return $this->newBelongsTo(
-            $instance->builder(), $instance, $this, $foreignKey, $ownerKey, $relation
+            $instance->builder(),
+            $instance,
+            $this,
+            $foreignKey,
+            $ownerKey,
+            $relation
         );
     }
 
@@ -132,7 +137,11 @@ trait HasRelations
         $localKey = $localKey ?: $this->getKeyName();
 
         return $this->newHasMany(
-            $instance->builder(), $this, $instance,$instance->getTable().'.'.$foreignKey, $localKey
+            $instance->builder(),
+            $this,
+            $instance,
+            $instance->getTable() . '.' . $foreignKey,
+            $localKey
         );
     }
 
@@ -164,14 +173,18 @@ trait HasRelations
      */
     public function hasManyThrough(string $related, string $through, string $firstKey = null, string $secondKey = null, string $localKey = null, string $secondLocalKey = null)
     {
-        $through = new $through;
+        $through = new $through();
 
         $firstKey = $firstKey ?: $this->getForeignKey();
         $secondKey = $secondKey ?: $through->getForeignKey();
 
         return $this->newHasManyThrough(
-            $this->newRelatedInstance($related)->builder(), $this, $through,
-            $firstKey, $secondKey, $localKey ?: $this->getKeyName(),
+            $this->newRelatedInstance($related)->builder(),
+            $this,
+            $through,
+            $firstKey,
+            $secondKey,
+            $localKey ?: $this->getKeyName(),
             $secondLocalKey ?: $through->getKeyName()
         );
     }
@@ -205,9 +218,15 @@ trait HasRelations
      * @param  string  $relatedKey
      * @return BelongsToMany
      */
-    public function belongsToMany(string $relation, string $related, string $table = null, string $foreignPivotKey = null, string $relatedPivotKey = null,
-                                  string $parentKey = null, string $relatedKey = null)
-    {
+    public function belongsToMany(
+        string $relation,
+        string $related,
+        string $table = null,
+        string $foreignPivotKey = null,
+        string $relatedPivotKey = null,
+        string $parentKey = null,
+        string $relatedKey = null
+    ) {
         // First, we'll need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we'll make the query
         // instances as well as the relationship instances we need for this.
@@ -225,9 +244,15 @@ trait HasRelations
         }
 
         return $this->newBelongsToMany(
-            $instance->builder(), $instance, $this, $table, $foreignPivotKey,
-            $relatedPivotKey, $parentKey ?: $this->getKeyName(),
-            $relatedKey ?: $instance->getKeyName(), $relation
+            $instance->builder(),
+            $instance,
+            $this,
+            $table,
+            $foreignPivotKey,
+            $relatedPivotKey,
+            $parentKey ?: $this->getKeyName(),
+            $relatedKey ?: $instance->getKeyName(),
+            $relation
         );
     }
 
@@ -245,9 +270,17 @@ trait HasRelations
      * @param string $relationName
      * @return BelongsToMany
      */
-    protected function newBelongsToMany(BaseBuilder $query, Model $related, Model $parent, string $table, string $foreignPivotKey, string $relatedPivotKey,
-                                        string $parentKey, string $relatedKey, string $relationName = null)
-    {
+    protected function newBelongsToMany(
+        BaseBuilder $query,
+        Model $related,
+        Model $parent,
+        string $table,
+        string $foreignPivotKey,
+        string $relatedPivotKey,
+        string $parentKey,
+        string $relatedKey,
+        string $relationName = null
+    ) {
         return new BelongsToMany($query, $related, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
     }
 
