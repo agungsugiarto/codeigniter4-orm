@@ -1,10 +1,10 @@
 <?php
 
-namespace Fluent\Models\Concerns;
+namespace Fluent\Orm\Models\Concerns;
 
 use Exception;
-use Fluent\Models\Model;
-use Fluent\Models\Relation\Relation;
+use Fluent\Orm\Models\Model;
+use Fluent\Orm\Models\Relation\Relation;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Carbon\Traits\Date;
@@ -12,7 +12,7 @@ use DateTimeInterface;
 
 /**
  * Trait HasAttributes
- * @package Fluent\Models\Concerns
+ * @package Fluent\Orm\Models\Concerns
  */
 trait HasAttributes
 {

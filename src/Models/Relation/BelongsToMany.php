@@ -1,15 +1,15 @@
 <?php
 
-namespace Fluent\Models\Relation;
+namespace Fluent\Orm\Models\Relation;
 
-use Fluent\Models\Model;
-use Fluent\Models\Relation\Concerns\InteractsWithPivotTable;
+use Fluent\Orm\Models\Model;
+use Fluent\Orm\Models\Relation\Concerns\InteractsWithPivotTable;
 use CodeIgniter\Database\BaseBuilder;
 use ReflectionException;
 
 /**
  * Class BelongsToMany
- * @package Fluent\Models\Relation
+ * @package Fluent\Orm\Models\Relation
  */
 class BelongsToMany extends Relation
 {
@@ -462,7 +462,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array  $columns
-     * @return Model|[\Fluent\Models\Model]|null
+     * @return Model|[\Fluent\Orm\Models\Model]|null
      */
     public function find($id, $columns = ['*'])
     {
@@ -477,7 +477,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $ids
      * @param  array  $columns
-     * @return [\Fluent\Models\Model]
+     * @return [\Fluent\Orm\Models\Model]
      */
     public function findMany($ids, $columns = ['*'])
     {

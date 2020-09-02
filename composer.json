@@ -1,5 +1,5 @@
 {
-    "name": "agungsugiarto/fluent",
+    "name": "agungsugiarto/codeigniter4-orm",
     "description": "A Fluent ORM based model and query builder for CodeIgniter4.",
     "keywords": [
         "codeigniter4",
@@ -28,7 +28,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Fluent\\": "src"
+            "Fluent\\Orm\\": "src"
         }
     },
     "autoload-dev": {

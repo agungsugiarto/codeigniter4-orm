@@ -1,13 +1,13 @@
 <?php
 
-namespace Fluent\Models\Relation\Concerns;
+namespace Fluent\Orm\Models\Relation\Concerns;
 
-use Fluent\Models\Model;
+use Fluent\Orm\Models\Model;
 use CodeIgniter\Database\BaseBuilder;
 
 /**
  * Trait AsPivot
- * @package Fluent\Models\Relation\Concerns
+ * @package Fluent\Orm\Models\Relation\Concerns
  */
 trait AsPivot
 {

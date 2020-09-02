@@ -1,13 +1,13 @@
 <?php
 
-namespace Fluent\Models\Relation;
+namespace Fluent\Orm\Models\Relation;
 
-use Fluent\Models\Model as BaseModel;
-use Fluent\Models\Relation\Concerns\AsPivot;
+use Fluent\Orm\Models\Model as BaseModel;
+use Fluent\Orm\Models\Relation\Concerns\AsPivot;
 
 /**
  * Class Pivot
- * @package Fluent\Models\Relation
+ * @package Fluent\Orm\Models\Relation
  */
 class Pivot extends BaseModel
 {

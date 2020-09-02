@@ -1,6 +1,6 @@
 <?php
 
-namespace Fluent\Models;
+namespace Fluent\Orm\Models;
 
 use RuntimeException;
 

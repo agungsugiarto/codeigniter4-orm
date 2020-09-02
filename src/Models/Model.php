@@ -1,15 +1,15 @@
 <?php
 
-namespace Fluent\Models;
+namespace Fluent\Orm\Models;
 
 use Closure;
 use Exception;
-use Fluent\Models\Concerns\GuardsAttributes;
-use Fluent\Models\Concerns\HasAttributes;
-use Fluent\Models\Concerns\HasRelations;
-use Fluent\Models\Concerns\HidesAttributes;
-use Fluent\Models\Relation\Pivot;
-use Fluent\Models\Relation\Relation;
+use Fluent\Orm\Models\Concerns\GuardsAttributes;
+use Fluent\Orm\Models\Concerns\HasAttributes;
+use Fluent\Orm\Models\Concerns\HasRelations;
+use Fluent\Orm\Models\Concerns\HidesAttributes;
+use Fluent\Orm\Models\Relation\Pivot;
+use Fluent\Orm\Models\Relation\Relation;
 use Carbon\Traits\Date;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\ConnectionInterface;

@@ -1,15 +1,15 @@
 <?php
 
-namespace Fluent\Models\Relation;
+namespace Fluent\Orm\Models\Relation;
 
 use Exception;
-use Fluent\Models\Model;
+use Fluent\Orm\Models\Model;
 use CodeIgniter\Database\BaseBuilder;
 use ReflectionException;
 
 /**
  * Class HasManyThrough
- * @package Fluent\Models\Relation
+ * @package Fluent\Orm\Models\Relation
  */
 class HasManyThrough extends Relation
 {

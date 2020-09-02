@@ -1,14 +1,14 @@
 <?php
 
-namespace Fluent\Models\Relation;
+namespace Fluent\Orm\Models\Relation;
 
 use Exception;
-use Fluent\Models\Model;
-use Fluent\Models\Relation\Concerns\SupportsDefaultModels;
+use Fluent\Orm\Models\Model;
+use Fluent\Orm\Models\Relation\Concerns\SupportsDefaultModels;
 
 /**
  * Class HasOne
- * @package Fluent\Models\Relation
+ * @package Fluent\Orm\Models\Relation
  */
 class HasOne extends HasOneOrMany
 {

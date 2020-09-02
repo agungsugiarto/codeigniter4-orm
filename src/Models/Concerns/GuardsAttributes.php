@@ -1,10 +1,10 @@
 <?php
 
-namespace Fluent\Models\Concerns;
+namespace Fluent\Orm\Models\Concerns;
 
 /**
  * Trait GuardsAttributes
- * @package Fluent\Models\Concerns
+ * @package Fluent\Orm\Models\Concerns
  */
 trait GuardsAttributes
 {

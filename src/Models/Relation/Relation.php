@@ -1,16 +1,16 @@
 <?php
 
-namespace Fluent\Models\Relation;
+namespace Fluent\Orm\Models\Relation;
 
 use Closure;
-use Fluent\Models\Model;
-use Fluent\Support\Traits\ForwardsCalls;
+use Fluent\Orm\Models\Model;
+use Fluent\Orm\Support\Traits\ForwardsCalls;
 use CodeIgniter\Database\BaseBuilder;
 use ReflectionException;
 
 /**
  * Class Relation
- * @package Fluent\Models\Relation
+ * @package Fluent\Orm\Models\Relation
  */
 abstract class Relation
 {

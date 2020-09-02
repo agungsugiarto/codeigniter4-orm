@@ -1,17 +1,17 @@
 <?php
 
-namespace Fluent\Models\Relation\Concerns;
+namespace Fluent\Orm\Models\Relation\Concerns;
 
 use Exception;
-use Fluent\Models\Model;
+use Fluent\Orm\Models\Model;
 use Carbon\Traits\Date;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\ResultInterface;
-use Fluent\Models\Relation\Pivot;
+use Fluent\Orm\Models\Relation\Pivot;
 
 /**
  * Trait InteractsWithPivotTable
- * @package Fluent\Models\Relation\Concerns
+ * @package Fluent\Orm\Models\Relation\Concerns
  */
 trait InteractsWithPivotTable
 {

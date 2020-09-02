@@ -1,13 +1,13 @@
 <?php
 
-namespace Fluent\Support\Traits;
+namespace Fluent\Orm\Support\Traits;
 
 use Error;
 use BadMethodCallException;
 
 /**
  * Trait ForwardsCalls
- * @package Fluent\Support\Traits
+ * @package Fluent\Orm\Support\Traits
  */
 trait ForwardsCalls
 {

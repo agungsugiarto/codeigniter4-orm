@@ -1,13 +1,13 @@
 <?php
 
-namespace Fluent\Models\Relation\Concerns;
+namespace Fluent\Orm\Models\Relation\Concerns;
 
 use Closure;
-use Fluent\Models\Model;
+use Fluent\Orm\Models\Model;
 
 /**
  * Trait SupportsDefaultModels
- * @package Fluent\Models\Relation\Concerns
+ * @package Fluent\Orm\Models\Relation\Concerns
  */
 trait SupportsDefaultModels
 {

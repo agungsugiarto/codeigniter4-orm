@@ -1,14 +1,14 @@
 <?php
 
-namespace Fluent\Models\Relation;
+namespace Fluent\Orm\Models\Relation;
 
 use CodeIgniter\Database\ResultInterface;
 use Exception;
-use Fluent\Models\Model;
+use Fluent\Orm\Models\Model;
 
 /**
  * Class HasMany
- * @package Fluent\Models\Relation
+ * @package Fluent\Orm\Models\Relation
  */
 class HasMany extends HasOneOrMany
 {

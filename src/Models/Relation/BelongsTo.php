@@ -1,15 +1,15 @@
 <?php
 
-namespace Fluent\Models\Relation;
+namespace Fluent\Orm\Models\Relation;
 
 use Exception;
-use Fluent\Models\Model;
-use Fluent\Models\Relation\Concerns\SupportsDefaultModels;
+use Fluent\Orm\Models\Model;
+use Fluent\Orm\Models\Relation\Concerns\SupportsDefaultModels;
 use CodeIgniter\Database\BaseBuilder;
 
 /**
  * Class BelongsTo
- * @package Fluent\Models\Relation
+ * @package Fluent\Orm\Models\Relation
  */
 class BelongsTo extends Relation
 {
