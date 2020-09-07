@@ -129,17 +129,18 @@ abstract class Relation
      */
     public function getEager()
     {
-        return $this->findAll();
+        return $this->get();
     }
 
     /**
-     * Get the relationship for eager loading.
-     *
-     * @return array|null
+     * Execute the query as a "select" statement.
+     * 
+     * @param array $columns
+     * @return Model
      */
-    public function findAll()
+    public function get($columns = ['*'])
     {
-        return $this->related->findAll();
+        $this->related->select($columns)->findAll();
     }
 
     /**
@@ -151,11 +152,9 @@ abstract class Relation
     {
         $model = $this->getRelated();
 
-        // if (! $model::isIgnoringTouch()) {
-            $this->rawUpdate([
-                $model->getUpdatedAtColumn() => $model->freshTimestampString(),
-            ]);
-        // }
+        $this->rawUpdate([
+            $model->getUpdatedAtColumn() => $model->freshTimestampString(),
+        ]);
     }
 
     /**
@@ -181,7 +180,7 @@ abstract class Relation
     {
         $keys = [];
         foreach ($models as $model) {
-            $keys[] = $key ? $model->$key : $model->primaryKey;
+            $keys[] = $key ? $model[$key] : $model->primaryKey;
         }
 
         return $keys;

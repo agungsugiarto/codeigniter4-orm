@@ -29,7 +29,11 @@
     "autoload": {
         "psr-4": {
             "Fluent\\Orm\\": "src"
-        }
+        },
+        "files": [
+            "src/Helpers/string_helper.php",
+            "vendor/codeigniter4/framework/system/Helpers/inflector_helper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -51,12 +51,14 @@ class Model extends BaseModel implements \JsonSerializable
      * @var bool
      */
     public $exists = false;
+
     /**
      * @var array|void
      */
     private $removedScopes;
+
     /**
-     * @var void
+     * @var object
      */
     private $scopes;
 
@@ -87,6 +89,7 @@ class Model extends BaseModel implements \JsonSerializable
         foreach (array_keys($data) as $key) {
             $classSet($key, $data[$key]);
         }
+        
         return $this;
     }
 

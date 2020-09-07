@@ -17,6 +17,8 @@ class BelongsTo extends Relation
 
     /**
      * The child model instance of the relation.
+     * 
+     * @var Model
      */
     protected $child;
 
@@ -135,7 +137,7 @@ class BelongsTo extends Relation
         // to query for via the eager loading query. We will add them to an array then
         // execute a "where in" statement to gather up all of those related records.
         foreach ($models as $model) {
-            if (! is_null($value = $model->{$this->foreignKey})) {
+            if (! is_null($value = $model[$this->foreignKey])) {
                 $keys[] = $value;
             }
         }
