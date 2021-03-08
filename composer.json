@@ -18,21 +18,23 @@
     ],
     "require": {
         "php": ">7.2",
-        "nesbot/carbon": "^2.16"
+        "codeigniter4/framework": "^4.1",
+        "nesbot/carbon": "^2.4",
+        "tightenco/collect": "^8.19",
+        "doctrine/inflector": "^2.0",
+        "ramsey/uuid": "^4.1"
     },
     "require-dev": {
-        "codeigniter4/framework": "^4",
         "phpunit/phpunit": "8.5.*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Fluent\\Orm\\": "src"
+            "Fluent\\Orm\\": "src/"
         },
         "files": [
-            "src/Helpers/string_helper.php",
-            "vendor/codeigniter4/framework/system/Helpers/inflector_helper.php"
+            "src/helper.php"
         ]
     },
     "autoload-dev": {
@@ -40,9 +42,9 @@
             "Tests\\": "tests"
         }
     },
-    "scripts": {
-        "post-update-cmd": [
-          "@composer dump-autoload"
-        ]
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        }
     }
 }
