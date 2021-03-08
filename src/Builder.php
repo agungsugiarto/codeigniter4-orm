@@ -6,12 +6,12 @@ use BadMethodCallException;
 use Closure;
 use Exception;
 use Tightenco\Collect\Contracts\Support\Arrayable;
-// use Illuminate\Database\Concerns\BuildsQueries;
+use Fluent\Orm\BuildsQueries;
 // use Illuminate\Database\Concerns\ExplainsQueries;
 use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Relation;
-use CodeIgniter\Database\BaseBuilder as QueryBuilder;
-use Fluent\Orm\RecordsNotFoundException;
+use CodeIgniter\Database\BaseBuilder;
+use Fluent\Orm\Concerns\RecordsNotFoundException;
 use Fluent\Orm\Pagination\Paginator;
 use Tightenco\Collect\Support\Arr;
 use Fluent\Orm\Support\Str;
@@ -27,6 +27,9 @@ use ReflectionMethod;
 class Builder
 {
     use Concerns\QueriesRelationships, ForwardsCalls;
+    use BuildsQueries {
+        sole as baseSole;
+    }
 
     /**
      * The base query builder instance.
@@ -87,7 +90,7 @@ class Builder
         'getConnection',
         'getGrammar',
         'insert',
-        'insertGetId',
+        'insertID',
         'insertOrIgnore',
         'insertUsing',
         'max',
@@ -114,10 +117,10 @@ class Builder
     /**
      * Create a new Eloquent query builder instance.
      *
-     * @param QueryBuilder  $query
+     * @param  \CodeIgniter\Database\BaseBuilder  $query
      * @return void
      */
-    public function __construct(QueryBuilder $query)
+    public function __construct(BaseBuilder $query)
     {
         $this->query = $query;
     }
@@ -240,6 +243,7 @@ class Builder
 
         return $this->where($this->model->getQualifiedKeyName(), '!=', $id);
     }
+    
 
     /**
      * Add a basic where clause to the query.
@@ -255,23 +259,13 @@ class Builder
         if ($column instanceof Closure && is_null($operator)) {
             $column($query = $this->model->newQueryWithoutRelationships());
 
-            $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
+            // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
+            throw new Exception('Not supported with closure.');
         } else {
-            $this->query->where(...func_get_args());
+            $this->toBase()->where(...func_get_args());
         }
 
         return $this;
-    }
-
-    /**
-     * Execute the query and get the first result.
-     *
-     * @param  array|string  $columns
-     * @return \Illuminate\Database\Eloquent\Model|object|static|null
-     */
-    public function first($columns = ['*'])
-    {
-        return $this->query->resetQuery()->select($columns)->get(1)->getResult();
     }
 
     /**
@@ -387,7 +381,7 @@ class Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param  \Tightenco\Collect\Contracts\Support\Arrayable|array  $ids
+     * @param  \Illuminate\Contracts\Support\Arrayable|array  $ids
      * @param  array  $columns
      * @return \Fluent\Orm\Collection
      */
@@ -593,7 +587,7 @@ class Builder
     public function getModels($columns = ['*'])
     {
         return $this->model->hydrate(
-            $this->query->resetQuery()->get()->getResult()
+            $this->toBase()->select($columns)->get()->getResult()
         )->all();
     }
 
@@ -739,7 +733,7 @@ class Builder
      *
      * @param  string|\Illuminate\Database\Query\Expression  $column
      * @param  string|null  $key
-     * @return \Tightenco\Collect\Support\Collection
+     * @return \Illuminate\Support\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -776,8 +770,8 @@ class Builder
 
         $perPage = $perPage ?: $this->model->getPerPage();
 
-        $results = ($total = $this->toBase()->resetQuery()->countAllResults())
-                                    ? $this->query->resetQuery()->select($columns)->get($page, $perPage)->getResult()
+        $results = ($total = $this->toBase()->countAllResults())
+                                    ? $this->query->select($columns)->offset(($page - 1) * $perPage)->limit($perPage)->get()->getResult()
                                     : $this->model->newCollection();
 
         return $this->paginator($results, $total, $perPage, $page, [
@@ -793,7 +787,7 @@ class Builder
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return \Fluent\Orm\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -804,7 +798,7 @@ class Builder
         // Next we will set the limit and offset for this query so that when we get the
         // results we get the proper section of results. Then, we'll create the full
         // paginator instances for these results with the given page and per page.
-        $this->skip(($page - 1) * $perPage)->take($perPage + 1);
+        $this->query->offset(($page - 1) * $perPage)->limit($perPage);
 
         return $this->simplePaginator($this->get($columns), $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
@@ -1252,9 +1246,7 @@ class Builder
      */
     public function newModelInstance($attributes = [])
     {
-        return $this->model->newInstance($attributes)->setConnection(
-            $this->query
-        );
+        return $this->model->newInstance($attributes);
     }
 
     /**
@@ -1383,7 +1375,7 @@ class Builder
      */
     public function toBase()
     {
-        return $this->applyScopes()->getQuery();
+        return $this->applyScopes()->getQuery()->resetQuery();
     }
 
     /**

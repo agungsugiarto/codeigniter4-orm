@@ -850,7 +850,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
 
             if (! $this->getConnectionName() &&
                 $connection = $query->getConnection()) {
-                $this->setConnection($connection->getConnection());
+                $this->setConnection($connection->getName());
             }
         }
 
@@ -1444,7 +1444,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     /**
      * Get the database connection for the model.
      *
-     * @return \CodeIgniter\Database\ConnectionInterface
+     * @return \CodeIgniter\Database\BaseConnection
      */
     public function getConnection()
     {
@@ -1478,7 +1478,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      * Resolve a connection instance.
      *
      * @param  string|null  $connection
-     * @return \CodeIgniter\Database\ConnectionInterface
+     * @return \CodeIgniter\Database\BaseConnection
      */
     public static function resolveConnection($connection = null)
     {

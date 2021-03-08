@@ -2,7 +2,7 @@
 
 namespace Fluent\Orm\Relations;
 
-use Illuminate\Support\Str;
+use Fluent\Orm\Support\Str;
 
 class MorphPivot extends Pivot
 {

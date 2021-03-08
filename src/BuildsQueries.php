@@ -2,11 +2,11 @@
 
 namespace Fluent\Orm;
 
-use Illuminate\Database\MultipleRecordsFoundException;
-use Illuminate\Database\RecordsNotFoundException;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
+use Fluent\Orm\MultipleRecordsFoundException;
+use Fluent\Orm\RecordsNotFoundException;
+use Fluent\Orm\Pagination\LengthAwarePaginator;
+use Fluent\Orm\Pagination\Paginator;
+use Tightenco\Collect\Support\Collection;
 
 trait BuildsQueries
 {
@@ -162,21 +162,21 @@ trait BuildsQueries
      * Execute the query and get the first result.
      *
      * @param  array|string  $columns
-     * @return \Illuminate\Database\Eloquent\Model|object|static|null
+     * @return \Fluent\Orm\Model|object|static|null
      */
     public function first($columns = ['*'])
     {
-        return $this->take(1)->get($columns)->first();
+        return $this->toBase()->select($columns)->get(1)->getResult();
     }
 
     /**
      * Execute the query and get the first result if it's the sole matching record.
      *
      * @param  array|string  $columns
-     * @return \Illuminate\Database\Eloquent\Model|object|static|null
+     * @return \Fluent\Orm\Model|object|static|null
      *
-     * @throws \Illuminate\Database\RecordsNotFoundException
-     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     * @throws \Fluent\Orm\RecordsNotFoundException
+     * @throws \Fluent\Orm\MultipleRecordsFoundException
      */
     public function sole($columns = ['*'])
     {
@@ -254,9 +254,7 @@ trait BuildsQueries
      */
     protected function paginator($items, $total, $perPage, $currentPage, $options)
     {
-        return Container::getInstance()->makeWith(LengthAwarePaginator::class, compact(
-            'items', 'total', 'perPage', 'currentPage', 'options'
-        ));
+        return new LengthAwarePaginator($items, $total, $perPage, $currentPage, $options);
     }
 
     /**
@@ -270,8 +268,6 @@ trait BuildsQueries
      */
     protected function simplePaginator($items, $perPage, $currentPage, $options)
     {
-        return Container::getInstance()->makeWith(Paginator::class, compact(
-            'items', 'perPage', 'currentPage', 'options'
-        ));
+        return new Paginator($items, $perPage, $currentPage, $options);
     }
 }

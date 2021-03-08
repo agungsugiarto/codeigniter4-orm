@@ -8,7 +8,7 @@ use Fluent\Orm\Collection;
 use Fluent\Orm\Model;
 use Fluent\Orm\ModelNotFoundException;
 use Fluent\Orm\Relations\Concerns\AsPivot;
-use Illuminate\Support\Str;
+use Fluent\Orm\Support\Str;
 use InvalidArgumentException;
 
 class BelongsToMany extends Relation

@@ -4,7 +4,7 @@ namespace Fluent\Orm\Relations;
 
 use Fluent\Orm\Builder;
 use Fluent\Orm\Model;
-use Illuminate\Support\Arr;
+use Tightenco\Collect\Support\Arr;
 
 class MorphToMany extends BelongsToMany
 {

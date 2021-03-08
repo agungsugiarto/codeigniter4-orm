@@ -7,11 +7,11 @@ use Fluent\Orm\Builder;
 use Fluent\Orm\Collection;
 use Fluent\Orm\Model;
 use Fluent\Orm\ModelNotFoundException;
-use Illuminate\Database\MultipleRecordsFoundException;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Traits\ForwardsCalls;
-use Illuminate\Support\Traits\Macroable;
+use Fluent\Orm\MultipleRecordsFoundException;
+use Fluent\Orm\Expression;
+use Tightenco\Collect\Support\Arr;
+use Fluent\Orm\Support\ForwardsCalls;
+use Tightenco\Collect\Support\Traits\Macroable;
 
 /**
  * @mixin \Fluent\Orm\Builder
@@ -160,7 +160,7 @@ abstract class Relation
      * @return \Fluent\Orm\Model
      *
      * @throws \Fluent\Orm\ModelNotFoundException
-     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     * @throws \Fluent\Orm\MultipleRecordsFoundException
      */
     public function sole($columns = ['*'])
     {
@@ -284,7 +284,7 @@ abstract class Relation
     /**
      * Get the base query builder driving the Eloquent builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Fluent\Orm\Builder
      */
     public function getBaseQuery()
     {
@@ -362,7 +362,7 @@ abstract class Relation
     {
         return $model->getKeyName() === last(explode('.', $key))
                     && in_array($model->getKeyType(), ['int', 'integer'])
-                        ? 'whereIntegerInRaw'
+                        ? 'where'
                         : 'whereIn';
     }
 
