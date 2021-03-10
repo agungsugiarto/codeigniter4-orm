@@ -4,8 +4,8 @@ namespace Fluent\Orm\Concerns;
 
 use Closure;
 use Fluent\Orm\Scope;
-use Tightenco\Collect\Support\Arr;
 use InvalidArgumentException;
+use Tightenco\Collect\Support\Arr;
 
 trait HasGlobalScopes
 {
@@ -55,7 +55,8 @@ trait HasGlobalScopes
         }
 
         return Arr::get(
-            static::$globalScopes, static::class.'.'.get_class($scope)
+            static::$globalScopes,
+            static::class.'.'.get_class($scope)
         );
     }
 

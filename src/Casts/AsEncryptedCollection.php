@@ -2,10 +2,10 @@
 
 namespace Fluent\Orm\Casts;
 
+use CodeIgniter\Config\Services;
 use Fluent\Orm\Contracts\Castable;
 use Fluent\Orm\Contracts\CastsAttributes;
 use Tightenco\Collect\Support\Collection;
-use CodeIgniter\Config\Services;
 
 class AsEncryptedCollection implements Castable
 {

@@ -3,8 +3,8 @@
 namespace Fluent\Orm\Casts;
 
 use ArrayObject as BaseArrayObject;
-use Tightenco\Collect\Contracts\Support\Arrayable;
 use JsonSerializable;
+use Tightenco\Collect\Contracts\Support\Arrayable;
 
 class ArrayObject extends BaseArrayObject implements Arrayable, JsonSerializable
 {

@@ -2,8 +2,6 @@
 
 namespace Fluent\Orm;
 
-use Fluent\Orm\MultipleRecordsFoundException;
-use Fluent\Orm\RecordsNotFoundException;
 use Fluent\Orm\Pagination\LengthAwarePaginator;
 use Fluent\Orm\Pagination\Paginator;
 use Tightenco\Collect\Support\Collection;

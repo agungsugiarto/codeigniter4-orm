@@ -9,7 +9,8 @@ use Fluent\Orm\Relations\Concerns\SupportsDefaultModels;
 
 class HasOne extends HasOneOrMany
 {
-    use ComparesRelatedModels, SupportsDefaultModels;
+    use ComparesRelatedModels;
+    use SupportsDefaultModels;
 
     /**
      * Get the results of the relationship.
@@ -63,7 +64,8 @@ class HasOne extends HasOneOrMany
     public function newRelatedInstanceFor(Model $parent)
     {
         return $this->related->newInstance()->setAttribute(
-            $this->getForeignKeyName(), $parent->{$this->localKey}
+            $this->getForeignKeyName(),
+            $parent->{$this->localKey}
         );
     }
 

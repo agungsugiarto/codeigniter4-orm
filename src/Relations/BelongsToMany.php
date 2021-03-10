@@ -2,7 +2,6 @@
 
 namespace Fluent\Orm\Relations;
 
-use Tightenco\Collect\Contracts\Support\Arrayable;
 use Fluent\Orm\Builder;
 use Fluent\Orm\Collection;
 use Fluent\Orm\Model;
@@ -10,6 +9,7 @@ use Fluent\Orm\ModelNotFoundException;
 use Fluent\Orm\Relations\Concerns\AsPivot;
 use Fluent\Orm\Support\Str;
 use InvalidArgumentException;
+use Tightenco\Collect\Contracts\Support\Arrayable;
 
 class BelongsToMany extends Relation
 {
@@ -140,8 +140,16 @@ class BelongsToMany extends Relation
      * @param  string|null  $relationName
      * @return void
      */
-    public function __construct(Builder $query, Model $parent, $table, $foreignPivotKey,
-                                $relatedPivotKey, $parentKey, $relatedKey, $relationName = null)
+    public function __construct(
+        Builder $query,
+        Model $parent,
+        $table,
+        $foreignPivotKey,
+        $relatedPivotKey,
+        $parentKey,
+        $relatedKey,
+        $relationName = null
+    )
     {
         $this->parentKey = $parentKey;
         $this->relatedKey = $relatedKey;
@@ -223,7 +231,9 @@ class BelongsToMany extends Relation
     protected function addWhereConstraints()
     {
         $this->query->where(
-            $this->getQualifiedForeignPivotKeyName(), '=', $this->parent->{$this->parentKey}
+            $this->getQualifiedForeignPivotKeyName(),
+            '=',
+            $this->parent->{$this->parentKey}
         );
 
         return $this;
@@ -279,7 +289,8 @@ class BelongsToMany extends Relation
         foreach ($models as $model) {
             if (isset($dictionary[$key = $model->{$this->parentKey}])) {
                 $model->setRelation(
-                    $relation, $this->related->newCollection($dictionary[$key])
+                    $relation,
+                    $this->related->newCollection($dictionary[$key])
                 );
             }
         }
@@ -652,7 +663,9 @@ class BelongsToMany extends Relation
         }
 
         return $this->where(
-            $this->getRelated()->getQualifiedKeyName(), '=', $this->parseId($id)
+            $this->getRelated()->getQualifiedKeyName(),
+            '=',
+            $this->parseId($id)
         )->first($columns);
     }
 
@@ -672,7 +685,8 @@ class BelongsToMany extends Relation
         }
 
         return $this->whereIn(
-            $this->getRelated()->getQualifiedKeyName(), $this->parseIds($ids)
+            $this->getRelated()->getQualifiedKeyName(),
+            $this->parseIds($ids)
         )->get($columns);
     }
 

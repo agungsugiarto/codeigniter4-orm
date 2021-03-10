@@ -7,28 +7,28 @@ use Config\Database;
 use Exception;
 use Fluent\Orm\Contracts\QueueableCollection;
 use Fluent\Orm\Contracts\QueueableEntity;
-use Tightenco\Collect\Contracts\Support\Arrayable;
-use Tightenco\Collect\Contracts\Support\Jsonable;
 use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Concerns\AsPivot;
 use Fluent\Orm\Relations\HasManyThrough;
 use Fluent\Orm\Relations\Pivot;
+use Fluent\Orm\Support\ForwardsCalls;
+use Fluent\Orm\Support\Str;
+use JsonSerializable;
+use Tightenco\Collect\Contracts\Support\Arrayable;
+use Tightenco\Collect\Contracts\Support\Jsonable;
 use Tightenco\Collect\Support\Arr;
 use Tightenco\Collect\Support\Collection as BaseCollection;
-use Fluent\Orm\Support\Str;
-use Fluent\Orm\Support\ForwardsCalls;
-use JsonSerializable;
 
 abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable, QueueableEntity
 {
-    use Concerns\HasAttributes,
-        Concerns\HasEvents,
-        Concerns\HasGlobalScopes,
-        Concerns\HasRelationships,
-        Concerns\HasTimestamps,
-        Concerns\HidesAttributes,
-        Concerns\GuardsAttributes,
-        ForwardsCalls;
+    use Concerns\HasAttributes;
+    use Concerns\HasEvents;
+    use Concerns\HasGlobalScopes;
+    use Concerns\HasRelationships;
+    use Concerns\HasTimestamps;
+    use Concerns\HidesAttributes;
+    use Concerns\GuardsAttributes;
+    use ForwardsCalls;
 
     /**
      * The connection name for the model.
@@ -345,7 +345,8 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             } elseif ($totallyGuarded) {
                 throw new MassAssignmentException(sprintf(
                     'Add [%s] to fillable property to allow mass assignment on [%s].',
-                    $key, get_class($this)
+                    $key,
+                    get_class($this)
                 ));
             }
         }
@@ -1404,7 +1405,8 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         ];
 
         $attributes = Arr::except(
-            $this->getAttributes(), $except ? array_unique(array_merge($except, $defaults)) : $defaults
+            $this->getAttributes(),
+            $except ? array_unique(array_merge($except, $defaults)) : $defaults
         );
 
         return tap(new static, function ($instance) use ($attributes) {

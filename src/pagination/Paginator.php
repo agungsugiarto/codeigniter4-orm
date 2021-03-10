@@ -5,11 +5,11 @@ namespace Fluent\Orm\Pagination;
 use ArrayAccess;
 use Countable;
 use Fluent\Orm\Contracts\Paginator as PaginatorContract;
+use IteratorAggregate;
+use JsonSerializable;
 use Tightenco\Collect\Contracts\Support\Arrayable;
 use Tightenco\Collect\Contracts\Support\Jsonable;
 use Tightenco\Collect\Support\Collection;
-use IteratorAggregate;
-use JsonSerializable;
 
 class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, Jsonable, JsonSerializable, PaginatorContract
 {

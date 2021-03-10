@@ -5,12 +5,12 @@ namespace Fluent\Orm\Relations;
 use Closure;
 use Fluent\Orm\Builder;
 use Fluent\Orm\Collection;
+use Fluent\Orm\Expression;
 use Fluent\Orm\Model;
 use Fluent\Orm\ModelNotFoundException;
 use Fluent\Orm\MultipleRecordsFoundException;
-use Fluent\Orm\Expression;
-use Tightenco\Collect\Support\Arr;
 use Fluent\Orm\Support\ForwardsCalls;
+use Tightenco\Collect\Support\Arr;
 use Tightenco\Collect\Support\Traits\Macroable;
 
 /**
@@ -225,7 +225,9 @@ abstract class Relation
     public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery)
     {
         return $this->getRelationExistenceQuery(
-            $query, $parentQuery, new Expression('count(*)')
+            $query,
+            $parentQuery,
+            new Expression('count(*)')
         )->setBindings([], 'select');
     }
 
@@ -242,7 +244,9 @@ abstract class Relation
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         return $query->select($columns)->whereColumn(
-            $this->getQualifiedParentKeyName(), '=', $this->getExistenceCompareKey()
+            $this->getQualifiedParentKeyName(),
+            '=',
+            $this->getExistenceCompareKey()
         );
     }
 

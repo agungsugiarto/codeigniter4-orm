@@ -3,10 +3,10 @@
 namespace Fluent\Orm\Pagination;
 
 use Closure;
+use Fluent\Orm\Support\ForwardsCalls;
+use Fluent\Orm\Support\Str;
 use Tightenco\Collect\Support\Arr;
 use Tightenco\Collect\Support\Collection;
-use Fluent\Orm\Support\Str;
-use Fluent\Orm\Support\ForwardsCalls;
 
 /**
  * @mixin \Illuminate\Support\Collection

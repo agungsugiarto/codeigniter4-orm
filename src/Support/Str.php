@@ -2,12 +2,12 @@
 
 namespace Fluent\Orm\Support;
 
-use Tightenco\Collect\Support\Arr;
-use Tightenco\Collect\Support\Traits\Macroable;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 use Ramsey\Uuid\Generator\CombGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidFactory;
+use Tightenco\Collect\Support\Arr;
+use Tightenco\Collect\Support\Traits\Macroable;
 
 class Str
 {

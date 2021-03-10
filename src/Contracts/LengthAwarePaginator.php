@@ -2,8 +2,6 @@
 
 namespace Fluent\Orm\Contracts;
 
-use Fluent\Orm\Contracts\Paginator;
-
 interface LengthAwarePaginator extends Paginator
 {
     /**

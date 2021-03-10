@@ -5,11 +5,11 @@ namespace Fluent\Orm\Pagination;
 use ArrayAccess;
 use Countable;
 use Fluent\Orm\Contracts\LengthAwarePaginator as LengthAwarePaginatorContract;
+use IteratorAggregate;
+use JsonSerializable;
 use Tightenco\Collect\Contracts\Support\Arrayable;
 use Tightenco\Collect\Contracts\Support\Jsonable;
 use Tightenco\Collect\Support\Collection;
-use IteratorAggregate;
-use JsonSerializable;
 
 class LengthAwarePaginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, Jsonable, JsonSerializable, LengthAwarePaginatorContract
 {

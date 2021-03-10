@@ -10,7 +10,8 @@ use Fluent\Orm\Relations\Concerns\SupportsDefaultModels;
 
 class BelongsTo extends Relation
 {
-    use ComparesRelatedModels, SupportsDefaultModels;
+    use ComparesRelatedModels;
+    use SupportsDefaultModels;
 
     /**
      * The child model instance of the relation.
@@ -247,7 +248,9 @@ class BelongsTo extends Relation
         }
 
         return $query->select($columns)->whereColumn(
-            $this->getQualifiedForeignKeyName(), '=', $query->qualifyColumn($this->ownerKey)
+            $this->getQualifiedForeignKeyName(),
+            '=',
+            $query->qualifyColumn($this->ownerKey)
         );
     }
 
@@ -268,7 +271,9 @@ class BelongsTo extends Relation
         $query->getModel()->setTable($hash);
 
         return $query->whereColumn(
-            $hash.'.'.$this->ownerKey, '=', $this->getQualifiedForeignKeyName()
+            $hash.'.'.$this->ownerKey,
+            '=',
+            $this->getQualifiedForeignKeyName()
         );
     }
 

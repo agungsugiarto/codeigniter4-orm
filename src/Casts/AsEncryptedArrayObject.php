@@ -2,9 +2,9 @@
 
 namespace Fluent\Orm\Casts;
 
+use CodeIgniter\Config\Services;
 use Fluent\Orm\Contracts\Castable;
 use Fluent\Orm\Contracts\CastsAttributes;
-use CodeIgniter\Config\Services;
 
 class AsEncryptedArrayObject implements Castable
 {

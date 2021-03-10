@@ -147,7 +147,8 @@ class MorphTo extends BelongsTo
         $whereIn = $this->whereInMethod($instance, $ownerKey);
 
         return $query->{$whereIn}(
-            $instance->getTable().'.'.$ownerKey, $this->gatherKeysByType($type, $instance->getKeyType())
+            $instance->getTable().'.'.$ownerKey,
+            $this->gatherKeysByType($type, $instance->getKeyType())
         )->get();
     }
 
@@ -226,11 +227,13 @@ class MorphTo extends BelongsTo
     public function associate($model)
     {
         $this->parent->setAttribute(
-            $this->foreignKey, $model instanceof Model ? $model->{$this->ownerKey ?: $model->getKeyName()} : null
+            $this->foreignKey,
+            $model instanceof Model ? $model->{$this->ownerKey ?: $model->getKeyName()} : null
         );
 
         $this->parent->setAttribute(
-            $this->morphType, $model instanceof Model ? $model->getMorphClass() : null
+            $this->morphType,
+            $model instanceof Model ? $model->getMorphClass() : null
         );
 
         return $this->parent->setRelation($this->relationName, $model);
@@ -302,7 +305,8 @@ class MorphTo extends BelongsTo
     public function morphWith(array $with)
     {
         $this->morphableEagerLoads = array_merge(
-            $this->morphableEagerLoads, $with
+            $this->morphableEagerLoads,
+            $with
         );
 
         return $this;
@@ -317,7 +321,8 @@ class MorphTo extends BelongsTo
     public function morphWithCount(array $withCount)
     {
         $this->morphableEagerLoadCounts = array_merge(
-            $this->morphableEagerLoadCounts, $withCount
+            $this->morphableEagerLoadCounts,
+            $withCount
         );
 
         return $this;
@@ -332,7 +337,8 @@ class MorphTo extends BelongsTo
     public function constrain(array $callbacks)
     {
         $this->morphableConstraints = array_merge(
-            $this->morphableConstraints, $callbacks
+            $this->morphableConstraints,
+            $callbacks
         );
 
         return $this;

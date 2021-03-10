@@ -2,12 +2,12 @@
 
 namespace Fluent\Orm\Relations;
 
-use Tightenco\Collect\Contracts\Support\Arrayable;
 use Fluent\Orm\Builder;
 use Fluent\Orm\Collection;
 use Fluent\Orm\Model;
 use Fluent\Orm\ModelNotFoundException;
 use Fluent\Orm\SoftDeletes;
+use Tightenco\Collect\Contracts\Support\Arrayable;
 
 class HasManyThrough extends Relation
 {
@@ -157,7 +157,8 @@ class HasManyThrough extends Relation
         $whereIn = $this->whereInMethod($this->farParent, $this->localKey);
 
         $this->query->{$whereIn}(
-            $this->getQualifiedFirstKeyName(), $this->getKeys($models, $this->localKey)
+            $this->getQualifiedFirstKeyName(),
+            $this->getKeys($models, $this->localKey)
         );
     }
 
@@ -195,7 +196,8 @@ class HasManyThrough extends Relation
         foreach ($models as $model) {
             if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
                 $model->setRelation(
-                    $relation, $this->related->newCollection($dictionary[$key])
+                    $relation,
+                    $this->related->newCollection($dictionary[$key])
                 );
             }
         }
@@ -312,7 +314,9 @@ class HasManyThrough extends Relation
         }
 
         return $this->where(
-            $this->getRelated()->getQualifiedKeyName(), '=', $id
+            $this->getRelated()->getQualifiedKeyName(),
+            '=',
+            $id
         )->first($columns);
     }
 
@@ -332,7 +336,8 @@ class HasManyThrough extends Relation
         }
 
         return $this->whereIn(
-            $this->getRelated()->getQualifiedKeyName(), $ids
+            $this->getRelated()->getQualifiedKeyName(),
+            $ids
         )->get($columns);
     }
 
@@ -537,7 +542,9 @@ class HasManyThrough extends Relation
         $this->performJoin($query);
 
         return $query->select($columns)->whereColumn(
-            $this->getQualifiedLocalKeyName(), '=', $this->getQualifiedFirstKeyName()
+            $this->getQualifiedLocalKeyName(),
+            '=',
+            $this->getQualifiedFirstKeyName()
         );
     }
 
@@ -562,7 +569,9 @@ class HasManyThrough extends Relation
         $query->getModel()->setTable($hash);
 
         return $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$this->localKey, '=', $this->getQualifiedFirstKeyName()
+            $parentQuery->getQuery()->from.'.'.$this->localKey,
+            '=',
+            $this->getQualifiedFirstKeyName()
         );
     }
 
@@ -585,7 +594,9 @@ class HasManyThrough extends Relation
         }
 
         return $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$this->localKey, '=', $hash.'.'.$this->firstKey
+            $parentQuery->getQuery()->from.'.'.$this->localKey,
+            '=',
+            $hash.'.'.$this->firstKey
         );
     }
 

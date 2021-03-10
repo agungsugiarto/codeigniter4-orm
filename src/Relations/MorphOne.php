@@ -9,7 +9,8 @@ use Fluent\Orm\Relations\Concerns\SupportsDefaultModels;
 
 class MorphOne extends MorphOneOrMany
 {
-    use ComparesRelatedModels, SupportsDefaultModels;
+    use ComparesRelatedModels;
+    use SupportsDefaultModels;
 
     /**
      * Get the results of the relationship.

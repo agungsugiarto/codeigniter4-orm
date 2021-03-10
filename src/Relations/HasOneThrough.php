@@ -55,7 +55,8 @@ class HasOneThrough extends HasManyThrough
             if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
                 $value = $dictionary[$key];
                 $model->setRelation(
-                    $relation, reset($value)
+                    $relation,
+                    reset($value)
                 );
             }
         }

@@ -2,22 +2,22 @@
 
 namespace Fluent\Orm\Concerns;
 
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use CodeIgniter\Config\Services;
+use CodeIgniter\I18n\Time;
 use DateTimeInterface;
 use Fluent\Orm\Contracts\Castable;
 use Fluent\Orm\Contracts\CastsInboundAttributes;
-use Tightenco\Collect\Contracts\Support\Arrayable;
 use Fluent\Orm\InvalidCastException;
 use Fluent\Orm\JsonEncodingException;
 use Fluent\Orm\Relations\Relation;
-use Tightenco\Collect\Support\Arr;
-use Carbon\Carbon;
-use Tightenco\Collect\Support\Collection as BaseCollection;
-use CodeIgniter\Config\Services;
-use CodeIgniter\I18n\Time;
 use Fluent\Orm\Support\Str;
 use InvalidArgumentException;
 use LogicException;
+use Tightenco\Collect\Contracts\Support\Arrayable;
+use Tightenco\Collect\Support\Arr;
+use Tightenco\Collect\Support\Collection as BaseCollection;
 
 trait HasAttributes
 {
@@ -145,14 +145,16 @@ trait HasAttributes
         );
 
         $attributes = $this->addMutatedAttributesToArray(
-            $attributes, $mutatedAttributes = $this->getMutatedAttributes()
+            $attributes,
+            $mutatedAttributes = $this->getMutatedAttributes()
         );
 
         // Next we will handle any casts that have been setup for this model and cast
         // the values to their appropriate type. If the attribute has a mutator we
         // will not perform the cast on those attributes to avoid any confusion.
         $attributes = $this->addCastAttributesToArray(
-            $attributes, $mutatedAttributes
+            $attributes,
+            $mutatedAttributes
         );
 
         // Here we will grab all of the appended, calculated attributes to this model
@@ -207,7 +209,8 @@ trait HasAttributes
             // mutated attribute's actual values. After we finish mutating each of the
             // attributes we will return this final array of the mutated attributes.
             $attributes[$key] = $this->mutateAttributeForArray(
-                $key, $attributes[$key]
+                $key,
+                $attributes[$key]
             );
         }
 
@@ -233,7 +236,8 @@ trait HasAttributes
             // then we will serialize the date for the array. This will convert the dates
             // to strings based on the date format specified for these Eloquent models.
             $attributes[$key] = $this->castAttribute(
-                $key, $attributes[$key]
+                $key,
+                $attributes[$key]
             );
 
             // If the attribute cast was a date or a datetime, we will serialize the date as
@@ -457,12 +461,16 @@ trait HasAttributes
         if (! $relation instanceof Relation) {
             if (is_null($relation)) {
                 throw new LogicException(sprintf(
-                    '%s::%s must return a relationship instance, but "null" was returned. Was the "return" keyword used?', static::class, $method
+                    '%s::%s must return a relationship instance, but "null" was returned. Was the "return" keyword used?',
+                    static::class,
+                    $method
                 ));
             }
 
             throw new LogicException(sprintf(
-                '%s::%s must return a relationship instance.', static::class, $method
+                '%s::%s must return a relationship instance.',
+                static::class,
+                $method
             ));
         }
 
@@ -643,7 +651,10 @@ trait HasAttributes
     protected function deviateClassCastableAttribute($method, $key, $value)
     {
         return $this->resolveCasterClass($key)->{$method}(
-            $this, $key, $value, $this->attributes
+            $this,
+            $key,
+            $value,
+            $this->attributes
         );
     }
 
@@ -657,7 +668,10 @@ trait HasAttributes
     protected function serializeClassCastableAttribute($key, $value)
     {
         return $this->resolveCasterClass($key)->serialize(
-            $this, $key, $value, $this->attributes
+            $this,
+            $key,
+            $value,
+            $this->attributes
         );
     }
 
@@ -780,7 +794,9 @@ trait HasAttributes
         [$key, $path] = explode('->', $key, 2);
 
         $value = $this->asJson($this->getArrayAttributeWithValue(
-            $path, $key, $value
+            $path,
+            $key,
+            $value
         ));
 
         $this->attributes[$key] = $this->isEncryptedCastable($key)
@@ -806,14 +822,20 @@ trait HasAttributes
                 function () {
                 },
                 $this->normalizeCastClassResponse($key, $caster->set(
-                    $this, $key, $this->{$key}, $this->attributes
+                    $this,
+                    $key,
+                    $this->{$key},
+                    $this->attributes
                 ))
             ));
         } else {
             $this->attributes = array_merge(
                 $this->attributes,
                 $this->normalizeCastClassResponse($key, $caster->set(
-                    $this, $key, $value, $this->attributes
+                    $this,
+                    $key,
+                    $value,
+                    $this->attributes
                 ))
             );
         }
@@ -872,7 +894,9 @@ trait HasAttributes
 
         if ($value === false) {
             throw JsonEncodingException::forAttribute(
-                $this, $key, json_last_error_msg()
+                $this,
+                $key,
+                json_last_error_msg()
             );
         }
 
@@ -999,7 +1023,8 @@ trait HasAttributes
         // when checking the field. We will just return the DateTime right away.
         if ($value instanceof DateTimeInterface) {
             return Time::parse(
-                $value->format('Y-m-d H:i:s.u'), $value->getTimezone()
+                $value->format('Y-m-d H:i:s.u'),
+                $value->getTimezone()
             );
         }
 
@@ -1352,7 +1377,8 @@ trait HasAttributes
     public function getOriginal($key = null, $default = null)
     {
         return (new static)->setRawAttributes(
-            $this->original, $sync = true
+            $this->original,
+            $sync = true
         )->getOriginalWithoutRewindingModel($key, $default);
     }
 
@@ -1367,7 +1393,8 @@ trait HasAttributes
     {
         if ($key) {
             return $this->transformModelValue(
-                $key, Arr::get($this->original, $key, $default)
+                $key,
+                Arr::get($this->original, $key, $default)
             );
         }
 
@@ -1468,7 +1495,8 @@ trait HasAttributes
     public function isDirty($attributes = null)
     {
         return $this->hasChanges(
-            $this->getDirty(), is_array($attributes) ? $attributes : func_get_args()
+            $this->getDirty(),
+            is_array($attributes) ? $attributes : func_get_args()
         );
     }
 
@@ -1492,7 +1520,8 @@ trait HasAttributes
     public function wasChanged($attributes = null)
     {
         return $this->hasChanges(
-            $this->getChanges(), is_array($attributes) ? $attributes : func_get_args()
+            $this->getChanges(),
+            is_array($attributes) ? $attributes : func_get_args()
         );
     }
 

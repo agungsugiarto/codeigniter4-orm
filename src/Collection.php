@@ -4,11 +4,11 @@ namespace Fluent\Orm;
 
 use Fluent\Orm\Contracts\QueueableCollection;
 use Fluent\Orm\Contracts\QueueableEntity;
+use Fluent\Orm\Support\Str;
+use LogicException;
 use Tightenco\Collect\Contracts\Support\Arrayable;
 use Tightenco\Collect\Support\Arr;
 use Tightenco\Collect\Support\Collection as BaseCollection;
-use Fluent\Orm\Support\Str;
-use LogicException;
 
 class Collection extends BaseCollection implements QueueableCollection
 {

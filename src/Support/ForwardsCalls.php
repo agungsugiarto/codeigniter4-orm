@@ -48,7 +48,9 @@ trait ForwardsCalls
     protected static function throwBadMethodCallException($method)
     {
         throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()', static::class, $method
+            'Call to undefined method %s::%s()',
+            static::class,
+            $method
         ));
     }
 }
