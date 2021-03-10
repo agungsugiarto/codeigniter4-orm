@@ -125,3 +125,7 @@ nb-configuration.xml
 /results/
 /phpunit*.xml
 /.phpunit.*.cache
+
+.php_cs
+.php_cs.cache
+.phpunit.result.cache

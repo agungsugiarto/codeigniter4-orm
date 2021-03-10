@@ -248,7 +248,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  \Closure|string|array|\Illuminate\Database\Query\Expression  $column
+     * @param  \Closure|string|array|\Fluent\Orm\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -271,7 +271,7 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  \Closure|string|array|\Illuminate\Database\Query\Expression  $column
+     * @param  \Closure|string|array|\Fluent\Orm\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -285,7 +285,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  \Closure|array|string|\Illuminate\Database\Query\Expression  $column
+     * @param  \Closure|array|string|\Fluent\Orm\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
@@ -302,7 +302,7 @@ class Builder
     /**
      * Add an "order by" clause for a timestamp to the query.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @return $this
      */
     public function latest($column = null)
@@ -319,7 +319,7 @@ class Builder
     /**
      * Add an "order by" clause for a timestamp to the query.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @return $this
      */
     public function oldest($column = null)
@@ -381,7 +381,7 @@ class Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable|array  $ids
+     * @param  \Tightenco\Collect\Contracts\Support\Arrayable|array  $ids
      * @param  array  $columns
      * @return \Fluent\Orm\Collection
      */
@@ -534,7 +534,7 @@ class Builder
      * @return \Fluent\Orm\Model
      *
      * @throws \Fluent\Orm\ModelNotFoundException
-     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     * @throws \Fluent\Orm\MultipleRecordsFoundException
      */
     public function sole($columns = ['*'])
     {
@@ -548,7 +548,7 @@ class Builder
     /**
      * Get a single column's value from the first result of a query.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @return mixed
      */
     public function value($column)
@@ -707,7 +707,7 @@ class Builder
     /**
      * Get a lazy collection for the given query.
      *
-     * @return \Illuminate\Support\LazyCollection
+     * @return \Tightenco\Collect\Support\LazyCollection
      */
     public function cursor()
     {
@@ -731,9 +731,9 @@ class Builder
     /**
      * Get an array with the values of a given column.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @param  string|null  $key
-     * @return \Illuminate\Support\Collection
+     * @return \Tightenco\Collect\Support\Collection
      */
     public function pluck($column, $key = null)
     {
@@ -760,7 +760,7 @@ class Builder
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Fluent\Orm\Contracts\LengthAwarePaginator
      *
      * @throws \InvalidArgumentException
      */
@@ -875,7 +875,7 @@ class Builder
     /**
      * Increment a column's value by a given amount.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @param  float|int  $amount
      * @param  array  $extra
      * @return int
@@ -890,7 +890,7 @@ class Builder
     /**
      * Decrement a column's value by a given amount.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @param  float|int  $amount
      * @param  array  $extra
      * @return int
@@ -1439,7 +1439,7 @@ class Builder
     /**
      * Qualify the given column name by the model's table.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @return string
      */
     public function qualifyColumn($column)

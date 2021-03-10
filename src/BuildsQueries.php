@@ -55,7 +55,7 @@ trait BuildsQueries
      *
      * @param  callable  $callback
      * @param  int  $count
-     * @return \Illuminate\Support\Collection
+     * @return \Tightenco\Collect\Support\Collection
      */
     public function chunkMap(callable $callback, $count = 1000)
     {
@@ -245,12 +245,12 @@ trait BuildsQueries
     /**
      * Create a new length-aware paginator instance.
      *
-     * @param  \Illuminate\Support\Collection  $items
+     * @param  \Tighn  $items
      * @param  int  $total
      * @param  int  $perPage
      * @param  int  $currentPage
      * @param  array  $options
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @return \Fluent\Orm\Pagination\LengthAwarePaginator
      */
     protected function paginator($items, $total, $perPage, $currentPage, $options)
     {
@@ -260,11 +260,11 @@ trait BuildsQueries
     /**
      * Create a new simple paginator instance.
      *
-     * @param  \Illuminate\Support\Collection  $items
+     * @param  \Tighn  $items
      * @param  int  $perPage
      * @param  int  $currentPage
      * @param  array  $options
-     * @return \Illuminate\Pagination\Paginator
+     * @return \Fluent\Orm\Pagination\Paginator
      */
     protected function simplePaginator($items, $perPage, $currentPage, $options)
     {
