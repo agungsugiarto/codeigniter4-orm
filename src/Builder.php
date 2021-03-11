@@ -4,20 +4,18 @@ namespace Fluent\Orm;
 
 use BadMethodCallException;
 use Closure;
+use CodeIgniter\Database\BaseBuilder as QueryBuilder;
 use Exception;
-use Tightenco\Collect\Contracts\Support\Arrayable;
-use Fluent\Orm\BuildsQueries;
 // use Illuminate\Database\Concerns\ExplainsQueries;
+use Fluent\Orm\Pagination\Paginator;
 use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Relation;
-use CodeIgniter\Database\BaseBuilder as QueryBuilder;
-use Fluent\Orm\RecordsNotFoundException;
-use Fluent\Orm\Pagination\Paginator;
-use Tightenco\Collect\Support\Arr;
-use Fluent\Orm\Support\Str;
 use Fluent\Orm\Support\ForwardsCalls;
+use Fluent\Orm\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
+use Tightenco\Collect\Contracts\Support\Arrayable;
+use Tightenco\Collect\Support\Arr;
 
 /**
  * @property-read HigherOrderBuilderProxy $orWhere
@@ -26,7 +24,8 @@ use ReflectionMethod;
  */
 class Builder
 {
-    use Concerns\QueriesRelationships, ForwardsCalls;
+    use Concerns\QueriesRelationships;
+    use ForwardsCalls;
     use BuildsQueries {
         sole as baseSole;
     }
@@ -258,7 +257,7 @@ class Builder
         if ($column instanceof Closure && is_null($operator)) {
             $column($query = $this->model->newQueryWithoutRelationships());
 
-            // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
+        // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
         } else {
             $this->getQuery()->where(...func_get_args());
         }
@@ -291,7 +290,9 @@ class Builder
     public function orWhere($column, $operator = null, $value = null)
     {
         [$value, $operator] = $this->query->prepareValueAndOperator(
-            $value, $operator, func_num_args() === 2
+            $value,
+            $operator,
+            func_num_args() === 2
         );
 
         return $this->where($column, $operator, $value, 'or');
@@ -419,7 +420,8 @@ class Builder
         }
 
         throw (new ModelNotFoundException)->setModel(
-            get_class($this->model), $id
+            get_class($this->model),
+            $id
         );
     }
 
@@ -634,7 +636,8 @@ class Builder
         // of models which have been eagerly hydrated and are readied for return.
         return $relation->match(
             $relation->initRelation($models, $name),
-            $relation->getEager(), $name
+            $relation->getEager(),
+            $name
         );
     }
 
@@ -882,7 +885,9 @@ class Builder
     public function increment($column, $amount = 1, array $extra = [])
     {
         return $this->toBase()->increment(
-            $column, $amount, $this->addUpdatedAtColumn($extra)
+            $column,
+            $amount,
+            $this->addUpdatedAtColumn($extra)
         );
     }
 
@@ -897,7 +902,9 @@ class Builder
     public function decrement($column, $amount = 1, array $extra = [])
     {
         return $this->toBase()->decrement(
-            $column, $amount, $this->addUpdatedAtColumn($extra)
+            $column,
+            $amount,
+            $this->addUpdatedAtColumn($extra)
         );
     }
 
@@ -1155,11 +1162,13 @@ class Builder
         $query->wheres = [];
 
         $this->groupWhereSliceForScope(
-            $query, array_slice($allWheres, 0, $originalWhereCount)
+            $query,
+            array_slice($allWheres, 0, $originalWhereCount)
         );
 
         $this->groupWhereSliceForScope(
-            $query, array_slice($allWheres, $originalWhereCount)
+            $query,
+            array_slice($allWheres, $originalWhereCount)
         );
     }
 
@@ -1179,7 +1188,8 @@ class Builder
         // we don't add any unnecessary nesting thus keeping the query clean.
         if ($whereBooleans->contains('or')) {
             $query->wheres[] = $this->createNestedWhere(
-                $whereSlice, $whereBooleans->first()
+                $whereSlice,
+                $whereBooleans->first()
             );
         } else {
             $query->wheres = array_merge($query->wheres, $whereSlice);
@@ -1597,8 +1607,8 @@ class Builder
     protected static function registerMixin($mixin, $replace)
     {
         $methods = (new ReflectionClass($mixin))->getMethods(
-                ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
-            );
+            ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
+        );
 
         foreach ($methods as $method) {
             if ($replace || ! static::hasGlobalMacro($method->name)) {

@@ -503,8 +503,7 @@ trait HasRelationships
         $parentKey = null,
         $relatedKey = null,
         $relation = null
-    )
-    {
+    ) {
         // If no relationship name was passed, we will pull backtraces to get the
         // name of the calling function. We will use that function name as the
         // title of this relation since that is a great convention to apply.
@@ -562,8 +561,7 @@ trait HasRelationships
         $parentKey,
         $relatedKey,
         $relationName = null
-    )
-    {
+    ) {
         return new BelongsToMany($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
     }
 
@@ -589,8 +587,7 @@ trait HasRelationships
         $parentKey = null,
         $relatedKey = null,
         $inverse = false
-    )
-    {
+    ) {
         $caller = $this->guessBelongsToManyRelation();
 
         // First, we will need to determine the foreign key and "other key" for the
@@ -653,8 +650,7 @@ trait HasRelationships
         $relatedKey,
         $relationName = null,
         $inverse = false
-    )
-    {
+    ) {
         return new MorphToMany(
             $query,
             $parent,
@@ -689,8 +685,7 @@ trait HasRelationships
         $relatedPivotKey = null,
         $parentKey = null,
         $relatedKey = null
-    )
-    {
+    ) {
         $foreignPivotKey = $foreignPivotKey ?: $this->getForeignKey();
 
         // For the inverse of the polymorphic many-to-many relations, we will change

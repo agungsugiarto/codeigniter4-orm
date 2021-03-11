@@ -5,10 +5,10 @@ namespace Fluent\Orm\Concerns;
 use Closure;
 use CodeIgniter\Database\BaseBuilder as QueryBuilder;
 use Fluent\Orm\Builder;
+use Fluent\Orm\Expression;
 use Fluent\Orm\Relations\MorphTo;
 use Fluent\Orm\Relations\Relation;
 use Fluent\Orm\Support\Str;
-use Fluent\Orm\Expression;
 
 trait QueriesRelationships
 {

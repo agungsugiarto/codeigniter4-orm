@@ -149,8 +149,7 @@ class BelongsToMany extends Relation
         $parentKey,
         $relatedKey,
         $relationName = null
-    )
-    {
+    ) {
         $this->parentKey = $parentKey;
         $this->relatedKey = $relatedKey;
         $this->relationName = $relationName;
