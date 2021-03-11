@@ -3,32 +3,34 @@
 namespace Fluent\Orm;
 
 use ArrayAccess;
-use Config\Database;
+use CodeIgniter\Database\Config;
 use Exception;
 use Fluent\Orm\Contracts\QueueableCollection;
 use Fluent\Orm\Contracts\QueueableEntity;
+// use Illuminate\Contracts\Routing\UrlRoutable;
+use Tightenco\Collect\Contracts\Support\Arrayable;
+use Tightenco\Collect\Contracts\Support\Jsonable;
+use CodeIgniter\Database\BaseConnection;
 use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Concerns\AsPivot;
 use Fluent\Orm\Relations\HasManyThrough;
 use Fluent\Orm\Relations\Pivot;
-use Fluent\Orm\Support\ForwardsCalls;
-use Fluent\Orm\Support\Str;
-use JsonSerializable;
-use Tightenco\Collect\Contracts\Support\Arrayable;
-use Tightenco\Collect\Contracts\Support\Jsonable;
 use Tightenco\Collect\Support\Arr;
 use Tightenco\Collect\Support\Collection as BaseCollection;
+use Fluent\Orm\Support\Str;
+use Fluent\Orm\Support\ForwardsCalls;
+use JsonSerializable;
 
-abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable, QueueableEntity
+abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable, QueueableEntity /**, UrlRoutable */
 {
-    use Concerns\HasAttributes;
-    use Concerns\HasEvents;
-    use Concerns\HasGlobalScopes;
-    use Concerns\HasRelationships;
-    use Concerns\HasTimestamps;
-    use Concerns\HidesAttributes;
-    use Concerns\GuardsAttributes;
-    use ForwardsCalls;
+    use Concerns\HasAttributes,
+        Concerns\HasEvents,
+        Concerns\HasGlobalScopes,
+        Concerns\HasRelationships,
+        Concerns\HasTimestamps,
+        Concerns\HidesAttributes,
+        Concerns\GuardsAttributes,
+        ForwardsCalls;
 
     /**
      * The connection name for the model.
@@ -99,6 +101,13 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      * @var bool
      */
     public $wasRecentlyCreated = false;
+
+    /**
+     * The connection resolver instance.
+     *
+     * @var \CodeIgniter\Database\BaseConnection
+     */
+    protected static $resolver;
 
     /**
      * The event dispatcher instance.
@@ -345,8 +354,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             } elseif ($totallyGuarded) {
                 throw new MassAssignmentException(sprintf(
                     'Add [%s] to fillable property to allow mass assignment on [%s].',
-                    $key,
-                    get_class($this)
+                    $key, get_class($this)
                 ));
             }
         }
@@ -851,7 +859,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
 
             if (! $this->getConnectionName() &&
                 $connection = $query->getConnection()) {
-                $this->setConnection($connection->getName());
+                $this->setConnection($connection);
             }
         }
 
@@ -875,9 +883,19 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     public function saveOrFail(array $options = [])
     {
-        return $this->getConnection()->transaction(function () use ($options) {
-            return $this->save($options);
-        });
+        $this->getConnection()->transBegin();
+
+        try {
+            $result = $this->save($options);
+
+            $this->getConnection()->transCommit();
+        } catch (\Exception $e) {
+            $this->getConnection()->transRollback();
+
+            throw $e;
+        }
+
+        return $result;
     }
 
     /**
@@ -1041,9 +1059,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     protected function insertAndSetId(Builder $query, $attributes)
     {
-        $id = $query->insertGetId($attributes, $keyName = $this->getKeyName());
-
-        $this->setAttribute($keyName, $id);
+        $this->setAttribute($this->getKeyName(), $this->getIncrementing());
     }
 
     /**
@@ -1405,8 +1421,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         ];
 
         $attributes = Arr::except(
-            $this->getAttributes(),
-            $except ? array_unique(array_merge($except, $defaults)) : $defaults
+            $this->getAttributes(), $except ? array_unique(array_merge($except, $defaults)) : $defaults
         );
 
         return tap(new static, function ($instance) use ($attributes) {
@@ -1484,7 +1499,38 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     public static function resolveConnection($connection = null)
     {
-        return Database::connect($connection);
+        return static::$resolver = Config::connect($connection);
+    }
+
+    /**
+     * Get the connection resolver instance.
+     *
+     * @return \CodeIgniter\Database\BaseConnection
+     */
+    public static function getConnectionResolver()
+    {
+        return static::$resolver;
+    }
+
+    /**
+     * Set the connection resolver instance.
+     *
+     * @param  \CodeIgniter\Database\BaseConnection  $resolver
+     * @return void
+     */
+    public static function setConnectionResolver(BaseConnection $resolver)
+    {
+        static::$resolver = $resolver;
+    }
+
+    /**
+     * Unset the connection resolver for models.
+     *
+     * @return void
+     */
+    public static function unsetConnectionResolver()
+    {
+        static::$resolver = null;
     }
 
     /**

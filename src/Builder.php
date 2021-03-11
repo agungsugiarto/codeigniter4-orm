@@ -4,19 +4,20 @@ namespace Fluent\Orm;
 
 use BadMethodCallException;
 use Closure;
-use CodeIgniter\Database\BaseBuilder;
 use Exception;
+use Tightenco\Collect\Contracts\Support\Arrayable;
+use Fluent\Orm\BuildsQueries;
 // use Illuminate\Database\Concerns\ExplainsQueries;
-use Fluent\Orm\Concerns\RecordsNotFoundException;
-use Fluent\Orm\Pagination\Paginator;
 use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Relation;
-use Fluent\Orm\Support\ForwardsCalls;
+use CodeIgniter\Database\BaseBuilder as QueryBuilder;
+use Fluent\Orm\RecordsNotFoundException;
+use Fluent\Orm\Pagination\Paginator;
+use Tightenco\Collect\Support\Arr;
 use Fluent\Orm\Support\Str;
+use Fluent\Orm\Support\ForwardsCalls;
 use ReflectionClass;
 use ReflectionMethod;
-use Tightenco\Collect\Contracts\Support\Arrayable;
-use Tightenco\Collect\Support\Arr;
 
 /**
  * @property-read HigherOrderBuilderProxy $orWhere
@@ -25,8 +26,7 @@ use Tightenco\Collect\Support\Arr;
  */
 class Builder
 {
-    use Concerns\QueriesRelationships;
-    use ForwardsCalls;
+    use Concerns\QueriesRelationships, ForwardsCalls;
     use BuildsQueries {
         sole as baseSole;
     }
@@ -120,7 +120,7 @@ class Builder
      * @param  \CodeIgniter\Database\BaseBuilder  $query
      * @return void
      */
-    public function __construct(BaseBuilder $query)
+    public function __construct(QueryBuilder $query)
     {
         $this->query = $query;
     }
@@ -259,9 +259,8 @@ class Builder
             $column($query = $this->model->newQueryWithoutRelationships());
 
             // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
-            throw new Exception('Not supported with closure.');
         } else {
-            $this->toBase()->where(...func_get_args());
+            $this->getQuery()->where(...func_get_args());
         }
 
         return $this;
@@ -292,9 +291,7 @@ class Builder
     public function orWhere($column, $operator = null, $value = null)
     {
         [$value, $operator] = $this->query->prepareValueAndOperator(
-            $value,
-            $operator,
-            func_num_args() === 2
+            $value, $operator, func_num_args() === 2
         );
 
         return $this->where($column, $operator, $value, 'or');
@@ -359,7 +356,8 @@ class Builder
     public function fromQuery($query, $bindings = [])
     {
         return $this->hydrate(
-            $this->query->getConnection()->select($query, $bindings)
+            // $this->query->select($query, $bindings)
+            $this->query->db()->query($query, $bindings)
         );
     }
 
@@ -421,8 +419,7 @@ class Builder
         }
 
         throw (new ModelNotFoundException)->setModel(
-            get_class($this->model),
-            $id
+            get_class($this->model), $id
         );
     }
 
@@ -589,7 +586,7 @@ class Builder
     public function getModels($columns = ['*'])
     {
         return $this->model->hydrate(
-            $this->toBase()->select($columns)->get()->getResult()
+            $this->getQuery()->select($columns)->get()->getResult()
         )->all();
     }
 
@@ -637,8 +634,7 @@ class Builder
         // of models which have been eagerly hydrated and are readied for return.
         return $relation->match(
             $relation->initRelation($models, $name),
-            $relation->getEager(),
-            $name
+            $relation->getEager(), $name
         );
     }
 
@@ -773,8 +769,8 @@ class Builder
 
         $perPage = $perPage ?: $this->model->getPerPage();
 
-        $results = ($total = $this->toBase()->countAllResults())
-                                    ? $this->query->select($columns)->offset(($page - 1) * $perPage)->limit($perPage)->get()->getResult()
+        $results = ($total = $this->getQuery()->countAllResults())
+                                    ? $this->getQuery()->select($columns)->offset(($page - 1) * $perPage)->limit($perPage)->get()->getResult()
                                     : $this->model->newCollection();
 
         return $this->paginator($results, $total, $perPage, $page, [
@@ -790,7 +786,7 @@ class Builder
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Fluent\Orm\Pagination\Paginator
+     * @return \Fluent\Orm\Contracts\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -801,7 +797,7 @@ class Builder
         // Next we will set the limit and offset for this query so that when we get the
         // results we get the proper section of results. Then, we'll create the full
         // paginator instances for these results with the given page and per page.
-        $this->query->offset(($page - 1) * $perPage)->limit($perPage);
+        $this->getQuery()->offset(($page - 1) * $perPage)->limit($perPage + 1);
 
         return $this->simplePaginator($this->get($columns), $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
@@ -886,9 +882,7 @@ class Builder
     public function increment($column, $amount = 1, array $extra = [])
     {
         return $this->toBase()->increment(
-            $column,
-            $amount,
-            $this->addUpdatedAtColumn($extra)
+            $column, $amount, $this->addUpdatedAtColumn($extra)
         );
     }
 
@@ -903,9 +897,7 @@ class Builder
     public function decrement($column, $amount = 1, array $extra = [])
     {
         return $this->toBase()->decrement(
-            $column,
-            $amount,
-            $this->addUpdatedAtColumn($extra)
+            $column, $amount, $this->addUpdatedAtColumn($extra)
         );
     }
 
@@ -1163,13 +1155,11 @@ class Builder
         $query->wheres = [];
 
         $this->groupWhereSliceForScope(
-            $query,
-            array_slice($allWheres, 0, $originalWhereCount)
+            $query, array_slice($allWheres, 0, $originalWhereCount)
         );
 
         $this->groupWhereSliceForScope(
-            $query,
-            array_slice($allWheres, $originalWhereCount)
+            $query, array_slice($allWheres, $originalWhereCount)
         );
     }
 
@@ -1189,8 +1179,7 @@ class Builder
         // we don't add any unnecessary nesting thus keeping the query clean.
         if ($whereBooleans->contains('or')) {
             $query->wheres[] = $this->createNestedWhere(
-                $whereSlice,
-                $whereBooleans->first()
+                $whereSlice, $whereBooleans->first()
             );
         } else {
             $query->wheres = array_merge($query->wheres, $whereSlice);
@@ -1256,7 +1245,9 @@ class Builder
      */
     public function newModelInstance($attributes = [])
     {
-        return $this->model->newInstance($attributes);
+        return $this->model->newInstance($attributes)->setConnection(
+            $this->query->db()
+        );
     }
 
     /**
@@ -1362,7 +1353,7 @@ class Builder
      */
     public function getQuery()
     {
-        return $this->query;
+        return $this->query->resetQuery();
     }
 
     /**
@@ -1385,7 +1376,7 @@ class Builder
      */
     public function toBase()
     {
-        return $this->applyScopes()->getQuery()->resetQuery();
+        return $this->applyScopes()->getQuery();
     }
 
     /**
@@ -1606,8 +1597,8 @@ class Builder
     protected static function registerMixin($mixin, $replace)
     {
         $methods = (new ReflectionClass($mixin))->getMethods(
-            ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
-        );
+                ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
+            );
 
         foreach ($methods as $method) {
             if ($replace || ! static::hasGlobalMacro($method->name)) {

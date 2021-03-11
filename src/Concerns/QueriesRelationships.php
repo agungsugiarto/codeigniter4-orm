@@ -8,6 +8,7 @@ use Fluent\Orm\Builder;
 use Fluent\Orm\Relations\MorphTo;
 use Fluent\Orm\Relations\Relation;
 use Fluent\Orm\Support\Str;
+use Fluent\Orm\Expression;
 
 trait QueriesRelationships
 {
