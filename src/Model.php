@@ -859,7 +859,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             $saved = $this->performInsert($query);
 
             if (! $this->getConnectionName() &&
-                $connection = $query->getConnection()) {
+                $connection = $query->getQuery()->db()) {
                 $this->setConnection($connection);
             }
         }
@@ -1024,8 +1024,10 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         // table from the database. Not all tables have to be incrementing though.
         $attributes = $this->getAttributes();
 
+        $query->insert($attributes);
+
         if ($this->getIncrementing()) {
-            $this->insertAndSetId($query, $attributes);
+            $this->insertAndSetId($query);
         }
 
         // If the table isn't incrementing we'll simply insert these attributes as they
@@ -1035,8 +1037,6 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             if (empty($attributes)) {
                 return true;
             }
-
-            $query->insert($attributes);
         }
 
         // We will go ahead and set the exists property to true, so that it is set when
@@ -1055,12 +1055,11 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      * Insert the given attributes and set the ID on the model.
      *
      * @param  \Fluent\Orm\Builder  $query
-     * @param  array  $attributes
      * @return void
      */
-    protected function insertAndSetId(Builder $query, $attributes)
+    protected function insertAndSetId(Builder $query)
     {
-        $this->setAttribute($this->getKeyName(), $this->getIncrementing());
+        $this->setAttribute($this->getKeyName(), $query->getQuery()->db()->insertID());
     }
 
     /**

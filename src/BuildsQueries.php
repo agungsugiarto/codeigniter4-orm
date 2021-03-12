@@ -164,7 +164,7 @@ trait BuildsQueries
      */
     public function first($columns = ['*'])
     {
-        return $this->toBase()->select($columns)->get(1)->getResult();
+        return $this->query->select($columns)->get(1)->getResult();
     }
 
     /**

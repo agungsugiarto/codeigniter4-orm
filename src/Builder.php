@@ -259,7 +259,7 @@ class Builder
 
         // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
         } else {
-            $this->getQuery()->where(...func_get_args());
+            $this->query->where(...func_get_args());
         }
 
         return $this;
@@ -588,7 +588,7 @@ class Builder
     public function getModels($columns = ['*'])
     {
         return $this->model->hydrate(
-            $this->getQuery()->select($columns)->get()->getResult()
+            $this->query->select($columns)->get()->getResult()
         )->all();
     }
 
@@ -772,9 +772,9 @@ class Builder
 
         $perPage = $perPage ?: $this->model->getPerPage();
 
-        $results = ($total = $this->getQuery()->countAllResults())
-                                    ? $this->getQuery()->select($columns)->offset(($page - 1) * $perPage)->limit($perPage)->get()->getResult()
-                                    : $this->model->newCollection();
+        $results = ($total = $this->query->countAllResults(false))
+            ? $this->query->select($columns)->get($perPage + 1, ($page - 1) * $perPage)->getResult()
+            : $this->model->newCollection();
 
         return $this->paginator($results, $total, $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
@@ -800,7 +800,7 @@ class Builder
         // Next we will set the limit and offset for this query so that when we get the
         // results we get the proper section of results. Then, we'll create the full
         // paginator instances for these results with the given page and per page.
-        $this->getQuery()->offset(($page - 1) * $perPage)->limit($perPage + 1);
+        $this->query->get($perPage + 1, ($page - 1) * $perPage)->getResult();
 
         return $this->simplePaginator($this->get($columns), $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
@@ -1363,7 +1363,7 @@ class Builder
      */
     public function getQuery()
     {
-        return $this->query->resetQuery();
+        return $this->query;
     }
 
     /**
@@ -1441,8 +1441,6 @@ class Builder
     public function setModel(Model $model)
     {
         $this->model = $model;
-
-        $this->query->from($model->getTable());
 
         return $this;
     }
