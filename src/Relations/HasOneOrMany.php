@@ -349,14 +349,14 @@ abstract class HasOneOrMany extends Relation
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
+        $query->from($query->getModel()->getTable() . ' as ' . $hash = $this->getRelationCountHash());
 
         $query->getModel()->setTable($hash);
 
         return $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
-            $hash.'.'.$this->getForeignKeyName()
+            $hash . '.' . $this->getForeignKeyName()
         );
     }
 

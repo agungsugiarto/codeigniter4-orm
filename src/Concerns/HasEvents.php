@@ -36,7 +36,7 @@ trait HasEvents
      */
     public static function observe($classes)
     {
-        $instance = new static;
+        $instance = new static();
 
         foreach (Arr::wrap($classes) as $class) {
             $instance->registerObserver($class);
@@ -60,7 +60,7 @@ trait HasEvents
         // it into the model's event system, making it convenient to watch these.
         foreach ($this->getObservableEvents() as $event) {
             if (method_exists($class, $event)) {
-                static::registerModelEvent($event, $className.'@'.$event);
+                static::registerModelEvent($event, $className . '@' . $event);
             }
         }
     }
@@ -83,7 +83,7 @@ trait HasEvents
             return $class;
         }
 
-        throw new InvalidArgumentException('Unable to find observer: '.$class);
+        throw new InvalidArgumentException('Unable to find observer: ' . $class);
     }
 
     /**
@@ -187,7 +187,7 @@ trait HasEvents
         }
 
         return ! empty($result) ? $result : static::$dispatcher->{$method}(
-            "eloquent.{$event}: ".static::class,
+            "eloquent.{$event}: " . static::class,
             $this
         );
     }
@@ -350,10 +350,10 @@ trait HasEvents
             return;
         }
 
-        $instance = new static;
+        $instance = new static();
 
         foreach ($instance->getObservableEvents() as $event) {
-            static::$dispatcher->forget("eloquent.{$event}: ".static::class);
+            static::$dispatcher->forget("eloquent.{$event}: " . static::class);
         }
 
         foreach (array_values($instance->dispatchesEvents) as $event) {

@@ -51,12 +51,12 @@ trait HasGlobalScopes
     public static function getGlobalScope($scope)
     {
         if (is_string($scope)) {
-            return Arr::get(static::$globalScopes, static::class.'.'.$scope);
+            return Arr::get(static::$globalScopes, static::class . '.' . $scope);
         }
 
         return Arr::get(
             static::$globalScopes,
-            static::class.'.'.get_class($scope)
+            static::class . '.' . get_class($scope)
         );
     }
 

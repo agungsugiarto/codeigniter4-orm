@@ -147,7 +147,7 @@ class MorphTo extends BelongsTo
         $whereIn = $this->whereInMethod($instance, $ownerKey);
 
         return $query->{$whereIn}(
-            $instance->getTable().'.'.$ownerKey,
+            $instance->getTable() . '.' . $ownerKey,
             $this->gatherKeysByType($type, $instance->getKeyType())
         )->get();
     }
@@ -178,7 +178,7 @@ class MorphTo extends BelongsTo
     {
         $class = Model::getActualClassNameForMorph($type);
 
-        return tap(new $class, function ($instance) {
+        return tap(new $class(), function ($instance) {
             if (! $instance->getConnectionName()) {
                 $instance->setConnection($this->getConnection()->getName());
             }

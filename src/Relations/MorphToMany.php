@@ -59,7 +59,7 @@ class MorphToMany extends BelongsToMany
         $inverse = false
     ) {
         $this->inverse = $inverse;
-        $this->morphType = $name.'_type';
+        $this->morphType = $name . '_type';
         $this->morphClass = $inverse ? $query->getModel()->getMorphClass() : $parent->getMorphClass();
 
         parent::__construct(
@@ -191,7 +191,7 @@ class MorphToMany extends BelongsToMany
         $defaults = [$this->foreignPivotKey, $this->relatedPivotKey, $this->morphType];
 
         return collect(array_merge($defaults, $this->pivotColumns))->map(function ($column) {
-            return $this->qualifyPivotColumn($column).' as pivot_'.$column;
+            return $this->qualifyPivotColumn($column) . ' as pivot_' . $column;
         })->unique()->all();
     }
 

@@ -229,7 +229,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         static::$traitInitializers[$class] = [];
 
         foreach (class_uses_recursive($class) as $trait) {
-            $method = 'boot'.class_basename($trait);
+            $method = 'boot' . class_basename($trait);
 
             if (method_exists($class, $method) && ! in_array($method, $booted)) {
                 forward_static_call([$class, $method]);
@@ -237,7 +237,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
                 $booted[] = $method;
             }
 
-            if (method_exists($class, $method = 'initialize'.class_basename($trait))) {
+            if (method_exists($class, $method = 'initialize' . class_basename($trait))) {
                 static::$traitInitializers[$class][] = $method;
 
                 static::$traitInitializers[$class] = array_unique(
@@ -388,7 +388,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             return $column;
         }
 
-        return $this->getTable().'.'.$column;
+        return $this->getTable() . '.' . $column;
     }
 
     /**
@@ -449,7 +449,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         // First we will just create a fresh instance of this model, and then we can set the
         // connection on the model so that it is used for the queries we execute, as well
         // as being set on every relation we retrieve without a custom connection name.
-        $instance = new static;
+        $instance = new static();
 
         $instance->setConnection($connection);
 
@@ -858,8 +858,10 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         else {
             $saved = $this->performInsert($query);
 
-            if (! $this->getConnectionName() &&
-                $connection = $query->getQuery()->db()) {
+            if (
+                ! $this->getConnectionName() &&
+                $connection = $query->getQuery()->db()
+            ) {
                 $this->setConnection($connection);
             }
         }
@@ -1083,7 +1085,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
         // We will actually pull the models from the database table and call delete on
         // each of them individually so that their events get fired properly with a
         // correct set of attributes in case the developers wants to check these.
-        $key = ($instance = new static)->getKeyName();
+        $key = ($instance = new static())->getKeyName();
 
         $count = 0;
 
@@ -1168,7 +1170,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     public static function query()
     {
-        return (new static)->newQuery();
+        return (new static())->newQuery();
     }
 
     /**
@@ -1310,7 +1312,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     public function hasNamedScope($scope)
     {
-        return method_exists($this, 'scope'.ucfirst($scope));
+        return method_exists($this, 'scope' . ucfirst($scope));
     }
 
     /**
@@ -1322,7 +1324,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     public function callNamedScope($scope, array $parameters = [])
     {
-        return $this->{'scope'.ucfirst($scope)}(...$parameters);
+        return $this->{'scope' . ucfirst($scope)}(...$parameters);
     }
 
     /**
@@ -1425,7 +1427,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
             $except ? array_unique(array_merge($except, $defaults)) : $defaults
         );
 
-        return tap(new static, function ($instance) use ($attributes) {
+        return tap(new static(), function ($instance) use ($attributes) {
             $instance->setRawAttributes($attributes);
 
             $instance->setRelations($this->relations);
@@ -1674,13 +1676,13 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
 
             if ($relation instanceof QueueableCollection) {
                 foreach ($relation->getQueueableRelations() as $collectionValue) {
-                    $relations[] = $key.'.'.$collectionValue;
+                    $relations[] = $key . '.' . $collectionValue;
                 }
             }
 
             if ($relation instanceof QueueableEntity) {
                 foreach ($relation->getQueueableRelations() as $entityKey => $entityValue) {
-                    $relations[] = $key.'.'.$entityValue;
+                    $relations[] = $key . '.' . $entityValue;
                 }
             }
         }
@@ -1744,9 +1746,11 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
 
         $field = $field ?: $relationship->getRelated()->getRouteKeyName();
 
-        if ($relationship instanceof HasManyThrough ||
-            $relationship instanceof BelongsToMany) {
-            return $relationship->where($relationship->getRelated()->getTable().'.'.$field, $value)->first();
+        if (
+            $relationship instanceof HasManyThrough ||
+            $relationship instanceof BelongsToMany
+        ) {
+            return $relationship->where($relationship->getRelated()->getTable() . '.' . $field, $value)->first();
         } else {
             return $relationship->where($field, $value)->first();
         }
@@ -1759,7 +1763,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     public function getForeignKey()
     {
-        return Str::snake(class_basename($this)).'_'.$this->getKeyName();
+        return Str::snake(class_basename($this)) . '_' . $this->getKeyName();
     }
 
     /**
@@ -1904,7 +1908,7 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
      */
     public static function __callStatic($method, $parameters)
     {
-        return (new static)->$method(...$parameters);
+        return (new static())->$method(...$parameters);
     }
 
     /**

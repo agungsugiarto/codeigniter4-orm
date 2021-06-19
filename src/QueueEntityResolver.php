@@ -18,7 +18,7 @@ class QueueEntityResolver implements EntityResolverContract
      */
     public function resolve($type, $id)
     {
-        $instance = (new $type)->find($id);
+        $instance = (new $type())->find($id);
 
         if ($instance) {
             return $instance;

@@ -54,8 +54,10 @@ trait InteractsWithPivotTable
         // Once we have finished attaching or detaching the records, we will see if we
         // have done any attaching or detaching, and if we have we will touch these
         // relationships if they are configured to touch on any database updates.
-        if ($touch && (count($changes['attached']) ||
-                       count($changes['detached']))) {
+        if (
+            $touch && (count($changes['attached']) ||
+                       count($changes['detached']))
+        ) {
             $this->touchIfTouching();
         }
 
@@ -116,8 +118,10 @@ trait InteractsWithPivotTable
         // Once we have finished attaching or detaching the records, we will see if we
         // have done any attaching or detaching, and if we have we will touch these
         // relationships if they are configured to touch on any database updates.
-        if (count($changes['attached']) ||
-            count($changes['updated'])) {
+        if (
+            count($changes['attached']) ||
+            count($changes['updated'])
+        ) {
             $this->touchIfTouching();
         }
 
@@ -181,8 +185,10 @@ trait InteractsWithPivotTable
             // Now we'll try to update an existing pivot record with the attributes that were
             // given to the method. If the model is actually updated we will add it to the
             // list of updated pivot records so we return them back out to the consumer.
-            elseif (count($attributes) > 0 &&
-                $this->updateExistingPivot($id, $attributes, $touch)) {
+            elseif (
+                count($attributes) > 0 &&
+                $this->updateExistingPivot($id, $attributes, $touch)
+            ) {
                 $changes['updated'][] = $this->castKey($id);
             }
         }
@@ -200,10 +206,12 @@ trait InteractsWithPivotTable
      */
     public function updateExistingPivot($id, array $attributes, $touch = true)
     {
-        if ($this->using &&
+        if (
+            $this->using &&
             empty($this->pivotWheres) &&
             empty($this->pivotWhereIns) &&
-            empty($this->pivotWhereNulls)) {
+            empty($this->pivotWhereNulls)
+        ) {
             return $this->updateExistingPivotUsingCustomClass($id, $attributes, $touch);
         }
 
@@ -398,7 +406,7 @@ trait InteractsWithPivotTable
         $fresh = $this->parent->freshTimestamp();
 
         if ($this->using) {
-            $pivotModel = new $this->using;
+            $pivotModel = new $this->using();
 
             $fresh = $fresh->format($pivotModel->getDateFormat());
         }
@@ -434,11 +442,13 @@ trait InteractsWithPivotTable
      */
     public function detach($ids = null, $touch = true)
     {
-        if ($this->using &&
+        if (
+            $this->using &&
             ! empty($ids) &&
             empty($this->pivotWheres) &&
             empty($this->pivotWhereIns) &&
-            empty($this->pivotWhereNulls)) {
+            empty($this->pivotWhereNulls)
+        ) {
             $results = $this->detachUsingCustomClass($ids);
         } else {
             $query = $this->newPivotQuery();

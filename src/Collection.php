@@ -31,7 +31,7 @@ class Collection extends BaseCollection implements QueueableCollection
 
         if (is_array($key)) {
             if ($this->isEmpty()) {
-                return new static;
+                return new static();
             }
 
             return $this->whereIn($this->first()->getKeyName(), $key);
@@ -177,7 +177,7 @@ class Collection extends BaseCollection implements QueueableCollection
             $segments = explode('.', explode(':', $key)[0]);
 
             if (Str::contains($key, ':')) {
-                $segments[count($segments) - 1] .= ':'.explode(':', $key)[1];
+                $segments[count($segments) - 1] .= ':' . explode(':', $key)[1];
             }
 
             $path = [];
@@ -367,7 +367,7 @@ class Collection extends BaseCollection implements QueueableCollection
     public function fresh($with = [])
     {
         if ($this->isEmpty()) {
-            return new static;
+            return new static();
         }
 
         $model = $this->first();
@@ -394,7 +394,7 @@ class Collection extends BaseCollection implements QueueableCollection
      */
     public function diff($items)
     {
-        $diff = new static;
+        $diff = new static();
 
         $dictionary = $this->getDictionary($items);
 
@@ -415,7 +415,7 @@ class Collection extends BaseCollection implements QueueableCollection
      */
     public function intersect($items)
     {
-        $intersect = new static;
+        $intersect = new static();
 
         if (empty($items)) {
             return $intersect;
@@ -726,9 +726,11 @@ class Collection extends BaseCollection implements QueueableCollection
 
         $class = get_class($model);
 
-        if ($this->filter(function ($model) use ($class) {
-            return ! $model instanceof $class;
-        })->isNotEmpty()) {
+        if (
+            $this->filter(function ($model) use ($class) {
+                return ! $model instanceof $class;
+            })->isNotEmpty()
+        ) {
             throw new LogicException('Unable to create query for collection with mixed types.');
         }
 

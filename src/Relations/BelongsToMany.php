@@ -172,7 +172,7 @@ class BelongsToMany extends Relation
             return $table;
         }
 
-        $model = new $table;
+        $model = new $table();
 
         if (! $model instanceof Model) {
             return $table;
@@ -712,7 +712,7 @@ class BelongsToMany extends Relation
             return $result;
         }
 
-        throw (new ModelNotFoundException)->setModel(get_class($this->related), $id);
+        throw (new ModelNotFoundException())->setModel(get_class($this->related), $id);
     }
 
     /**
@@ -756,7 +756,7 @@ class BelongsToMany extends Relation
             return $model;
         }
 
-        throw (new ModelNotFoundException)->setModel(get_class($this->related));
+        throw (new ModelNotFoundException())->setModel(get_class($this->related));
     }
 
     /**
@@ -811,7 +811,7 @@ class BelongsToMany extends Relation
     protected function shouldSelect(array $columns = ['*'])
     {
         if ($columns == ['*']) {
-            $columns = [$this->related->getTable().'.*'];
+            $columns = [$this->related->getTable() . '.*'];
         }
 
         return array_merge($columns, $this->aliasedPivotColumns());
@@ -829,7 +829,7 @@ class BelongsToMany extends Relation
         $defaults = [$this->foreignPivotKey, $this->relatedPivotKey];
 
         return collect(array_merge($defaults, $this->pivotColumns))->map(function ($column) {
-            return $this->qualifyPivotColumn($column).' as pivot_'.$column;
+            return $this->qualifyPivotColumn($column) . ' as pivot_' . $column;
         })->unique()->all();
     }
 
@@ -1166,7 +1166,7 @@ class BelongsToMany extends Relation
     {
         $query->select($columns);
 
-        $query->from($this->related->getTable().' as '.$hash = $this->getRelationCountHash());
+        $query->from($this->related->getTable() . ' as ' . $hash = $this->getRelationCountHash());
 
         $this->related->setTable($hash);
 
@@ -1352,6 +1352,6 @@ class BelongsToMany extends Relation
     {
         return Str::contains($column, '.')
                     ? $column
-                    : $this->table.'.'.$column;
+                    : $this->table . '.' . $column;
     }
 }

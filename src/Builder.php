@@ -419,7 +419,7 @@ class Builder
             return $result;
         }
 
-        throw (new ModelNotFoundException)->setModel(
+        throw (new ModelNotFoundException())->setModel(
             get_class($this->model),
             $id
         );
@@ -503,7 +503,7 @@ class Builder
             return $model;
         }
 
-        throw (new ModelNotFoundException)->setModel(get_class($this->model));
+        throw (new ModelNotFoundException())->setModel(get_class($this->model));
     }
 
     /**
@@ -542,7 +542,7 @@ class Builder
         try {
             return $this->baseSole($columns);
         } catch (RecordsNotFoundException $exception) {
-            throw (new ModelNotFoundException)->setModel(get_class($this->model));
+            throw (new ModelNotFoundException())->setModel(get_class($this->model));
         }
     }
 
@@ -687,7 +687,7 @@ class Builder
         // that start with the given top relations and adds them to our arrays.
         foreach ($this->eagerLoad as $name => $constraints) {
             if ($this->isNestedUnder($relation, $name)) {
-                $nested[substr($name, strlen($relation.'.'))] = $constraints;
+                $nested[substr($name, strlen($relation . '.'))] = $constraints;
             }
         }
 
@@ -703,7 +703,7 @@ class Builder
      */
     protected function isNestedUnder($relation, $name)
     {
-        return Str::contains($name, '.') && Str::startsWith($name, $relation.'.');
+        return Str::contains($name, '.') && Str::startsWith($name, $relation . '.');
     }
 
     /**
@@ -744,9 +744,11 @@ class Builder
         // If the model has a mutator for the requested column, we will spin through
         // the results and mutate the values so that the mutated version of these
         // columns are returned as you would expect from these Eloquent models.
-        if (! $this->model->hasGetMutator($column) &&
+        if (
+            ! $this->model->hasGetMutator($column) &&
             ! $this->model->hasCast($column) &&
-            ! in_array($column, $this->model->getDates())) {
+            ! in_array($column, $this->model->getDates())
+        ) {
             return $results;
         }
 
@@ -916,8 +918,10 @@ class Builder
      */
     protected function addUpdatedAtColumn(array $values)
     {
-        if (! $this->model->usesTimestamps() ||
-            is_null($this->model->getUpdatedAtColumn())) {
+        if (
+            ! $this->model->usesTimestamps() ||
+            is_null($this->model->getUpdatedAtColumn())
+        ) {
             return $values;
         }
 
@@ -930,7 +934,7 @@ class Builder
 
         $segments = preg_split('/\s+as\s+/i', $this->query->from);
 
-        $qualifiedColumn = end($segments).'.'.$column;
+        $qualifiedColumn = end($segments) . '.' . $column;
 
         $values[$qualifiedColumn] = $values[$column];
 
@@ -981,9 +985,11 @@ class Builder
 
         $column = $this->model->getUpdatedAtColumn();
 
-        if (! is_null($column) &&
+        if (
+            ! is_null($column) &&
             ! array_key_exists($column, $update) &&
-            ! in_array($column, $update)) {
+            ! in_array($column, $update)
+        ) {
             $update[] = $column;
         }
 
@@ -1310,7 +1316,7 @@ class Builder
                 }
 
                 return $query instanceof BelongsToMany
-                        ? $query->getRelated()->getTable().'.'.$column
+                        ? $query->getRelated()->getTable() . '.' . $column
                         : $column;
             }, explode(',', explode(':', $name)[1])));
         }];

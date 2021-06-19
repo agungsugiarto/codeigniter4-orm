@@ -181,11 +181,11 @@ trait BuildsQueries
         $result = $this->take(2)->get($columns);
 
         if ($result->isEmpty()) {
-            throw new RecordsNotFoundException;
+            throw new RecordsNotFoundException();
         }
 
         if ($result->count() > 1) {
-            throw new MultipleRecordsFoundException;
+            throw new MultipleRecordsFoundException();
         }
 
         return $result->first();

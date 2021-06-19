@@ -167,11 +167,11 @@ abstract class Relation
         $result = $this->take(2)->get($columns);
 
         if ($result->isEmpty()) {
-            throw (new ModelNotFoundException)->setModel(get_class($this->related));
+            throw (new ModelNotFoundException())->setModel(get_class($this->related));
         }
 
         if ($result->count() > 1) {
-            throw new MultipleRecordsFoundException;
+            throw new MultipleRecordsFoundException();
         }
 
         return $result->first();
@@ -258,7 +258,7 @@ abstract class Relation
      */
     public function getRelationCountHash($incrementJoinCount = true)
     {
-        return 'laravel_reserved_'.($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
+        return 'laravel_reserved_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
 
     /**
@@ -402,7 +402,7 @@ abstract class Relation
         }
 
         return array_combine(array_map(function ($model) {
-            return (new $model)->getTable();
+            return (new $model())->getTable();
         }, $models), $models);
     }
 
