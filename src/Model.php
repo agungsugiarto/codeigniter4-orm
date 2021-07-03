@@ -110,13 +110,6 @@ abstract class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializab
     protected static $resolver;
 
     /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected static $dispatcher;
-
-    /**
      * The array of booted models.
      *
      * @var array

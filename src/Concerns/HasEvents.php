@@ -9,6 +9,13 @@ use Tightenco\Collect\Support\Arr;
 trait HasEvents
 {
     /**
+     * The event dispatcher instance.
+     *
+     * @var \CodeIgniter\Events\Events
+     */
+    protected static $dispatcher;
+
+    /**
      * The event map for the model.
      *
      * Allows for object-based events for native Eloquent events.
@@ -353,11 +360,11 @@ trait HasEvents
         $instance = new static();
 
         foreach ($instance->getObservableEvents() as $event) {
-            static::$dispatcher->forget("eloquent.{$event}: " . static::class);
+            static::$dispatcher->removeAllListeners("eloquent.{$event}: " . static::class);
         }
 
         foreach (array_values($instance->dispatchesEvents) as $event) {
-            static::$dispatcher->forget($event);
+            static::$dispatcher->removeAllListeners($event);
         }
     }
 

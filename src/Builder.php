@@ -256,9 +256,10 @@ class Builder
     {
         if ($column instanceof Closure && is_null($operator)) {
             $column($query = $this->model->newQueryWithoutRelationships());
-
-        // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
+            
+            $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
         } else {
+            // $this->query->where("{$column} {$operator}", $value);
             $this->query->where(...func_get_args());
         }
 

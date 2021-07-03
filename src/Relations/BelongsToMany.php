@@ -213,10 +213,9 @@ class BelongsToMany extends Relation
         // key column with the intermediate table's foreign key for the related
         // model instance. Then we can set the "where" for the parent models.
         $query->join(
-            $this->table,
-            $this->getQualifiedRelatedKeyName(),
-            '=',
-            $this->getQualifiedRelatedPivotKeyName()
+            "{$this->table}",
+            "{$this->getQualifiedRelatedKeyName()} = {$this->getQualifiedRelatedPivotKeyName()}",
+            "inner"
         );
 
         return $this;
@@ -784,9 +783,9 @@ class BelongsToMany extends Relation
         // models with the result of those columns as a separate model relation.
         $builder = $this->query->applyScopes();
 
-        $columns = $builder->getQuery()->columns ? [] : $columns;
+        $columns = $builder->getQuery()->getBinds() ? [] : $columns;
 
-        $models = $builder->addSelect(
+        $models = $builder->select(
             $this->shouldSelect($columns)
         )->getModels();
 
