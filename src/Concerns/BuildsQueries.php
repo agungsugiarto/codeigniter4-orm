@@ -4,12 +4,9 @@ namespace Fluent\Orm\Concerns;
 
 use Fluent\Orm\Exceptions\MultipleRecordsFoundException;
 use Fluent\Orm\Exceptions\RecordsNotFoundException;
-use Illuminate\Container\Container;
-// use Illuminate\Pagination\CursorPaginator;
-// use Illuminate\Pagination\LengthAwarePaginator;
-// use Illuminate\Pagination\Paginator;
-// use Illuminate\Support\Collection;
-// use Illuminate\Support\LazyCollection;
+use Fluent\Orm\Pagination\CursorPaginator;
+use Fluent\Orm\Pagination\LengthAwarePaginator;
+use Fluent\Orm\Pagination\Paginator;
 use InvalidArgumentException;
 use RuntimeException;
 use Tightenco\Collect\Support\Collection;
@@ -329,52 +326,46 @@ trait BuildsQueries
         return $this;
     }
 
-    // /**
-    //  * Create a new length-aware paginator instance.
-    //  *
-    //  * @param  \Illuminate\Support\Collection  $items
-    //  * @param  int  $total
-    //  * @param  int  $perPage
-    //  * @param  int  $currentPage
-    //  * @param  array  $options
-    //  * @return \Illuminate\Pagination\LengthAwarePaginator
-    //  */
-    // protected function paginator($items, $total, $perPage, $currentPage, $options)
-    // {
-    //     return Container::getInstance()->makeWith(LengthAwarePaginator::class, compact(
-    //         'items', 'total', 'perPage', 'currentPage', 'options'
-    //     ));
-    // }
+    /**
+     * Create a new length-aware paginator instance.
+     *
+     * @param  \Illuminate\Support\Collection  $items
+     * @param  int  $total
+     * @param  int  $perPage
+     * @param  int  $currentPage
+     * @param  array  $options
+     * @return \Fluent\Orm\Pagination\LengthAwarePaginator
+     */
+    protected function paginator($items, $total, $perPage, $currentPage, $options)
+    {
+        return new LengthAwarePaginator($items, $total, $perPage, $currentPage, $options);
+    }
 
-    // /**
-    //  * Create a new simple paginator instance.
-    //  *
-    //  * @param  \Illuminate\Support\Collection  $items
-    //  * @param  int  $perPage
-    //  * @param  int  $currentPage
-    //  * @param  array  $options
-    //  * @return \Illuminate\Pagination\Paginator
-    //  */
-    // protected function simplePaginator($items, $perPage, $currentPage, $options)
-    // {
-    //     return Container::getInstance()->makeWith(Paginator::class, compact(
-    //         'items', 'perPage', 'currentPage', 'options'
-    //     ));
-    // }
+    /**
+     * Create a new simple paginator instance.
+     *
+     * @param  \Illuminate\Support\Collection  $items
+     * @param  int  $perPage
+     * @param  int  $currentPage
+     * @param  array  $options
+     * @return \Fluent\Orm\Pagination\Paginator
+     */
+    protected function simplePaginator($items, $perPage, $currentPage, $options)
+    {
+        return new Paginator($items, $perPage, $currentPage, $options);
+    }
 
-    // /**
-    //  * Create a new cursor paginator instance.
-    //  *
-    //  * @param  \Illuminate\Support\Collection  $items
-    //  * @param  int  $perPage
-    //  * @param  \Illuminate\Pagination\Cursor  $cursor
-    //  * @param  array  $options
-    //  * @return \Illuminate\Pagination\Paginator
-    //  */
-    // protected function cursorPaginator($items, $perPage, $cursor, $options)
-    // {
-    //     return Container::getInstance()->makeWith(CursorPaginator::class, compact(
-    //         'items', 'perPage', 'cursor', 'options'
-    //     ));
-    // }
+    /**
+     * Create a new cursor paginator instance.
+     *
+     * @param  \Illuminate\Support\Collection  $items
+     * @param  int  $perPage
+     * @param  \Fluent\Orm\Pagination\Cursor  $cursor
+     * @param  array  $options
+     * @return \Fluent\Orm\Pagination\Paginator
+     */
+    protected function cursorPaginator($items, $perPage, $cursor, $options)
+    {
+        return new CursorPaginator($items, $perPage, $cursor, $options);
+    }
 }

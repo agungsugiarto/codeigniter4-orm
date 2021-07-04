@@ -789,8 +789,6 @@ class BelongsToMany extends Relation
         // models with the result of those columns as a separate model relation.
         $builder = $this->query->applyScopes();
 
-        $columns = $builder->getQuery()->QBSelect ? [] : $columns;
-
         $models = $builder->select(
             $this->shouldSelect($columns)
         )->getModels();
@@ -845,7 +843,7 @@ class BelongsToMany extends Relation
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Fluent\Orm\Contracts\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -863,7 +861,7 @@ class BelongsToMany extends Relation
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return \Fluent\Orm\Contracts\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {

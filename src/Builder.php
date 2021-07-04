@@ -10,9 +10,12 @@ use Fluent\Orm\Concerns\BuildsQueries;
 use Fluent\Orm\Concerns\ExplainsQueries;
 use Fluent\Orm\Concerns\QueriesRelationships;
 use Fluent\Orm\Contracts\Scope;
+use Fluent\Orm\Exceptions\CursorPaginationException;
 use Fluent\Orm\Exceptions\ModelNotFoundException;
 use Fluent\Orm\Exceptions\RecordsNotFoundException;
 use Fluent\Orm\Exceptions\RelationNotFoundException;
+use Fluent\Orm\Pagination\CursorPaginator;
+use Fluent\Orm\Pagination\Paginator;
 use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Relation;
 use Fluent\Orm\Support\ForwardsCalls;
@@ -360,7 +363,7 @@ class Builder
     public function fromQuery($query, $bindings = [])
     {
         return $this->hydrate(
-            $this->query->db()->query($query, $bindings)
+            $this->query->db()->query($query, $bindings)->getResult()
         );
     }
 
@@ -567,7 +570,7 @@ class Builder
      * @param  array|string  $columns
      * @return \Fluent\Orm\Collection|static[]
      */
-    public function get($columns = ['*'])
+    public function get($columns = [])
     {
         $builder = $this->applyScopes();
 
@@ -587,10 +590,10 @@ class Builder
      * @param  array|string  $columns
      * @return \Fluent\Orm\Model[]|static[]
      */
-    public function getModels($columns = ['*'])
+    public function getModels($columns = [])
     {
         return $this->model->hydrate(
-            $this->query->get()->getResult()
+            $this->query->select($columns)->get()->getResult()
         )->all();
     }
 
@@ -757,130 +760,130 @@ class Builder
     //     });
     // }
 
-    // /**
-    //  * Paginate the given query.
-    //  *
-    //  * @param  int|null  $perPage
-    //  * @param  array  $columns
-    //  * @param  string  $pageName
-    //  * @param  int|null  $page
-    //  * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-    //  *
-    //  * @throws \InvalidArgumentException
-    //  */
-    // public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
-    // {
-    //     $page = $page ?: Paginator::resolveCurrentPage($pageName);
+    /**
+     * Paginate the given query.
+     *
+     * @param  int|null  $perPage
+     * @param  array  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Fluent\Orm\Contracts\LengthAwarePaginator
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function paginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
+    {
+        $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-    //     $perPage = $perPage ?: $this->model->getPerPage();
+        $perPage = $perPage ?: $this->model->getPerPage();
 
-    //     $results = ($total = $this->toBase()->getCountForPagination())
-    //         ? $this->forPage($page, $perPage)->get($columns)
-    //         : $this->model->newCollection();
+        $results = ($total = $this->toBase()->countAllResults(false))
+            ? $this->query->select($columns)->get($perPage + 1, ($page - 1) * $perPage)->getResult()
+            : $this->model->newCollection();
 
-    //     return $this->paginator($results, $total, $perPage, $page, [
-    //         'path' => Paginator::resolveCurrentPath(),
-    //         'pageName' => $pageName,
-    //     ]);
-    // }
+        return $this->paginator($results, $total, $perPage, $page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => $pageName,
+        ]);
+    }
 
-    // /**
-    //  * Paginate the given query into a simple paginator.
-    //  *
-    //  * @param  int|null  $perPage
-    //  * @param  array  $columns
-    //  * @param  string  $pageName
-    //  * @param  int|null  $page
-    //  * @return \Illuminate\Contracts\Pagination\Paginator
-    //  */
-    // public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
-    // {
-    //     $page = $page ?: Paginator::resolveCurrentPage($pageName);
+    /**
+     * Paginate the given query into a simple paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Fluent\Orm\Contracts\Paginator
+     */
+    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    {
+        $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-    //     $perPage = $perPage ?: $this->model->getPerPage();
+        $perPage = $perPage ?: $this->model->getPerPage();
 
-    //     // Next we will set the limit and offset for this query so that when we get the
-    //     // results we get the proper section of results. Then, we'll create the full
-    //     // paginator instances for these results with the given page and per page.
-    //     $this->skip(($page - 1) * $perPage)->take($perPage + 1);
+        // Next we will set the limit and offset for this query so that when we get the
+        // results we get the proper section of results. Then, we'll create the full
+        // paginator instances for these results with the given page and per page.
+        $this->query->get($perPage + 1, ($page - 1) * $perPage)->getResult();
 
-    //     return $this->simplePaginator($this->get($columns), $perPage, $page, [
-    //         'path' => Paginator::resolveCurrentPath(),
-    //         'pageName' => $pageName,
-    //     ]);
-    // }
+        return $this->simplePaginator($this->get($columns), $perPage, $page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => $pageName,
+        ]);
+    }
 
-    // /**
-    //  * Paginate the given query into a cursor paginator.
-    //  *
-    //  * @param  int|null  $perPage
-    //  * @param  array  $columns
-    //  * @param  string  $cursorName
-    //  * @param  string|null  $cursor
-    //  * @return \Illuminate\Contracts\Pagination\Paginator
-    //  * @throws \Illuminate\Pagination\CursorPaginationException
-    //  */
-    // public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
-    // {
-    //     $cursor = $cursor ?: CursorPaginator::resolveCurrentCursor($cursorName);
+    /**
+     * Paginate the given query into a cursor paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array  $columns
+     * @param  string  $cursorName
+     * @param  string|null  $cursor
+     * @return \Fluent\Orm\Contracts\Paginator
+     * @throws \Fluent\Orm\Pagination\CursorPaginationException
+     */
+    public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
+    {
+        $cursor = $cursor ?: CursorPaginator::resolveCurrentCursor($cursorName);
 
-    //     $perPage = $perPage ?: $this->model->getPerPage();
+        $perPage = $perPage ?: $this->model->getPerPage();
 
-    //     $orders = $this->ensureOrderForCursorPagination(! is_null($cursor) && $cursor->pointsToPreviousItems());
+        $orders = $this->ensureOrderForCursorPagination(! is_null($cursor) && $cursor->pointsToPreviousItems());
 
-    //     $orderDirection = $orders->first()['direction'] ?? 'asc';
+        $orderDirection = $orders->first()['direction'] ?? 'asc';
 
-    //     $comparisonOperator = $orderDirection === 'asc' ? '>' : '<';
+        $comparisonOperator = $orderDirection === 'asc' ? '>' : '<';
 
-    //     $parameters = $orders->pluck('column')->toArray();
+        $parameters = $orders->pluck('column')->toArray();
 
-    //     if (! is_null($cursor)) {
-    //         if (count($parameters) === 1) {
-    //             $this->where($column = $parameters[0], $comparisonOperator, $cursor->parameter($column));
-    //         } elseif (count($parameters) > 1) {
-    //             $this->whereRowValues($parameters, $comparisonOperator, $cursor->parameters($parameters));
-    //         }
-    //     }
+        if (! is_null($cursor)) {
+            if (count($parameters) === 1) {
+                $this->where($column = $parameters[0], $comparisonOperator, $cursor->parameter($column));
+            } elseif (count($parameters) > 1) {
+                $this->whereRowValues($parameters, $comparisonOperator, $cursor->parameters($parameters));
+            }
+        }
 
-    //     $this->take($perPage + 1);
+        $this->take($perPage + 1);
 
-    //     return $this->cursorPaginator($this->get($columns), $perPage, $cursor, [
-    //         'path' => Paginator::resolveCurrentPath(),
-    //         'cursorName' => $cursorName,
-    //         'parameters' => $parameters,
-    //     ]);
-    // }
+        return $this->cursorPaginator($this->get($columns), $perPage, $cursor, [
+            'path' => Paginator::resolveCurrentPath(),
+            'cursorName' => $cursorName,
+            'parameters' => $parameters,
+        ]);
+    }
 
-    // /**
-    //  * Ensure the proper order by required for cursor pagination.
-    //  *
-    //  * @param  bool  $shouldReverse
-    //  * @return \Illuminate\Support\Collection
-    //  *
-    //  * @throws \Illuminate\Pagination\CursorPaginationException
-    //  */
-    // protected function ensureOrderForCursorPagination($shouldReverse = false)
-    // {
-    //     $orderDirections = collect($this->query->orders)->pluck('direction')->unique();
+    /**
+     * Ensure the proper order by required for cursor pagination.
+     *
+     * @param  bool  $shouldReverse
+     * @return \Illuminate\Support\Collection
+     *
+     * @throws \Fluent\Orm\Pagination\CursorPaginationException
+     */
+    protected function ensureOrderForCursorPagination($shouldReverse = false)
+    {
+        $orderDirections = collect($this->query->orders)->pluck('direction')->unique();
 
-    //     if ($orderDirections->count() > 1) {
-    //         throw new CursorPaginationException('Only a single order by direction is supported when using cursor pagination.');
-    //     }
+        if ($orderDirections->count() > 1) {
+            throw new CursorPaginationException('Only a single order by direction is supported when using cursor pagination.');
+        }
 
-    //     if ($orderDirections->count() === 0) {
-    //         $this->enforceOrderBy();
-    //     }
+        if ($orderDirections->count() === 0) {
+            $this->enforceOrderBy();
+        }
 
-    //     if ($shouldReverse) {
-    //         $this->query->orders = collect($this->query->orders)->map(function ($order) {
-    //             $order['direction'] = $order['direction'] === 'asc' ? 'desc' : 'asc';
+        if ($shouldReverse) {
+            $this->query->orders = collect($this->query->orders)->map(function ($order) {
+                $order['direction'] = $order['direction'] === 'asc' ? 'desc' : 'asc';
 
-    //             return $order;
-    //         })->toArray();
-    //     }
+                return $order;
+            })->toArray();
+        }
 
-    //     return collect($this->query->orders);
-    // }
+        return collect($this->query->orders);
+    }
 
     /**
      * Save a new model and return the instance.
@@ -1195,12 +1198,12 @@ class Builder
         // We will keep track of how many wheres are on the query before running the
         // scope so that we can properly group the added scope constraints in the
         // query as their own isolated nested where statement and avoid issues.
-        $originalWhereCount = is_null($query->wheres)
-                    ? 0 : count($query->wheres);
+        $originalWhereCount = is_null($query->getCompiledQBWhere())
+                    ? 0 : count($query->getCompiledQBWhere());
 
         $result = $scope(...array_values($parameters)) ?? $this;
 
-        if (count((array) $query->wheres) > $originalWhereCount) {
+        if (count((array) $query->getCompiledQBWhere()) > $originalWhereCount) {
             $this->addNewWheresWithinGroup($query, $originalWhereCount);
         }
 
@@ -1233,7 +1236,7 @@ class Builder
         // Here, we totally remove all of the where clauses since we are going to
         // rebuild them as nested queries by slicing the groups of wheres into
         // their own sections. This is to prevent any confusing logic order.
-        $allWheres = $query->wheres;
+        $allWheres = $query->getCompiledQBWhere();
 
         $query->wheres = [];
 
@@ -1268,7 +1271,7 @@ class Builder
                 $whereBooleans->first()
             );
         } else {
-            $query->wheres = array_merge($query->wheres, $whereSlice);
+            $query->wheres = array_merge($query->getCompiledQBWhere(), $whereSlice);
         }
     }
 
