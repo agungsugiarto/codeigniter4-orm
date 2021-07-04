@@ -217,9 +217,7 @@ class BelongsToMany extends Relation
         // model instance. Then we can set the "where" for the parent models.
         $query->join(
             $this->table,
-            $this->getQualifiedRelatedKeyName(),
-            '=',
-            $this->getQualifiedRelatedPivotKeyName()
+            "{$this->getQualifiedRelatedKeyName()} = {$this->getQualifiedRelatedPivotKeyName()}"
         );
 
         return $this;
@@ -791,9 +789,9 @@ class BelongsToMany extends Relation
         // models with the result of those columns as a separate model relation.
         $builder = $this->query->applyScopes();
 
-        $columns = $builder->getQuery()->columns ? [] : $columns;
+        $columns = $builder->getQuery()->QBSelect ? [] : $columns;
 
-        $models = $builder->addSelect(
+        $models = $builder->select(
             $this->shouldSelect($columns)
         )->getModels();
 

@@ -10,6 +10,7 @@ use Fluent\Orm\Concerns\{GuardsAttributes, HasAttributes, HasEvents, HasGlobalSc
 use Fluent\Orm\Events\Dispatcher;
 use Fluent\Orm\Exceptions\JsonEncodingException;
 use Fluent\Orm\Exceptions\MassAssignmentException;
+use Fluent\Orm\Relations\Pivot;
 use Fluent\Orm\Support\ForwardsCalls;
 use Fluent\Orm\Support\Str;
 use JsonSerializable;
@@ -1313,21 +1314,21 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
         return new Collection($models);
     }
 
-    // /**
-    //  * Create a new pivot model instance.
-    //  *
-    //  * @param  \Fluent\Orm\Model  $parent
-    //  * @param  array  $attributes
-    //  * @param  string  $table
-    //  * @param  bool  $exists
-    //  * @param  string|null  $using
-    //  * @return \Fluent\Orm\Relations\Pivot
-    //  */
-    // public function newPivot(self $parent, array $attributes, $table, $exists, $using = null)
-    // {
-    //     return $using ? $using::fromRawAttributes($parent, $attributes, $table, $exists)
-    //                   : Pivot::fromAttributes($parent, $attributes, $table, $exists);
-    // }
+    /**
+     * Create a new pivot model instance.
+     *
+     * @param  \Fluent\Orm\Model  $parent
+     * @param  array  $attributes
+     * @param  string  $table
+     * @param  bool  $exists
+     * @param  string|null  $using
+     * @return \Fluent\Orm\Relations\Pivot
+     */
+    public function newPivot(self $parent, array $attributes, $table, $exists, $using = null)
+    {
+        return $using ? $using::fromRawAttributes($parent, $attributes, $table, $exists)
+                      : Pivot::fromAttributes($parent, $attributes, $table, $exists);
+    }
 
     /**
      * Determine if the model has a given scope.
@@ -1408,30 +1409,30 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
                         ->first();
     }
 
-    // /**
-    //  * Reload the current model instance with fresh attributes from the database.
-    //  *
-    //  * @return $this
-    //  */
-    // public function refresh()
-    // {
-    //     if (! $this->exists) {
-    //         return $this;
-    //     }
+    /**
+     * Reload the current model instance with fresh attributes from the database.
+     *
+     * @return $this
+     */
+    public function refresh()
+    {
+        if (! $this->exists) {
+            return $this;
+        }
 
-    //     $this->setRawAttributes(
-    //         $this->setKeysForSelectQuery($this->newQueryWithoutScopes())->firstOrFail()->attributes
-    //     );
+        $this->setRawAttributes(
+            $this->setKeysForSelectQuery($this->newQueryWithoutScopes())->firstOrFail()->attributes
+        );
 
-    //     $this->load(collect($this->relations)->reject(function ($relation) {
-    //         return $relation instanceof Pivot
-    //             || (is_object($relation) && in_array(AsPivot::class, class_uses_recursive($relation), true));
-    //     })->keys()->all());
+        $this->load(collect($this->relations)->reject(function ($relation) {
+            return $relation instanceof Pivot
+                || (is_object($relation) && in_array(AsPivot::class, class_uses_recursive($relation), true));
+        })->keys()->all());
 
-    //     $this->syncOriginal();
+        $this->syncOriginal();
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     /**
      * Clone the model into a new, non-existing instance.

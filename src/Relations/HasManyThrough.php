@@ -108,7 +108,7 @@ class HasManyThrough extends Relation
 
         $farKey = $this->getQualifiedFarKeyName();
 
-        $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName(), '=', $farKey);
+        $query->join($this->throughParent->getTable(), "{$this->getQualifiedParentKeyName()} = {$farKey}");
 
         if ($this->throughParentSoftDeletes()) {
             $query->withGlobalScope('SoftDeletableHasManyThrough', function ($query) {

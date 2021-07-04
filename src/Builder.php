@@ -11,6 +11,7 @@ use Fluent\Orm\Contracts\Scope;
 use Fluent\Orm\Exceptions\ModelNotFoundException;
 use Fluent\Orm\Exceptions\RecordsNotFoundException;
 use Fluent\Orm\Exceptions\RelationNotFoundException;
+use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Relation;
 use Fluent\Orm\Support\ForwardsCalls;
 use Fluent\Orm\Support\Str;
@@ -587,7 +588,7 @@ class Builder
     public function getModels($columns = ['*'])
     {
         return $this->model->hydrate(
-            $this->query->select($columns)->get()->getResult()
+            $this->query->get()->getResult()
         )->all();
     }
 
@@ -1001,7 +1002,7 @@ class Builder
 
         $segments = preg_split('/\s+as\s+/i', $this->query->from);
 
-        $qualifiedColumn = end($segments) . '.' . $column;
+        $qualifiedColumn = last($segments) . '.' . $column;
 
         $values[$qualifiedColumn] = $values[$column];
 
@@ -1381,26 +1382,26 @@ class Builder
         return $results;
     }
 
-    // /**
-    //  * Create a constraint to select the given columns for the relation.
-    //  *
-    //  * @param  string  $name
-    //  * @return array
-    //  */
-    // protected function createSelectWithConstraint($name)
-    // {
-    //     return [explode(':', $name)[0], static function ($query) use ($name) {
-    //         $query->select(array_map(static function ($column) use ($query) {
-    //             if (Str::contains($column, '.')) {
-    //                 return $column;
-    //             }
+    /**
+     * Create a constraint to select the given columns for the relation.
+     *
+     * @param  string  $name
+     * @return array
+     */
+    protected function createSelectWithConstraint($name)
+    {
+        return [explode(':', $name)[0], static function ($query) use ($name) {
+            $query->select(array_map(static function ($column) use ($query) {
+                if (Str::contains($column, '.')) {
+                    return $column;
+                }
 
-    //             return $query instanceof BelongsToMany
-    //                     ? $query->getRelated()->getTable().'.'.$column
-    //                     : $column;
-    //         }, explode(',', explode(':', $name)[1])));
-    //     }];
-    // }
+                return $query instanceof BelongsToMany
+                        ? $query->getRelated()->getTable().'.'.$column
+                        : $column;
+            }, explode(',', explode(':', $name)[1])));
+        }];
+    }
 
     /**
      * Parse the nested relationships in a relation.

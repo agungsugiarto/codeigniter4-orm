@@ -253,9 +253,7 @@ trait BuildsQueries
      */
     public function first($columns = ['*'])
     {
-        return $this->hydrate(
-            $this->query->select($columns)->get(1, 0)->getResult()
-        );
+        return $this->limit(1)->get($columns)->first();
     }
 
     /**
