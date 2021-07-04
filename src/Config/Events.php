@@ -9,12 +9,12 @@ use Fluent\Orm\Pagination\CursorPaginator;
 use Fluent\Orm\Pagination\Paginator;
 use Fluent\Orm\Pagination\ViewBridge;
 
-Events::on('pre_system', function() {
+Events::on('pre_system', function () {
     Paginator::viewFactoryResolver(function () {
         return new ViewBridge();
     });
 
-    Paginator::currentPathResolver(function() {
+    Paginator::currentPathResolver(function () {
         return current_url();
     });
 
