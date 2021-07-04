@@ -267,9 +267,11 @@ class Builder
         if ($column instanceof Closure && is_null($operator)) {
             $column($query = $this->model->newQueryWithoutRelationships());
 
-        // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
+            return $query;
         } else {
             $this->query->where("{$column} {$operator}", $value);
+            // $this->query->where(...func_get_args());
+            // (fn() => $this->whereHaving('QBWhere', "{$column} {$operator}", $value, $boolean))->call($this->query);
         }
 
         return $this;
@@ -778,7 +780,7 @@ class Builder
         $perPage = $perPage ?: $this->model->getPerPage();
 
         $results = ($total = $this->toBase()->countAllResults(false))
-            ? $this->query->select($columns)->get($perPage + 1, ($page - 1) * $perPage)->getResult()
+            ? $this->toBase()->select($columns)->get($perPage + 1, ($page - 1) * $perPage)->getResult()
             : $this->model->newCollection();
 
         return $this->paginator($results, $total, $perPage, $page, [
@@ -805,9 +807,9 @@ class Builder
         // Next we will set the limit and offset for this query so that when we get the
         // results we get the proper section of results. Then, we'll create the full
         // paginator instances for these results with the given page and per page.
-        $this->query->get($perPage + 1, ($page - 1) * $perPage)->getResult();
+        $results = $this->toBase()->select($columns)->get($perPage + 1, ($page - 1) * $perPage)->getResult();
 
-        return $this->simplePaginator($this->get($columns), $perPage, $page, [
+        return $this->simplePaginator($results, $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
@@ -845,7 +847,8 @@ class Builder
             }
         }
 
-        $this->take($perPage + 1);
+        // $this->query->limit($perPage + 1);
+        $this->query->get($perPage + 1, 0, false)->getResult();
 
         return $this->cursorPaginator($this->get($columns), $perPage, $cursor, [
             'path' => Paginator::resolveCurrentPath(),
@@ -864,7 +867,9 @@ class Builder
      */
     protected function ensureOrderForCursorPagination($shouldReverse = false)
     {
-        $orderDirections = collect($this->query->orders)->pluck('direction')->unique();
+        $orders = (fn() => $this->QBOrderBy)->call($this->query);
+
+        $orderDirections = collect($orders)->pluck('direction')->unique();
 
         if ($orderDirections->count() > 1) {
             throw new CursorPaginationException('Only a single order by direction is supported when using cursor pagination.');
@@ -875,14 +880,14 @@ class Builder
         }
 
         if ($shouldReverse) {
-            $this->query->orders = collect($this->query->orders)->map(function ($order) {
+            $orders = collect($orders)->map(function ($order) {
                 $order['direction'] = $order['direction'] === 'asc' ? 'desc' : 'asc';
 
                 return $order;
             })->toArray();
         }
 
-        return collect($this->query->orders);
+        return collect($orders);
     }
 
     /**
@@ -1005,7 +1010,7 @@ class Builder
             $values
         );
 
-        $segments = preg_split('/\s+as\s+/i', $this->query->from);
+        $segments = preg_split('/\s+as\s+/i', last((fn() => $this->QBFrom)->call($this->query)));
 
         $qualifiedColumn = last($segments) . '.' . $column;
 

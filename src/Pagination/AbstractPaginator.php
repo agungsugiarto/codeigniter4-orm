@@ -112,14 +112,14 @@ abstract class AbstractPaginator implements Htmlable
      *
      * @var string
      */
-    public static $defaultView = 'pagination::tailwind';
+    public static $defaultView = 'Fluent\Orm\Pagination\Views\bootstrap-4';
 
     /**
      * The default "simple" pagination view.
      *
      * @var string
      */
-    public static $defaultSimpleView = 'pagination::simple-tailwind';
+    public static $defaultSimpleView = 'Fluent\Orm\Pagination\Views\simple-bootstrap-4';
 
     /**
      * Determine if the given value is a valid page number.
