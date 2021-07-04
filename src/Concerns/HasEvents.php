@@ -44,7 +44,7 @@ trait HasEvents
      */
     public static function observe($classes)
     {
-        $instance = new static;
+        $instance = new static();
 
         foreach (Arr::wrap($classes) as $class) {
             $instance->registerObserver($class);
@@ -133,7 +133,8 @@ trait HasEvents
     public function addObservableEvents($observables)
     {
         $this->observables = array_unique(array_merge(
-            $this->observables, is_array($observables) ? $observables : func_get_args()
+            $this->observables,
+            is_array($observables) ? $observables : func_get_args()
         ));
     }
 
@@ -146,7 +147,8 @@ trait HasEvents
     public function removeObservableEvents($observables)
     {
         $this->observables = array_diff(
-            $this->observables, is_array($observables) ? $observables : func_get_args()
+            $this->observables,
+            is_array($observables) ? $observables : func_get_args()
         );
     }
 
@@ -193,7 +195,8 @@ trait HasEvents
         }
 
         return ! empty($result) ? $result : static::$dispatcher->{$method}(
-            "eloquent.{$event}: ".static::class, $this
+            "eloquent.{$event}: ".static::class,
+            $this
         );
     }
 
@@ -355,7 +358,7 @@ trait HasEvents
             return;
         }
 
-        $instance = new static;
+        $instance = new static();
 
         foreach ($instance->getObservableEvents() as $event) {
             static::$dispatcher->forget("eloquent.{$event}: ".static::class);

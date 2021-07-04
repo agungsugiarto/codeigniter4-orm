@@ -3,10 +3,12 @@
 namespace Fluent\Orm;
 
 use BadMethodCallException;
-use CodeIgniter\Database\BaseBuilder;
 use Closure;
+use CodeIgniter\Database\BaseBuilder;
 use Exception;
-use Fluent\Orm\Concerns\{BuildsQueries, ExplainsQueries, QueriesRelationships};
+use Fluent\Orm\Concerns\BuildsQueries;
+use Fluent\Orm\Concerns\ExplainsQueries;
+use Fluent\Orm\Concerns\QueriesRelationships;
 use Fluent\Orm\Contracts\Scope;
 use Fluent\Orm\Exceptions\ModelNotFoundException;
 use Fluent\Orm\Exceptions\RecordsNotFoundException;
@@ -262,7 +264,7 @@ class Builder
         if ($column instanceof Closure && is_null($operator)) {
             $column($query = $this->model->newQueryWithoutRelationships());
 
-            // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
+        // $this->query->addNestedWhereQuery($query->getQuery(), $boolean);
         } else {
             $this->query->where("{$column} {$operator}", $value);
         }

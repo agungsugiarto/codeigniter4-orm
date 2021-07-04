@@ -4,8 +4,8 @@ namespace Fluent\Orm\Concerns;
 
 use Closure;
 use Fluent\Orm\Contracts\Scope;
-use Tightenco\Collect\Support\Arr;
 use InvalidArgumentException;
+use Tightenco\Collect\Support\Arr;
 
 trait HasGlobalScopes
 {

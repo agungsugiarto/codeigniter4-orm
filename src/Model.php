@@ -6,7 +6,13 @@ use ArrayAccess;
 use CodeIgniter\Database\Config;
 use CodeIgniter\Database\ConnectionInterface;
 use Fluent\Orm\Collection as EloquentCollection;
-use Fluent\Orm\Concerns\{GuardsAttributes, HasAttributes, HasEvents, HasGlobalScopes, HasRelationships, HasTimestamps, HidesAttributes};
+use Fluent\Orm\Concerns\GuardsAttributes;
+use Fluent\Orm\Concerns\HasAttributes;
+use Fluent\Orm\Concerns\HasEvents;
+use Fluent\Orm\Concerns\HasGlobalScopes;
+use Fluent\Orm\Concerns\HasRelationships;
+use Fluent\Orm\Concerns\HasTimestamps;
+use Fluent\Orm\Concerns\HidesAttributes;
 use Fluent\Orm\Events\Dispatcher;
 use Fluent\Orm\Exceptions\JsonEncodingException;
 use Fluent\Orm\Exceptions\MassAssignmentException;
@@ -16,9 +22,9 @@ use Fluent\Orm\Support\Str;
 use JsonSerializable;
 use LogicException;
 use Tightenco\Collect\Contracts\Support\Arrayable;
-use Tightenco\Collect\Support\Collection as BaseCollection;
 use Tightenco\Collect\Contracts\Support\Jsonable;
 use Tightenco\Collect\Support\Arr;
+use Tightenco\Collect\Support\Collection as BaseCollection;
 
 class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
 {
@@ -141,14 +147,14 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
      *
      * @var string|null
      */
-    const CREATED_AT = 'created_at';
+    public const CREATED_AT = 'created_at';
 
     /**
      * The name of the "updated at" column.
      *
      * @var string|null
      */
-    const UPDATED_AT = 'updated_at';
+    public const UPDATED_AT = 'updated_at';
 
     /**
      * Create a new Eloquent model instance.

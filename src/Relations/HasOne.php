@@ -10,7 +10,6 @@ use Fluent\Orm\Model;
 use Fluent\Orm\Relations\Concerns\CanBeOneOfMany;
 use Fluent\Orm\Relations\Concerns\ComparesRelatedModels;
 use Fluent\Orm\Relations\Concerns\SupportsDefaultModels;
-use Illuminate\Database\Query\JoinClause;
 
 class HasOne extends HasOneOrMany implements SupportsPartialRelations
 {

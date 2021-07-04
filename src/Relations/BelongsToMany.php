@@ -4,8 +4,8 @@ namespace Fluent\Orm\Relations;
 
 use Fluent\Orm\Builder;
 use Fluent\Orm\Collection;
-use Fluent\Orm\Model;
 use Fluent\Orm\Exceptions\ModelNotFoundException;
+use Fluent\Orm\Model;
 use Fluent\Orm\Relations\Concerns\AsPivot;
 use Fluent\Orm\Relations\Concerns\InteractsWithDictionary;
 use Fluent\Orm\Relations\Concerns\InteractsWithPivotTable;

@@ -4,8 +4,8 @@ namespace Fluent\Orm\Relations;
 
 use Fluent\Orm\Builder;
 use Fluent\Orm\Collection;
-use Fluent\Orm\Model;
 use Fluent\Orm\Exceptions\ModelNotFoundException;
+use Fluent\Orm\Model;
 use Fluent\Orm\Relations\Concerns\InteractsWithDictionary;
 use Fluent\Orm\SoftDeletes;
 use Tightenco\Collect\Contracts\Support\Arrayable;
