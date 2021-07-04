@@ -789,7 +789,7 @@ class BelongsToMany extends Relation
         // models with the result of those columns as a separate model relation.
         $builder = $this->query->applyScopes();
 
-        $columns = (fn() => $this->QBSelect)->call($builder->getQuery()) ? [] : $columns;
+        $columns = (fn () => $this->QBSelect)->call($builder->getQuery()) ? [] : $columns;
 
         $models = $builder->select(
             $this->shouldSelect($columns)
