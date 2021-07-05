@@ -48,5 +48,8 @@
         "branch-alias": {
             "dev-main": "1.x-dev"
         }
+    },
+    "scripts": {
+        "test": "phpunit --colors=always"
     }
 }
