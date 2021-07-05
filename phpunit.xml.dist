@@ -29,12 +29,12 @@
     <const name="HOMEPATH" value="./"/>
     <const name="CONFIGPATH" value="./vendor/codeigniter4/framework/app/Config/"/>
     <const name="PUBLICPATH" value="./vendor/codeigniter4/framework/public/"/>
-    <env name="database.tests.database" value=":memory:"/>
-    <env name="database.tests.DBDriver" value="SQLite3"/>
+    <!-- <env name="database.tests.database" value=":memory:"/>
+    <env name="database.tests.DBDriver" value="SQLite3"/> -->
 
-    <!-- <env name="database.tests.database" value="test-codeigniter4-orm"/>
+    <env name="database.tests.database" value="test-codeigniter4-orm"/>
     <env name="database.tests.username" value="root" />
     <env name="database.tests.password" value="" />
-    <env name="database.tests.DBDriver" value="MySQLi"/> -->
+    <env name="database.tests.DBDriver" value="MySQLi"/>
   </php>
 </phpunit>

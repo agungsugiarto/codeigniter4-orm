@@ -1924,9 +1924,9 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
             return $this->$method(...$parameters);
         }
 
-        // if ($resolver = (static::$relationResolvers[get_class($this)][$method] ?? null)) {
-        //     return $resolver($this);
-        // }
+        if ($resolver = (static::$relationResolvers[get_class($this)][$method] ?? null)) {
+            return $resolver($this);
+        }
 
         return $this->forwardCallTo($this->newQuery(), $method, $parameters);
     }

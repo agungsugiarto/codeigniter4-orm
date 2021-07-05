@@ -5,28 +5,24 @@ namespace Fluent\Orm\Tests;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use Fluent\Orm\Model;
-use Tightenco\Collect\Support\Collection;
 
-class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
+class DatabaseEloquentBelongsToManyLazyByIdTest extends CIUnitTestCase
 {
     use DatabaseTestTrait;
 
     /** {@inheritdoc} */
     protected $namespace = 'Fluent\Orm\Tests';
 
-    /** {@inheritdoc} */
-    protected $refresh = true;
-
-    public function testBelongsToChunkById()
+    public function testBelongsToLazyById()
     {
         $this->seedData();
 
-        $user = BelongsToManyChunkByIdTestTestUser::query()->first();
+        $user = BelongsToManyLazyByIdTestTestUser::query()->first();
         $i = 0;
 
-        $user->articles()->chunkById(1, function (Collection $collection) use (&$i) {
+        $user->articles()->lazyById(1)->each(function ($model) use (&$i) {
             $i++;
-            $this->assertEquals($i, $collection->first()->aid);
+            $this->assertEquals($i, $model->aid);
         });
 
         $this->assertSame(3, $i);
@@ -37,18 +33,18 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
      */
     protected function seedData()
     {
-        $user = BelongsToManyChunkByIdTestTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
-        BelongsToManyChunkByIdTestTestArticle::insertBatch([
+        $user = BelongsToManyLazyByIdTestTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+        BelongsToManyLazyByIdTestTestArticle::query()->insertBatch([
             ['aid' => 1, 'title' => 'Another title'],
             ['aid' => 2, 'title' => 'Another title'],
-            ['aid' => 3, 'title' => 'Another title']
+            ['aid' => 3, 'title' => 'Another title'],
         ]);
 
         $user->articles()->sync([3, 1, 2]);
     }
 }
 
-class BelongsToManyChunkByIdTestTestUser extends Model
+class BelongsToManyLazyByIdTestTestUser extends Model
 {
     protected $table = 'users';
     protected $fillable = ['id', 'email'];
@@ -56,11 +52,11 @@ class BelongsToManyChunkByIdTestTestUser extends Model
 
     public function articles()
     {
-        return $this->belongsToMany(BelongsToManyChunkByIdTestTestArticle::class, 'article_user', 'user_id', 'article_id');
+        return $this->belongsToMany(BelongsToManyLazyByIdTestTestArticle::class, 'article_user', 'user_id', 'article_id');
     }
 }
 
-class BelongsToManyChunkByIdTestTestArticle extends Model
+class BelongsToManyLazyByIdTestTestArticle extends Model
 {
     protected $primaryKey = 'aid';
     protected $table = 'articles';
