@@ -288,7 +288,7 @@ abstract class Relation
     /**
      * Get the base query builder driving the Eloquent builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \CodeIgniter\Database\BaseBuilder
      */
     public function getBaseQuery()
     {

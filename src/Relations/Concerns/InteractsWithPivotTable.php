@@ -274,7 +274,7 @@ trait InteractsWithPivotTable
             // Here we will insert the attachment records into the pivot table. Once we have
             // inserted the records, we will touch the relationships if necessary and the
             // function will return. We can parse the IDs before inserting the records.
-            $this->newPivotStatement()->insert($this->formatAttachRecords(
+            $this->newPivotStatement()->insertBatch($this->formatAttachRecords(
                 $this->parseIds($id),
                 $attributes
             ));
@@ -506,7 +506,7 @@ trait InteractsWithPivotTable
      */
     protected function getCurrentlyAttachedPivots()
     {
-        return $this->newPivotQuery()->get()->map(function ($record) {
+        return collect($this->newPivotQuery()->get()->getResult())->map(function ($record) {
             $class = $this->using ?: Pivot::class;
 
             $pivot = $class::fromRawAttributes($this->parent, (array) $record, $this->getTable(), true);
@@ -549,18 +549,18 @@ trait InteractsWithPivotTable
     /**
      * Get a new plain query builder for the pivot table.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \CodeIgniter\Database\BaseBuilder
      */
     public function newPivotStatement()
     {
-        return $this->query->getQuery()->newQuery()->from($this->table);
+        return (fn () => $this->cleanClone())->call($this->query->getQuery())->from($this->table);
     }
 
     /**
      * Get a new pivot statement for a given "other" ID.
      *
      * @param  mixed  $id
-     * @return \Illuminate\Database\Query\Builder
+     * @return \CodeIgniter\Database\BaseBuilder
      */
     public function newPivotStatementForId($id)
     {
@@ -570,7 +570,7 @@ trait InteractsWithPivotTable
     /**
      * Create a new query builder for the pivot table.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \CodeIgniter\Database\BaseBuilder
      */
     public function newPivotQuery()
     {

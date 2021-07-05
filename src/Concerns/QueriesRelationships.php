@@ -7,8 +7,8 @@ use Fluent\Orm\Builder;
 use Fluent\Orm\Relations\MorphTo;
 use Fluent\Orm\Relations\Relation;
 use Fluent\Orm\Support\Str;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Query\Expression;
+use CodeIgniter\Database\BaseBuilder as QueryBuilder;
+use Fluent\Orm\Expression;
 
 trait QueriesRelationships
 {
@@ -561,7 +561,7 @@ trait QueriesRelationships
     /**
      * Add a sub-query count clause to this query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  \CodeIgniter\Database\BaseBuilder  $query
      * @param  string  $operator
      * @param  int  $count
      * @param  string  $boolean

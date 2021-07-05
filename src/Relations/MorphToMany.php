@@ -151,7 +151,7 @@ class MorphToMany extends BelongsToMany
     /**
      * Create a new query builder for the pivot table.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \CodeIgniter\Database\BaseBuilder
      */
     public function newPivotQuery()
     {

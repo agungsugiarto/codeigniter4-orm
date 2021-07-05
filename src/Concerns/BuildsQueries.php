@@ -15,6 +15,24 @@ use Tightenco\Collect\Support\LazyCollection;
 trait BuildsQueries
 {
     /**
+     * Constrain the query to the next "page" of results after a given ID.
+     *
+     * @param  int  $perPage
+     * @param  int|null  $lastId
+     * @param  string  $column
+     * @return $this
+     */
+    public function forPageAfterId($perPage = 15, $lastId = 0, $column = 'id')
+    {
+        if (! is_null($lastId)) {
+            $this->where($column, '>', $lastId);
+        }
+
+        return $this->orderBy($column, 'asc')
+                    ->limit($perPage);
+    }
+
+    /**
      * Chunk the results of the query.
      *
      * @param  int  $count

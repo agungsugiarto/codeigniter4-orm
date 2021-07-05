@@ -993,7 +993,7 @@ class BelongsToMany extends Relation
      */
     protected function prepareQueryBuilder()
     {
-        return $this->query->addSelect($this->shouldSelect());
+        return $this->query->select($this->shouldSelect());
     }
 
     /**
