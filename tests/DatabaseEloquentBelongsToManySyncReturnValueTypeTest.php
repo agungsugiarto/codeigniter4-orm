@@ -30,7 +30,7 @@ class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends CIUnitTestCas
         });
 
         $user->articles->each(function (BelongsToManySyncTestTestArticle $article) {
-            $this->assertSame('0', $article->pivot->visible);
+            $this->assertEquals('0', $article->pivot->visible);
         });
     }
 
@@ -48,7 +48,7 @@ class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends CIUnitTestCas
         });
 
         $user->articles->each(function (BelongsToManySyncTestTestArticle $article) {
-            $this->assertSame('1', $article->pivot->visible);
+            $this->assertEquals('1', $article->pivot->visible);
         });
     }
 
