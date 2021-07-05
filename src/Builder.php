@@ -867,7 +867,7 @@ class Builder
      */
     protected function ensureOrderForCursorPagination($shouldReverse = false)
     {
-        $orders = (fn() => $this->QBOrderBy)->call($this->query);
+        $orders = (fn () => $this->QBOrderBy)->call($this->query);
 
         $orderDirections = collect($orders)->pluck('direction')->unique();
 
@@ -1010,7 +1010,7 @@ class Builder
             $values
         );
 
-        $segments = preg_split('/\s+as\s+/i', last((fn() => $this->QBFrom)->call($this->query)));
+        $segments = preg_split('/\s+as\s+/i', last((fn () => $this->QBFrom)->call($this->query)));
 
         $qualifiedColumn = last($segments) . '.' . $column;
 
