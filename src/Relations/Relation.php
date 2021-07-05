@@ -164,7 +164,7 @@ abstract class Relation
      */
     public function sole($columns = ['*'])
     {
-        $result = $this->take(2)->get($columns);
+        $result = $this->limit(2)->get($columns);
 
         if ($result->isEmpty()) {
             throw (new ModelNotFoundException())->setModel(get_class($this->related));
@@ -243,7 +243,7 @@ abstract class Relation
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        return $query->select($columns)->whereColumn(
+        return $query->select($columns)->where(
             $this->getQualifiedParentKeyName(),
             '=',
             $this->getExistenceCompareKey()

@@ -335,7 +335,7 @@ abstract class HasOneOrMany extends Relation
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        if ($query->getQuery()->from == $parentQuery->getQuery()->from) {
+        if ((fn () => $this->QBFrom)->call($query->getQuery()) == (fn () => $this->QBFrom)->call($parentQuery->getQuery())) {
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 

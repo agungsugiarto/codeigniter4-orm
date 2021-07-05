@@ -15,6 +15,28 @@ use Tightenco\Collect\Support\LazyCollection;
 trait BuildsQueries
 {
     /**
+     * Get the SQL representation of the query.
+     *
+     * @return string
+     */
+    public function toSql()
+    {
+        return $this->query->getCompiledSelect();
+    }
+
+    /**
+     * Set the limit and offset for a given page.
+     *
+     * @param  int  $page
+     * @param  int  $perPage
+     * @return $this
+     */
+    public function forPage($page, $perPage = 15)
+    {
+        return $this->offset(($page - 1) * $perPage)->limit($perPage);
+    }
+
+    /**
      * Constrain the query to the next "page" of results after a given ID.
      *
      * @param  int  $perPage
@@ -282,7 +304,7 @@ trait BuildsQueries
      */
     public function sole($columns = ['*'])
     {
-        $result = $this->take(2)->get($columns);
+        $result = $this->limit(2)->get($columns);
 
         if ($result->isEmpty()) {
             throw new RecordsNotFoundException();

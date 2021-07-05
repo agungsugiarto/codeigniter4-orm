@@ -27,7 +27,9 @@ use Tightenco\Collect\Support\Arr;
 
 class Builder
 {
-    use BuildsQueries;
+    use BuildsQueries {
+        sole as baseSole;
+    }
     use ExplainsQueries;
     use ForwardsCalls;
     use QueriesRelationships;
@@ -98,7 +100,6 @@ class Builder
         'min',
         'raw',
         'sum',
-        'toSql',
     ];
 
     /**
