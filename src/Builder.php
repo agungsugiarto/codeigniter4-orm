@@ -25,8 +25,7 @@ use ReflectionMethod;
 use Tightenco\Collect\Contracts\Support\Arrayable;
 use Tightenco\Collect\Support\Arr;
 
-class Builder
-{
+class Builder {
     use BuildsQueries {
         sole as baseSole;
     }
