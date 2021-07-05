@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^7.3||^8.0",
+        "php": "^7.4||^8.0",
         "codeigniter4/framework": "^4.1",
         "nesbot/carbon": "^2.4",
         "tightenco/collect": "^8.19",
@@ -48,8 +48,5 @@
         "branch-alias": {
             "dev-main": "1.x-dev"
         }
-    },
-    "scripts": {
-        "tests": "phpunit"
     }
 }
