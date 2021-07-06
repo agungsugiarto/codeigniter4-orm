@@ -781,7 +781,7 @@ class Builder
         $perPage = $perPage ?: $this->model->getPerPage();
 
         $results = ($total = $this->toBase()->countAllResults(false))
-            ? $this->toBase()->select($columns)->get($perPage + 1, ($page - 1) * $perPage)->getResult()
+            ? $this->forPage($page, $perPage)->get($columns)
             : $this->model->newCollection();
 
         return $this->paginator($results, $total, $perPage, $page, [
@@ -808,9 +808,10 @@ class Builder
         // Next we will set the limit and offset for this query so that when we get the
         // results we get the proper section of results. Then, we'll create the full
         // paginator instances for these results with the given page and per page.
-        $results = $this->toBase()->select($columns)->get($perPage + 1, ($page - 1) * $perPage)->getResult();
 
-        return $this->simplePaginator($results, $perPage, $page, [
+        $this->offset(($page - 1) * $perPage)->limit($perPage + 1);
+
+        return $this->simplePaginator($this->get($columns), $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
