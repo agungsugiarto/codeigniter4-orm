@@ -453,7 +453,7 @@ abstract class AbstractCursorPaginator implements Htmlable
     /**
      * Get an instance of the view factory from the resolver.
      *
-     * @return \Illuminate\Contracts\View\Factory
+     * @return \CodeIgniter\View\RendererInterface
      */
     public static function viewFactory()
     {

@@ -20,6 +20,7 @@ use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Relation;
 use Fluent\Orm\Support\ForwardsCalls;
 use Fluent\Orm\Support\Str;
+use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
 use Tightenco\Collect\Contracts\Support\Arrayable;
@@ -257,7 +258,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  \Closure|string|array|\Illuminate\Database\Query\Expression  $column
+     * @param  \Closure|string|array|\Fluent\Orm\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -270,9 +271,14 @@ class Builder
 
             return $query;
         } else {
-            $this->query->where("{$column} {$operator}", $value);
-            // $this->query->where(...func_get_args());
-            // (fn() => $this->whereHaving('QBWhere', "{$column} {$operator}", $value, $boolean))->call($this->query);
+            // Here we will make some assumptions about the operator. If only 2 values are
+            // passed to the method, we will assume that the operator is an equals sign
+            // and keep going. Otherwise, we'll require the operator to be passed in.
+            [$value, $operator] = $this->prepareValueAndOperator(
+                $value, $operator, func_num_args() === 2
+            );
+
+            (fn() => $this->whereHaving('QBWhere', "{$column} {$operator}", $value, "{$boolean} ", true))->call($this->query);
         }
 
         return $this;
@@ -281,7 +287,7 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  \Closure|string|array|\Illuminate\Database\Query\Expression  $column
+     * @param  \Closure|string|array|\Fluent\Orm\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -295,22 +301,24 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  \Closure|array|string|\Illuminate\Database\Query\Expression  $column
+     * @param  \Closure|array|string|\Fluent\Orm\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
      */
     public function orWhere($column, $operator = null, $value = null)
     {
-        $this->query->where("{$column} {$operator}", $value);
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value, $operator, func_num_args() === 2
+        );
 
-        return $this;
+        return $this->where($column, $operator, $value, 'or');
     }
 
     /**
      * Add an "order by" clause for a timestamp to the query.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @return $this
      */
     public function latest($column = null)
@@ -327,7 +335,7 @@ class Builder
     /**
      * Add an "order by" clause for a timestamp to the query.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @return $this
      */
     public function oldest($column = null)
@@ -557,7 +565,7 @@ class Builder
     /**
      * Get a single column's value from the first result of a query.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @return mixed
      */
     public function value($column)
@@ -741,7 +749,7 @@ class Builder
     // /**
     //  * Get an array with the values of a given column.
     //  *
-    //  * @param  string|\Illuminate\Database\Query\Expression  $column
+    //  * @param  string|\Fluent\Orm\Expression  $column
     //  * @param  string|null  $key
     //  * @return \Illuminate\Support\Collection
     //  */
@@ -961,7 +969,7 @@ class Builder
     /**
      * Increment a column's value by a given amount.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @param  float|int  $amount
      * @param  array  $extra
      * @return int
@@ -977,7 +985,7 @@ class Builder
     /**
      * Decrement a column's value by a given amount.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @param  float|int  $amount
      * @param  array  $extra
      * @return int
@@ -1547,7 +1555,7 @@ class Builder
     /**
      * Qualify the given column name by the model's table.
      *
-     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|\Fluent\Orm\Expression  $column
      * @return string
      */
     public function qualifyColumn($column)

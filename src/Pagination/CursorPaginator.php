@@ -68,7 +68,7 @@ class CursorPaginator extends AbstractCursorPaginator implements Arrayable, Arra
      *
      * @param  string|null  $view
      * @param  array  $data
-     * @return \Illuminate\Contracts\Support\Htmlable
+     * @return \Tightenco\Collect\Contracts\Support\Htmlable
      */
     public function links($view = null, $data = [])
     {
@@ -80,7 +80,7 @@ class CursorPaginator extends AbstractCursorPaginator implements Arrayable, Arra
      *
      * @param  string|null  $view
      * @param  array  $data
-     * @return \Illuminate\Contracts\Support\Htmlable
+     * @return \Tightenco\Collect\Contracts\Support\Htmlable
      */
     public function render($view = null, $data = [])
     {

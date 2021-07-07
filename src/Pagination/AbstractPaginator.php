@@ -540,7 +540,7 @@ abstract class AbstractPaginator implements Htmlable
     /**
      * Get an instance of the view factory from the resolver.
      *
-     * @return \Illuminate\Contracts\View\Factory
+     * @return \CodeIgniter\View\RendererInterface
      */
     public static function viewFactory()
     {
@@ -581,25 +581,14 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
-     * Indicate that Tailwind styling should be used for generated links.
-     *
-     * @return void
-     */
-    public static function useTailwind()
-    {
-        static::defaultView('pagination::tailwind');
-        static::defaultSimpleView('pagination::simple-tailwind');
-    }
-
-    /**
      * Indicate that Bootstrap 4 styling should be used for generated links.
      *
      * @return void
      */
     public static function useBootstrap()
     {
-        static::defaultView('pagination::bootstrap-4');
-        static::defaultSimpleView('pagination::simple-bootstrap-4');
+        static::defaultView('Fluent\Orm\Pagination\Views\bootstrap-4');
+        static::defaultSimpleView('Fluent\Orm\Pagination\Views\simple-bootstrap-4');
     }
 
     /**
@@ -609,8 +598,8 @@ abstract class AbstractPaginator implements Htmlable
      */
     public static function useBootstrapThree()
     {
-        static::defaultView('pagination::default');
-        static::defaultSimpleView('pagination::simple-default');
+        static::defaultView('Fluent\Orm\Pagination\Views\default');
+        static::defaultSimpleView('Fluent\Orm\Pagination\Views\simple-default');
     }
 
     /**
