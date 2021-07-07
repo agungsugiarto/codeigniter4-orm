@@ -23,18 +23,18 @@ class PaginationState
 
         Paginator::currentPageResolver(function ($pageName = 'page') {
             $page = Services::request()->getVar($pageName);
-    
+
             if (filter_var($page, FILTER_VALIDATE_INT) !== false && (int) $page >= 1) {
                 return (int) $page;
             }
-    
+
             return 1;
         });
-    
+
         Paginator::queryStringResolver(function () {
             return Services::uri()->getQuery();
         });
-    
+
         CursorPaginator::currentCursorResolver(function ($cursorName = 'cursor') {
             return Cursor::fromEncoded(Services::request()->getVar($cursorName));
         });

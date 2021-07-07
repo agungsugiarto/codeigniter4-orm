@@ -20,7 +20,6 @@ use Fluent\Orm\Relations\BelongsToMany;
 use Fluent\Orm\Relations\Relation;
 use Fluent\Orm\Support\ForwardsCalls;
 use Fluent\Orm\Support\Str;
-use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
 use Tightenco\Collect\Contracts\Support\Arrayable;
@@ -275,10 +274,12 @@ class Builder
             // passed to the method, we will assume that the operator is an equals sign
             // and keep going. Otherwise, we'll require the operator to be passed in.
             [$value, $operator] = $this->prepareValueAndOperator(
-                $value, $operator, func_num_args() === 2
+                $value,
+                $operator,
+                func_num_args() === 2
             );
 
-            (fn() => $this->whereHaving('QBWhere', "{$column} {$operator}", $value, "{$boolean} ", true))->call($this->query);
+            (fn () => $this->whereHaving('QBWhere', "{$column} {$operator}", $value, "{$boolean} ", true))->call($this->query);
         }
 
         return $this;
@@ -309,7 +310,9 @@ class Builder
     public function orWhere($column, $operator = null, $value = null)
     {
         [$value, $operator] = $this->prepareValueAndOperator(
-            $value, $operator, func_num_args() === 2
+            $value,
+            $operator,
+            func_num_args() === 2
         );
 
         return $this->where($column, $operator, $value, 'or');
