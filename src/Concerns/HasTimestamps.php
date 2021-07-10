@@ -3,6 +3,7 @@
 namespace Fluent\Orm\Concerns;
 
 use Fluent\Orm\Support\Carbon;
+
 trait HasTimestamps
 {
     /**
