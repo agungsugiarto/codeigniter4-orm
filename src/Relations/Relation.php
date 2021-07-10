@@ -243,7 +243,7 @@ abstract class Relation
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        return $query->select($columns)->where(
+        return $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
             $this->getExistenceCompareKey()

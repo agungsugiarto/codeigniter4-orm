@@ -255,6 +255,44 @@ class Builder
     }
 
     /**
+     * Add a "where" clause comparing two columns to the query.
+     *
+     * @param  string|array  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @param  string|null  $boolean
+     * @return $this
+     */
+    public function whereColumn($first, $operator = null, $second = null, $boolean = 'and')
+    {
+        // Here we will make some assumptions about the operator. If only 2 values are
+        // passed to the method, we will assume that the operator is an equals sign
+        // and keep going. Otherwise, we'll require the operator to be passed in.
+        [$first, $operator] = $this->prepareValueAndOperator(
+            $first,
+            $operator,
+            func_num_args() === 2
+        );
+
+        (fn () => $this->whereHaving('QBWhere', "{$first} {$operator}", $second, "{$boolean} ", false))->call($this->query);
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where" clause comparing two columns to the query.
+     *
+     * @param  string|array  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @return $this
+     */
+    public function orWhereColumn($first, $operator = null, $second = null)
+    {
+        return $this->whereColumn($first, $operator, $second, 'or');
+    }
+
+    /**
      * Add a basic where clause to the query.
      *
      * @param  \Closure|string|array|\Fluent\Orm\Expression  $column

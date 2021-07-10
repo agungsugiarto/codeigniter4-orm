@@ -1194,7 +1194,7 @@ class BelongsToMany extends Relation
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        if ($parentQuery->getQuery()->from == $query->getQuery()->from) {
+        if ((fn () => $this->QBFrom)->call($parentQuery->getQuery()) == (fn () => $this->QBFrom)->call($query->getQuery())) {
             return $this->getRelationExistenceQueryForSelfJoin($query, $parentQuery, $columns);
         }
 
@@ -1400,7 +1400,7 @@ class BelongsToMany extends Relation
     public function qualifyPivotColumn($column)
     {
         return Str::contains($column, '.')
-                    ? $column
-                    : $this->table . '.' . $column;
+            ? $column
+            : $this->table . '.' . $column;
     }
 }
