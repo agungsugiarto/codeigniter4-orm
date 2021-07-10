@@ -2,8 +2,7 @@
 
 namespace Fluent\Orm\Concerns;
 
-use CodeIgniter\I18n\Time;
-
+use Fluent\Orm\Support\Carbon;
 trait HasTimestamps
 {
     /**
@@ -80,11 +79,11 @@ trait HasTimestamps
     /**
      * Get a fresh timestamp for the model.
      *
-     * @return \Illuminate\Support\Carbon
+     * @return \Fluent\Orm\Support\Carbon
      */
     public function freshTimestamp()
     {
-        return Time::now();
+        return Carbon::now();
     }
 
     /**

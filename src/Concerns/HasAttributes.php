@@ -4,7 +4,6 @@ namespace Fluent\Orm\Concerns;
 
 use Carbon\CarbonInterface;
 use CodeIgniter\Config\Services;
-use CodeIgniter\I18n\Time;
 use DateTimeInterface;
 use Fluent\Orm\Contracts\Castable;
 use Fluent\Orm\Contracts\CastsInboundAttributes;
@@ -1017,7 +1016,7 @@ trait HasAttributes
      * Return a timestamp as DateTime object.
      *
      * @param  mixed  $value
-     * @return \Fluent\Orm\Support\Carbon|\CodeIgniter\I18n\Time
+     * @return \Fluent\Orm\Support\Carbon
      */
     protected function asDateTime($value)
     {
@@ -1032,7 +1031,7 @@ trait HasAttributes
         // these checks since they will be a waste of time, and hinder performance
         // when checking the field. We will just return the DateTime right away.
         if ($value instanceof DateTimeInterface) {
-            return Time::parse(
+            return Carbon::parse(
                 $value->format('Y-m-d H:i:s.u'),
                 $value->getTimezone()
             );
@@ -1042,14 +1041,14 @@ trait HasAttributes
         // and format a Carbon object from this timestamp. This allows flexibility
         // when defining your date fields as they might be UNIX timestamps here.
         if (is_numeric($value)) {
-            return Time::createFromTimestamp($value);
+            return Carbon::createFromTimestamp($value);
         }
 
         // If the value is in simply year, month, day format, we will instantiate the
         // Carbon instances from that format. Again, this provides for simple date
         // fields on the database, while still supporting Carbonized conversion.
         if ($this->isStandardDateFormat($value)) {
-            return Time::createFromInstance(Carbon::createFromFormat('Y-m-d', $value)->startOfDay());
+            return Carbon::instance(Carbon::createFromFormat('Y-m-d', $value)->startOfDay());
         }
 
         $format = $this->getDateFormat();
@@ -1058,12 +1057,12 @@ trait HasAttributes
         // the database connection and use that format to create the Carbon object
         // that is returned back out to the developers after we convert it here.
         try {
-            $date = Time::createFromFormat($format, $value);
+            $date = Carbon::createFromFormat($format, $value);
         } catch (InvalidArgumentException $e) {
             $date = false;
         }
 
-        return $date ?: Time::parse($value);
+        return $date ?: Carbon::parse($value);
     }
 
     /**
