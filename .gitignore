@@ -129,3 +129,6 @@ nb-configuration.xml
 .php_cs
 .php_cs.cache
 .phpunit.result.cache
+
+# PHPCS
+.php-cs-fixer.cache
