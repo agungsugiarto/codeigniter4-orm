@@ -271,7 +271,7 @@ class Builder
         return $this;
     }
 
-        /**
+    /**
      * Add a "where not null" clause to the query.
      *
      * @param  string|array  $columns
