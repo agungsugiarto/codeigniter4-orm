@@ -367,8 +367,8 @@ trait QueriesRelationships
             return $this;
         }
 
-        if (is_null($this->query->columns)) {
-            $this->query->select([$this->query->from . '.*']);
+        if (is_null((fn () => $this->QBSelect)->call($this->query))) {
+            $this->query->select([$this->query->getTable . '.*']);
         }
 
         $relations = is_array($relations) ? $relations : [$relations];
@@ -388,13 +388,11 @@ trait QueriesRelationships
             $relation = $this->getRelationWithoutConstraints($name);
 
             if ($function) {
-                $hashedColumn = $this->getQuery()->from === $relation->getQuery()->getQuery()->from
-                                            ? "{$relation->getRelationCountHash(false)}.$column"
-                                            : $column;
+                $hashedColumn = $this->getQuery()->getTable() === $relation->getQuery()->getQuery()->getTable()
+                    ? "{$relation->getRelationCountHash(false)}.$column"
+                    : $column;
 
-                $wrappedColumn = $this->getQuery()->getGrammar()->wrap(
-                    $column === '*' ? $column : $relation->getRelated()->qualifyColumn($hashedColumn)
-                );
+                $wrappedColumn = $column === '*' ? $column : $relation->getRelated()->qualifyColumn($hashedColumn);
 
                 $expression = $function === 'exists' ? $wrappedColumn : sprintf('%s(%s)', $function, $wrappedColumn);
             } else {
@@ -545,7 +543,7 @@ trait QueriesRelationships
      */
     public function mergeConstraintsFrom(Builder $from)
     {
-        $whereBindings = $from->getQuery()->getRawBindings()['where'] ?? [];
+        $whereBindings = $from->getQuery()->getCompiledQBWhere() ?? [];
 
         // Here we have some other query that we want to merge the where constraints from. We will
         // copy over any where constraints on the query as well as remove any global scopes the
@@ -553,7 +551,7 @@ trait QueriesRelationships
         return $this->withoutGlobalScopes(
             $from->removedScopes()
         )->mergeWheres(
-            $from->getQuery()->wheres,
+            $from->getQuery()->getCompiledQBWhere(),
             $whereBindings
         );
     }

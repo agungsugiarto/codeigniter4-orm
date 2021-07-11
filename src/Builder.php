@@ -1293,8 +1293,8 @@ class Builder
         // rebuild them as nested queries by slicing the groups of wheres into
         // their own sections. This is to prevent any confusing logic order.
         $allWheres = $query->getCompiledQBWhere();
-
-        $query->wheres = [];
+        
+        (fn () => $query->QBWhere = [])->call($query);
 
         $this->groupWhereSliceForScope(
             $query,
