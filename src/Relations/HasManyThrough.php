@@ -281,7 +281,7 @@ class HasManyThrough extends Relation
      */
     public function first($columns = ['*'])
     {
-        $results = $this->take(1)->get($columns);
+        $results = $this->limit(1)->get($columns);
 
         return count($results) > 0 ? $results->first() : null;
     }
@@ -547,8 +547,8 @@ class HasManyThrough extends Relation
     {
         $builder = $this->query->applyScopes();
 
-        return $builder->addSelect(
-            $this->shouldSelect($builder->getQuery()->columns ? [] : $columns)
+        return $builder->select(
+            $this->shouldSelect((fn () => $this->QBSelect)->call($builder->getQuery()) ? [] : $columns)
         );
     }
 
@@ -562,11 +562,11 @@ class HasManyThrough extends Relation
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        if ($parentQuery->getQuery()->from === $query->getQuery()->from) {
+        if ($parentQuery->getQuery()->getTable() === $query->getQuery()->getTable()) {
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        if ($parentQuery->getQuery()->from === $this->throughParent->getTable()) {
+        if ($parentQuery->getQuery()->getTable() === $this->throughParent->getTable()) {
             return $this->getRelationExistenceQueryForThroughSelfRelation($query, $parentQuery, $columns);
         }
 

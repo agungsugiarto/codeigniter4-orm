@@ -276,6 +276,16 @@ abstract class Relation
     }
 
     /**
+     * Get the query builder that will contain the relationship constraints.
+     *
+     * @return \Fluent\Orm\Builder
+     */
+    protected function getRelationQuery()
+    {
+        return $this->query;
+    }
+
+    /**
      * Get the underlying query for the relation.
      *
      * @return \Fluent\Orm\Builder

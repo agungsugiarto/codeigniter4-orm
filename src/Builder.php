@@ -255,6 +255,35 @@ class Builder
     }
 
     /**
+     * Add a "where null" clause to the query.
+     *
+     * @param  string|array  $columns
+     * @param  string  $boolean
+     * @param  bool  $not
+     * @return $this
+     */
+    public function whereNull($columns, $boolean = 'and', $not = false)
+    {
+        $type = $not ? 'IS NOT NULL' : 'IS NULL';
+
+        $this->query->where("{$columns} {$type}");
+
+        return $this;
+    }
+
+        /**
+     * Add a "where not null" clause to the query.
+     *
+     * @param  string|array  $columns
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function whereNotNull($columns, $boolean = 'and')
+    {
+        return $this->whereNull($columns, $boolean, true);
+    }
+
+    /**
      * Add a "where" clause comparing two columns to the query.
      *
      * @param  string|array  $first
