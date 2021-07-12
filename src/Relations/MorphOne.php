@@ -108,10 +108,9 @@ class MorphOne extends MorphOneOrMany implements SupportsPartialRelations
      */
     public function addOneOfManyJoinSubQueryConstraints(BaseBuilder $query)
     {
-        $query->where([
-            $this->qualifySubSelectColumn($this->morphType) => $this->qualifyRelatedColumn($this->morphType),
-            $this->qualifySubSelectColumn($this->foreignKey) => $this->qualifyRelatedColumn($this->foreignKey),
-        ]);
+        $query
+            ->join($query->getTable(), "{$this->qualifySubSelectColumn($this->morphType)} = {$this->qualifyRelatedColumn($this->morphType)}")
+            ->join($query->getTable(), "{$this->qualifySubSelectColumn($this->foreignKey)} = {$this->qualifyRelatedColumn($this->foreignKey)}");
     }
 
     /**

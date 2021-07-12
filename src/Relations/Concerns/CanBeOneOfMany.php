@@ -174,7 +174,7 @@ trait CanBeOneOfMany
         }
 
         if (! is_null($column)) {
-            $subQuery->selectRaw($aggregate . '(' . $column . ') as ' . $column);
+            $subQuery->select($aggregate . '(' . $column . ') as ' . $column);
         }
 
         $this->addOneOfManySubQueryConstraints($subQuery, $groupBy, $column, $aggregate);

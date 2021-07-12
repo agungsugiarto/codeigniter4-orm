@@ -89,7 +89,7 @@ class HasOne extends HasOneOrMany implements SupportsPartialRelations
      */
     public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null)
     {
-        $query->addSelect($this->foreignKey);
+        $query->select($this->foreignKey);
     }
 
     /**
@@ -110,8 +110,7 @@ class HasOne extends HasOneOrMany implements SupportsPartialRelations
      */
     public function addOneOfManyJoinSubQueryConstraints(BaseBuilder $query)
     {
-        // $join->on($this->qualifySubSelectColumn($this->foreignKey), '=', $this->qualifyRelatedColumn($this->foreignKey));
-        $query->where($this->qualifySubSelectColumn($this->foreignKey), $this->qualifyRelatedColumn($this->foreignKey));
+        $query->join($query->getTable(), "{$this->qualifySubSelectColumn($this->foreignKey)} = {$this->qualifyRelatedColumn($this->foreignKey)}");
     }
 
     /**
