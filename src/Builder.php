@@ -266,7 +266,7 @@ class Builder
     {
         $type = $not ? 'IS NOT NULL' : 'IS NULL';
 
-        $this->query->where("{$columns} {$type}");
+        (fn () => $this->whereHaving('QBWhere', "{$columns} {$type}", null, "{$boolean} ", false))->call($this->query);
 
         return $this;
     }

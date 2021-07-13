@@ -28,26 +28,9 @@ trait BuildsQueries
     {
         if ($useDefault) {
             return [$operator, '='];
-        } elseif ($this->invalidOperatorAndValue($operator, $value)) {
-            throw new InvalidArgumentException('Illegal operator and value combination.');
         }
 
         return [$value, $operator];
-    }
-
-    /**
-     * Determine if the given operator and value combination is legal.
-     *
-     * Prevents using Null values with invalid operators.
-     *
-     * @param  string  $operator
-     * @param  mixed  $value
-     * @return bool
-     */
-    protected function invalidOperatorAndValue($operator, $value)
-    {
-        return is_null($value) && in_array($operator, $this->operators) &&
-             ! in_array($operator, ['=', '<>', '!=']);
     }
 
     /**
