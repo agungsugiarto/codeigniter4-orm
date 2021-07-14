@@ -286,7 +286,7 @@ class Builder
     /**
      * Add a "where" clause comparing two columns to the query.
      *
-     * @param  string|array  $first
+     * @param  string  $first
      * @param  string|null  $operator
      * @param  string|null  $second
      * @param  string|null  $boolean
@@ -311,7 +311,7 @@ class Builder
     /**
      * Add an "or where" clause comparing two columns to the query.
      *
-     * @param  string|array  $first
+     * @param  string  $first
      * @param  string|null  $operator
      * @param  string|null  $second
      * @return $this
@@ -324,30 +324,26 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  \Closure|string|array|\Fluent\Orm\Expression  $column
-     * @param  mixed  $operator
+     * @param  array|string|\Fluent\Orm\Expression  $column
+     * @param  string|\Closure  $operator
      * @param  mixed  $value
      * @param  string  $boolean
      * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
-        if ($column instanceof Closure && is_null($operator)) {
-            $column($query = $this->model->newQueryWithoutRelationships());
+        // Here we will make some assumptions about the operator. If only 2 values are
+        // passed to the method, we will assume that the operator is an equals sign
+        // and keep going. Otherwise, we'll require the operator to be passed in.
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2
+        );
 
-            return $query;
-        } else {
-            // Here we will make some assumptions about the operator. If only 2 values are
-            // passed to the method, we will assume that the operator is an equals sign
-            // and keep going. Otherwise, we'll require the operator to be passed in.
-            [$value, $operator] = $this->prepareValueAndOperator(
-                $value,
-                $operator,
-                func_num_args() === 2
-            );
+        $columnAndOperator = is_array($column) ? $column : "{$column} {$operator}";
 
-            (fn () => $this->whereHaving('QBWhere', "{$column} {$operator}", $value, "{$boolean} ", true))->call($this->query);
-        }
+        (fn () => $this->whereHaving('QBWhere', $columnAndOperator, $value, "{$boolean} ", true))->call($this->query);
 
         return $this;
     }
@@ -355,8 +351,8 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  \Closure|string|array|\Fluent\Orm\Expression  $column
-     * @param  mixed  $operator
+     * @param  array|string|\Fluent\Orm\Expression  $column
+     * @param  string|\Closure  $operator
      * @param  mixed  $value
      * @param  string  $boolean
      * @return \Fluent\Orm\Model|static
@@ -376,12 +372,6 @@ class Builder
      */
     public function orWhere($column, $operator = null, $value = null)
     {
-        [$value, $operator] = $this->prepareValueAndOperator(
-            $value,
-            $operator,
-            func_num_args() === 2
-        );
-
         return $this->where($column, $operator, $value, 'or');
     }
 
