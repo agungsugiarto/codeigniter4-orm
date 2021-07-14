@@ -15,6 +15,51 @@ use Tightenco\Collect\Support\LazyCollection;
 trait BuildsQueries
 {
     /**
+     * Determine if any rows exist for the current query.
+     *
+     * @return bool
+     */
+    public function exists()
+    {
+        $results = $this->query
+            ->db()
+            ->query("select exists({$this->toSql()}) as 'exists'")
+            ->getResultArray();
+
+        // If the results has rows, we will get the row and see if the exists column is a
+        // boolean true. If there is no results for this query we will return false as
+        // there are no rows for this query at all and we can return that info here.
+        if (isset($results[0])) {
+            $results = (array) $results[0];
+
+            return (bool) $results['exists'];
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if no rows exist for the current query.
+     *
+     * @return bool
+     */
+    public function doesntExist()
+    {
+        return ! $this->exists();
+    }
+
+    /**
+     * Retrieve the "count" result of the query.
+     *
+     * @param  string  $columns
+     * @return int
+     */
+    public function count($columns = '*')
+    {
+        return $this->query->select($columns)->countAllResults();
+    }
+
+    /**
      * Prepare the value and operator for a where clause.
      *
      * @param  string  $value
