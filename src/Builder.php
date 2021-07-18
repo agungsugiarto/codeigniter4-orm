@@ -29,6 +29,7 @@ class Builder
 {
     use BuildsQueries {
         sole as baseSole;
+        cursor as baseCursor;
     }
     use ExplainsQueries;
     use ForwardsCalls;
@@ -782,17 +783,17 @@ class Builder
         return Str::contains($name, '.') && Str::startsWith($name, $relation . '.');
     }
 
-    // /**
-    //  * Get a lazy collection for the given query.
-    //  *
-    //  * @return \Illuminate\Support\LazyCollection
-    //  */
-    // public function cursor()
-    // {
-    //     return $this->applyScopes()->query->cursor()->map(function ($record) {
-    //         return $this->newModelInstance()->newFromBuilder($record);
-    //     });
-    // }
+    /**
+     * Get a lazy collection for the given query.
+     *
+     * @return \Tightenco\Collect\Support\LazyCollection
+     */
+    public function cursor()
+    {
+        return $this->applyScopes()->baseCursor()->map(function ($record) {
+            return $this->newModelInstance()->newFromBuilder($record);
+        });
+    }
 
     /**
      * Add a generic "order by" clause if the query doesn't already have one.
@@ -1019,9 +1020,9 @@ class Builder
 
         $orderDirection = $orders->first()['direction'] ?? 'asc';
 
-        $comparisonOperator = $orderDirection === 'asc' ? '>' : '<';
+        $comparisonOperator = Str::lower($orderDirection) === ' asc' ? '>' : '<';
 
-        $parameters = $orders->pluck('column')->toArray();
+        $parameters = $orders->pluck('field')->toArray();
 
         if (! is_null($cursor)) {
             if (count($parameters) === 1) {
@@ -1031,8 +1032,7 @@ class Builder
             }
         }
 
-        // $this->query->limit($perPage + 1);
-        $this->query->get($perPage + 1, 0, false)->getResult();
+        $this->limit($perPage + 1);
 
         return $this->cursorPaginator($this->get($columns), $perPage, $cursor, [
             'path' => Paginator::resolveCurrentPath(),
@@ -1051,9 +1051,7 @@ class Builder
      */
     protected function ensureOrderForCursorPagination($shouldReverse = false)
     {
-        $orders = (fn () => $this->QBOrderBy)->call($this->query);
-
-        $orderDirections = collect($orders)->pluck('direction')->unique();
+        $orderDirections = collect($this->query->QBOrderBy)->pluck('direction')->unique();
 
         if ($orderDirections->count() > 1) {
             throw new CursorPaginationException('Only a single order by direction is supported when using cursor pagination.');
@@ -1064,14 +1062,14 @@ class Builder
         }
 
         if ($shouldReverse) {
-            $orders = collect($orders)->map(function ($order) {
-                $order['direction'] = $order['direction'] === 'asc' ? 'desc' : 'asc';
+            $this->query->QBOrderBy = collect($this->query->QBOrderBy)->map(function ($order) {
+                $order['direction'] = Str::lower($order['direction']) === ' asc' ? 'desc' : 'asc';
 
                 return $order;
             })->toArray();
         }
 
-        return collect($orders);
+        return collect($this->query->QBOrderBy);
     }
 
     /**
@@ -1536,9 +1534,7 @@ class Builder
      */
     public function newModelInstance($attributes = [])
     {
-        return $this->model->newInstance($attributes)->setConnection(
-            $this->query->db()
-        );
+        return $this->model->newInstance($attributes);
     }
 
     /**

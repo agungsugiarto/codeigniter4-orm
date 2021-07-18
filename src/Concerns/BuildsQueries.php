@@ -15,6 +15,53 @@ use Tightenco\Collect\Support\LazyCollection;
 trait BuildsQueries
 {
     /**
+     * Merge an array of where clauses and bindings.
+     *
+     * @param  array  $wheres
+     * @param  array  $bindings
+     * @return void
+     */
+    public function mergeWheres($wheres, $bindings)
+    {
+        $whereBind = $this->query->getCompiledQBWhere() ?? [];
+
+        (fn () => $this->QBWhere = array_merge($whereBind, (array) $wheres))->call($this->query);
+
+        (fn () => $this->QBWhere = array_values(
+            array_merge($this->getCompiledQBWhere(), (array) $bindings)
+        ))->call($this->query);
+    }
+
+    /**
+     * Add an exists clause to the query.
+     *
+     * @param  \CodeIgniter\Database\BaseBuilder  $query
+     * @param  string  $boolean
+     * @param  bool  $not
+     * @return $this
+     */
+    public function addWhereExistsQuery($query, $boolean = 'and', $not = false)
+    {
+        $type = $not ? 'NOT EXISTS' : 'EXISTS';
+
+        $this->where("{$type} ({$query->getCompiledSelect(false)})", null, null, $boolean);
+
+        return $this;
+    }
+
+    /**
+     * Get a lazy collection for the given query.
+     *
+     * @return \Tightenco\Collect\Support\LazyCollection
+     */
+    public function cursor()
+    {
+        return new LazyCollection(function () {
+            yield from $this->query->db()->query($this->toSql())->getResult();
+        });
+    }
+
+    /**
      * Determine if any rows exist for the current query.
      *
      * @return bool

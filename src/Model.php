@@ -5,6 +5,7 @@ namespace Fluent\Orm;
 use ArrayAccess;
 use CodeIgniter\Database\Config;
 use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Database\Exceptions\DatabaseException;
 use Fluent\Orm\Collection as EloquentCollection;
 use Fluent\Orm\Concerns\GuardsAttributes;
 use Fluent\Orm\Concerns\HasAttributes;
@@ -909,7 +910,7 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
      * @param  array  $options
      * @return bool
      *
-     * @throws \Throwable
+     * @throws DatabaseException
      */
     public function saveOrFail(array $options = [])
     {
@@ -919,7 +920,7 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
             $result = $this->save($options);
 
             $this->getConnection()->transCommit();
-        } catch (\Exception $e) {
+        } catch (DatabaseException $e) {
             $this->getConnection()->transRollback();
 
             throw $e;

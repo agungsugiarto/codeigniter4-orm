@@ -2,19 +2,60 @@
 
 namespace Fluent\Orm\Tests;
 
-use CodeIgniter\Test\CIUnitTestCase;
-use CodeIgniter\Test\DatabaseTestTrait;
+use CodeIgniter\Database\Config;
 use Fluent\Orm\Model;
+use PHPUnit\Framework\TestCase;
 
-class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends CIUnitTestCase
+class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends TestCase
 {
-    use DatabaseTestTrait;
+    /**
+     * Setup the database schema.
+     *
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        $this->createSchema();
+    }
 
-    /** {@inheritdoc} */
-    protected $namespace = 'Fluent\Orm\Tests';
+    protected function createSchema()
+    {
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'email'=> ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('users', true);
 
-    /** {@inheritdoc} */
-    protected $refresh = true;
+        $this->schema()->addField([
+            'id' => ['type' => 'varchar', 'constraint' => 255],
+            'title'=> ['type' => 'varchar', 'constraint' => 255,],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('articles', true);
+
+        $this->schema()->addField([
+            'article_id' => ['type' => 'varchar', 'constraint' => 255],
+            'user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'visible' => ['type' => 'tinyint', 'constraint' => 4, 'default' => false]
+        ])
+        ->addKey(['article_id', 'user_id'])
+        ->addForeignKey('article_id', 'articles', 'id')
+        ->addForeignKey('user_id', 'users', 'id')
+        ->createTable('article_user', true);
+    }
+
+    /**
+     * Tear down the database schema.
+     *
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        $this->schema()->dropTable('users', true);
+        $this->schema()->dropTable('articles', true);
+        $this->schema()->dropTable('article_user', true);
+    }
 
     public function testSyncReturnValueType()
     {
@@ -64,23 +105,33 @@ class DatabaseEloquentBelongsToManySyncReturnValueTypeTest extends CIUnitTestCas
             ['id' => '1', 'title' => 'Another title'],
         ]);
     }
+
+    /**
+     * Get a schema builder instance.
+     *
+     * @return \CodeIgniter\Database\Forge
+     */
+    protected function schema()
+    {
+        return Config::forge();
+    }
 }
 
 class BelongsToManySyncTestTestUser extends Model
 {
-    protected $table = 'users_1';
+    protected $table = 'users';
     protected $fillable = ['id', 'email'];
     public $timestamps = false;
 
     public function articles()
     {
-        return $this->belongsToMany(BelongsToManySyncTestTestArticle::class, 'article_user_1', 'user_id', 'article_id')->withPivot('visible');
+        return $this->belongsToMany(BelongsToManySyncTestTestArticle::class, 'article_user', 'user_id', 'article_id')->withPivot('visible');
     }
 }
 
 class BelongsToManySyncTestTestArticle extends Model
 {
-    protected $table = 'articles_1';
+    protected $table = 'articles';
     protected $keyType = 'string';
     public $incrementing = false;
     public $timestamps = false;

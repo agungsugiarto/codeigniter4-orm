@@ -2,25 +2,74 @@
 
 namespace Fluent\Orm\Tests;
 
-use CodeIgniter\Database\Forge;
-use CodeIgniter\Test\CIUnitTestCase;
-use CodeIgniter\Test\DatabaseTestTrait;
+use CodeIgniter\Database\Config;
 use Fluent\Orm\Model as Eloquent;
 use Fluent\Orm\Exceptions\ModelNotFoundException;
 use Fluent\Orm\SoftDeletes;
-use PHPUnit\Framework\TestCase;
 use Tightenco\Collect\Support\Collection;
 use Tightenco\Collect\Support\LazyCollection;
+use PHPUnit\Framework\TestCase;
 
-class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
+class DatabaseEloquentHasManyThroughIntegrationTest extends TestCase
 {
-    use DatabaseTestTrait;
+    protected function setUp(): void
+    {
+        $this->createSchema();
+    }
 
-    /** {@inheritdoc} */
-    protected $namespace = 'Fluent\Orm\Tests';
+    /**
+     * Setup the database schema.
+     *
+     * @return void
+     */
+    public function createSchema()
+    {
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'email' => ['type' => 'varchar', 'constraint' => 255],
+            'country_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'country_short' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+            'deleted_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('users', true);
 
-    /** {@inheritdoc} */
-    protected $refresh = true;
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'title' => ['type' => 'varchar', 'constraint' => 255],
+            'body' => ['type' => 'varchar', 'constraint' => 255],
+            'email' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('posts', true);
+
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'name' => ['type' => 'varchar', 'constraint' => 255],
+            'shortname' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('countries', true);
+    }
+
+    /**
+     * Tear down the database schema.
+     *
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        $this->schema()->dropTable('users');
+        $this->schema()->dropTable('posts');
+        $this->schema()->dropTable('countries');
+    }
 
     public function testItLoadsAHasManyThroughRelationWithCustomKeys()
     {
@@ -33,11 +82,14 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
 
     public function testItLoadsADefaultHasManyThroughRelation()
     {
+        $this->migrateDefault();
         $this->seedDefaultData();
 
         $posts = HasManyThroughDefaultTestCountry::first()->posts;
         $this->assertSame('A title', $posts[0]->title);
         $this->assertCount(2, $posts);
+
+        $this->resetDefault();
     }
 
     public function testItLoadsARelationWithCustomIntermediateAndLocalKey()
@@ -58,15 +110,15 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
         $this->assertCount(2, $posts);
     }
 
-    // public function testWhereHasOnARelationWithCustomIntermediateAndLocalKey()
-    // {
-    //     $this->seedData();
-    //     $country = HasManyThroughIntermediateTestCountry::whereHas('posts', function ($query) {
-    //         $query->where('title', 'A title');
-    //     })->get();
+    public function testWhereHasOnARelationWithCustomIntermediateAndLocalKey()
+    {
+        $this->seedData();
+        $country = HasManyThroughIntermediateTestCountry::whereHas('posts', function ($query) {
+            $query->where('title', 'A title');
+        })->get();
 
-    //     $this->assertCount(1, $country);
-    // }
+        $this->assertCount(1, $country);
+    }
 
     public function testFindMethod()
     {
@@ -161,13 +213,12 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
     {
         $this->seedData();
         $post = HasManyThroughTestCountry::first()->posts()->first();
-
         $this->assertEquals([
             'id',
             'user_id',
-            'email',
             'title',
             'body',
+            'email',
             'created_at',
             'updated_at',
             'laravel_through_key',
@@ -197,9 +248,9 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
             $this->assertEquals([
                 'id',
                 'user_id',
-                'email',
                 'title',
                 'body',
+                'email',
                 'created_at',
                 'updated_at',
                 'laravel_through_key',
@@ -225,29 +276,29 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
         $this->assertEquals(6, $count);
     }
 
-    // public function testCursorReturnsCorrectModels()
-    // {
-    //     $this->seedData();
-    //     $this->seedDataExtended();
-    //     $country = HasManyThroughTestCountry::find(2);
+    public function testCursorReturnsCorrectModels()
+    {
+        $this->seedData();
+        $this->seedDataExtended();
+        $country = HasManyThroughTestCountry::find(2);
 
-    //     $posts = $country->posts()->cursor();
+        $posts = $country->posts()->cursor();
 
-    //     $this->assertInstanceOf(LazyCollection::class, $posts);
+        $this->assertInstanceOf(LazyCollection::class, $posts);
 
-    //     foreach ($posts as $post) {
-    //         $this->assertEquals([
-    //             'id',
-    //             'user_id',
-    //             'email',
-    //             'title',
-    //             'body',
-    //             'created_at',
-    //             'updated_at',
-    //             'laravel_through_key',
-    //         ], array_keys($post->getAttributes()));
-    //     }
-    // }
+        foreach ($posts as $post) {
+            $this->assertEquals([
+                'id',
+                'user_id',
+                'title',
+                'body',
+                'email',
+                'created_at',
+                'updated_at',
+                'laravel_through_key',
+            ], array_keys($post->getAttributes()));
+        }
+    }
 
     public function testEachReturnsCorrectModels()
     {
@@ -259,9 +310,9 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
             $this->assertEquals([
                 'id',
                 'user_id',
-                'email',
                 'title',
                 'body',
+                'email',
                 'created_at',
                 'updated_at',
                 'laravel_through_key',
@@ -279,9 +330,9 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
             $this->assertEquals([
                 'id',
                 'user_id',
-                'email',
                 'title',
                 'body',
+                'email',
                 'created_at',
                 'updated_at',
                 'laravel_through_key',
@@ -303,9 +354,9 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
             $this->assertEquals([
                 'id',
                 'user_id',
-                'email',
                 'title',
                 'body',
+                'email',
                 'created_at',
                 'updated_at',
                 'laravel_through_key',
@@ -382,32 +433,61 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
                                         ]);
     }
 
-    // /**
-    //  * Migrate tables for classes with a Laravel "default" HasManyThrough setup.
-    //  */
-    // protected function migrateDefault()
-    // {
-    //     $this->schema()->create('users_default', function ($table) {
-    //         $table->increments('id');
-    //         $table->string('email')->unique();
-    //         $table->unsignedInteger('has_many_through_default_test_country_id');
-    //         $table->timestamps();
-    //     });
+    /**
+     * Drop the default tables.
+     */
+    protected function resetDefault()
+    {
+        $this->schema()->dropTable('users_default');
+        $this->schema()->dropTable('posts_default');
+        $this->schema()->dropTable('countries_default');
+    }
 
-    //     $this->schema()->create('posts_default', function ($table) {
-    //         $table->increments('id');
-    //         $table->integer('has_many_through_default_test_user_id');
-    //         $table->string('title');
-    //         $table->text('body');
-    //         $table->timestamps();
-    //     });
+    /**
+     * Migrate tables for classes with a Laravel "default" HasManyThrough setup.
+     */
+    protected function migrateDefault()
+    {
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'has_many_through_default_test_country_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'email' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('users_default', true);
 
-    //     $this->schema()->create('countries_default', function ($table) {
-    //         $table->increments('id');
-    //         $table->string('name');
-    //         $table->timestamps();
-    //     });
-    // }
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'has_many_through_default_test_user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'title' => ['type' => 'varchar', 'constraint' => 255],
+            'body' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('posts_default', true);
+
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'name' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('countries_default', true);
+    }
+
+    /**
+     * Get a schema builder instance.
+     *
+     * @return \CodeIgniter\Database\Forge
+     */
+    protected function schema()
+    {
+        return Config::forge();
+    }
 }
 
 /**
@@ -415,7 +495,7 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends CIUnitTestCase
  */
 class HasManyThroughTestUser extends Eloquent
 {
-    protected $table = 'users_2';
+    protected $table = 'users';
     protected $guarded = [];
 
     public function posts()
@@ -429,7 +509,7 @@ class HasManyThroughTestUser extends Eloquent
  */
 class HasManyThroughTestPost extends Eloquent
 {
-    protected $table = 'posts_2';
+    protected $table = 'posts';
     protected $guarded = [];
 
     public function owner()
@@ -440,7 +520,7 @@ class HasManyThroughTestPost extends Eloquent
 
 class HasManyThroughTestCountry extends Eloquent
 {
-    protected $table = 'countries_2';
+    protected $table = 'countries';
     protected $guarded = [];
 
     public function posts()
@@ -500,7 +580,7 @@ class HasManyThroughDefaultTestCountry extends Eloquent
 
 class HasManyThroughIntermediateTestCountry extends Eloquent
 {
-    protected $table = 'countries_2';
+    protected $table = 'countries';
     protected $guarded = [];
 
     public function posts()
@@ -518,7 +598,7 @@ class HasManyThroughSoftDeletesTestUser extends Eloquent
 {
     use SoftDeletes;
 
-    protected $table = 'users_2';
+    protected $table = 'users';
     protected $guarded = [];
 
     public function posts()
@@ -532,7 +612,7 @@ class HasManyThroughSoftDeletesTestUser extends Eloquent
  */
 class HasManyThroughSoftDeletesTestPost extends Eloquent
 {
-    protected $table = 'posts_2';
+    protected $table = 'posts';
     protected $guarded = [];
 
     public function owner()
@@ -543,7 +623,7 @@ class HasManyThroughSoftDeletesTestPost extends Eloquent
 
 class HasManyThroughSoftDeletesTestCountry extends Eloquent
 {
-    protected $table = 'countries_2';
+    protected $table = 'countries';
     protected $guarded = [];
 
     public function posts()

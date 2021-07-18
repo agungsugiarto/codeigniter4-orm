@@ -2,20 +2,60 @@
 
 namespace Fluent\Orm\Tests;
 
-use CodeIgniter\Test\CIUnitTestCase;
-use CodeIgniter\Test\DatabaseTestTrait;
+use CodeIgniter\Database\Config;
 use Fluent\Orm\Model;
+use PHPUnit\Framework\TestCase;
 use Tightenco\Collect\Support\Collection;
 
-class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
+class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
 {
-    use DatabaseTestTrait;
+    /**
+     * Setup the database schema.
+     *
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        $this->createSchema();
+    }
 
-    /** {@inheritdoc} */
-    protected $namespace = 'Fluent\Orm\Tests';
+    protected function createSchema()
+    {
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'email'=> ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('users', true);
 
-    /** {@inheritdoc} */
-    protected $refresh = true;
+        $this->schema()->addField([
+            'aid' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'title'=> ['type' => 'varchar', 'constraint' => 255,],
+        ])
+        ->addPrimaryKey('aid')
+        ->createTable('articles', true);
+
+        $this->schema()->addField([
+            'article_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+        ])
+        ->addKey(['article_id', 'user_id'])
+        ->addForeignKey('article_id', 'articles', 'aid')
+        ->addForeignKey('user_id', 'users', 'id')
+        ->createTable('article_user', true);
+    }
+
+    /**
+     * Tear down the database schema.
+     *
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        $this->schema()->dropTable('users', true);
+        $this->schema()->dropTable('articles', true);
+        $this->schema()->dropTable('article_user', true);
+    }
 
     public function testBelongsToChunkById()
     {
@@ -45,6 +85,16 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
         ]);
 
         $user->articles()->sync([3, 1, 2]);
+    }
+
+    /**
+     * Get a schema builder instance.
+     *
+     * @return \CodeIgniter\Database\Forge
+     */
+    protected function schema()
+    {
+        return Config::forge();
     }
 }
 
