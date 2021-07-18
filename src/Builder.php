@@ -806,30 +806,144 @@ class Builder
         }
     }
 
-    // /**
-    //  * Get an array with the values of a given column.
-    //  *
-    //  * @param  string|\Fluent\Orm\Expression  $column
-    //  * @param  string|null  $key
-    //  * @return \Illuminate\Support\Collection
-    //  */
-    // public function pluck($column, $key = null)
-    // {
-    //     $results = $this->toBase()->pluck($column, $key);
+    /**
+     * Get an array with the values of a given column.
+     *
+     * @param  string|\Fluent\Orm\Expression  $column
+     * @param  string|null  $key
+     * @return \Tightenco\Collect\Support\Collection
+     */
+    public function pluck($column, $key = null)
+    {
+        // First, we will need to select the results of the query accounting for the
+        // given columns / key. Once we have the results, we will be able to take
+        // the results and get the exact data that was requested for the query.
+        $queryResult = $this->onceWithColumns(
+            is_null($key) ? [$column] : [$column, $key],
+            function () {
+                return $this->fromQuery($this->toSql());
+            }
+        );
 
-    //     // If the model has a mutator for the requested column, we will spin through
-    //     // the results and mutate the values so that the mutated version of these
-    //     // columns are returned as you would expect from these Orm models.
-    //     if (! $this->model->hasGetMutator($column) &&
-    //         ! $this->model->hasCast($column) &&
-    //         ! in_array($column, $this->model->getDates())) {
-    //         return $results;
-    //     }
+        if (empty($queryResult)) {
+            return collect();
+        }
 
-    //     return $results->map(function ($value) use ($column) {
-    //         return $this->model->newFromBuilder([$column => $value])->{$column};
-    //     });
-    // }
+        // If the columns are qualified with a table or have an alias, we cannot use
+        // those directly in the "pluck" operations since the results from the DB
+        // are only keyed by the column itself. We'll strip the table out here.
+        $column = $this->stripTableForPluck($column);
+
+        $key = $this->stripTableForPluck($key);
+
+        $results = is_array($queryResult[0])
+            ? $this->pluckFromArrayColumn($queryResult, $column, $key)
+            : $this->pluckFromObjectColumn($queryResult, $column, $key);
+
+        // If the model has a mutator for the requested column, we will spin through
+        // the results and mutate the values so that the mutated version of these
+        // columns are returned as you would expect from these Orm models.
+        if (! $this->model->hasGetMutator($column) &&
+            ! $this->model->hasCast($column) &&
+            ! in_array($column, $this->model->getDates())) {
+            return $results;
+        }
+
+        return $results->map(function ($value) use ($column) {
+            return $this->model->newFromBuilder([$column => $value])->{$column};
+        });
+    }
+
+    /**
+     * Execute the given callback while selecting the given columns.
+     *
+     * After running the callback, the columns are reset to the original value.
+     *
+     * @param  array  $columns
+     * @param  callable  $callback
+     * @return mixed
+     */
+    protected function onceWithColumns($columns, $callback)
+    {
+        $original = (fn () => $this->QBSelect)->call($this->query);
+
+        if (empty($original)) {
+            (fn () => $this->QBSelect = $columns)->call($this->query);
+        }
+
+        $result = $callback();
+
+        (fn () => $this->QBSelect = $original)->call($this->query);
+
+        return $result;
+    }
+
+    /**
+     * Strip off the table name or alias from a column identifier.
+     *
+     * @param  string  $column
+     * @return string|null
+     */
+    protected function stripTableForPluck($column)
+    {
+        if (is_null($column)) {
+            return $column;
+        }
+
+        $separator = strpos(strtolower($column), ' as ') !== false ? ' as ' : '\.';
+
+        return last(preg_split('~'.$separator.'~i', $column));
+    }
+
+    /**
+     * Retrieve column values from rows represented as arrays.
+     *
+     * @param  array  $queryResult
+     * @param  string  $column
+     * @param  string  $key
+     * @return \Tightenco\Collect\Support\Collection
+     */
+    protected function pluckFromArrayColumn($queryResult, $column, $key)
+    {
+        $results = [];
+
+        if (is_null($key)) {
+            foreach ($queryResult as $row) {
+                $results[] = $row[$column];
+            }
+        } else {
+            foreach ($queryResult as $row) {
+                $results[$row[$key]] = $row[$column];
+            }
+        }
+
+        return collect($results);
+    }
+
+    /**
+     * Retrieve column values from rows represented as objects.
+     *
+     * @param  array  $queryResult
+     * @param  string  $column
+     * @param  string  $key
+     * @return \Tightenco\Collect\Support\Collection
+     */
+    protected function pluckFromObjectColumn($queryResult, $column, $key)
+    {
+        $results = [];
+
+        if (is_null($key)) {
+            foreach ($queryResult as $row) {
+                $results[] = $row->$column;
+            }
+        } else {
+            foreach ($queryResult as $row) {
+                $results[$row->$key] = $row->$column;
+            }
+        }
+
+        return collect($results);
+    }
 
     /**
      * Paginate the given query.

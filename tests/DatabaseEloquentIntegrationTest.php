@@ -57,7 +57,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
         ->addPrimaryKey('id')
         ->createTable('with_json', true);
 
-        $this->schema('second_connection')->addField([
+        $this->schema('default')->addField([
             'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
@@ -75,7 +75,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
         ->addPrimaryKey('id')
         ->createTable('users_with_space_in_colum_name', true);
 
-        foreach (['tests', 'second_tests'] as $connection) {
+        foreach (['tests', 'default'] as $connection) {
             $this->schema($connection)->addField([
                 'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
                 'name' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
@@ -179,7 +179,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
      */
     protected function tearDown(): void
     {
-        foreach (['tests', 'second_default'] as $connection) {
+        foreach (['tests', 'default'] as $connection) {
             $this->schema($connection)->dropTable('users_5', true);
             $this->schema($connection)->dropTable('friends', true);
             $this->schema($connection)->dropTable('posts_5', true);
@@ -1943,29 +1943,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
      */
     protected function connection($connection = 'tests')
     {
-        $second_tests = [
-            'DSN'      => '',
-            'hostname' => '127.0.0.1',
-            'username' => '',
-            'password' => '',
-            'database' => ':memory:',
-            'DBDriver' => 'SQLite3',
-            'DBPrefix' => 'db_',  // Needed to ensure we're working correctly with prefixes live. DO NOT REMOVE FOR CI DEVS
-            'pConnect' => false,
-            'DBDebug'  => (ENVIRONMENT !== 'production'),
-            'charset'  => 'utf8',
-            'DBCollat' => 'utf8_general_ci',
-            'swapPre'  => '',
-            'encrypt'  => false,
-            'compress' => false,
-            'strictOn' => false,
-            'failover' => [],
-            'port'     => 3306,
-        ];
-
-        $connection = $connection == 'tests' ? 'tests' : $second_tests;
-
-        return Eloquent::resolveConnection($connection);
+        return Config::connect($connection);
     }
 
     /**
