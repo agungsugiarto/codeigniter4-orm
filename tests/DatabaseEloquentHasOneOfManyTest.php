@@ -2,24 +2,70 @@
 
 namespace Fluent\Orm\Tests;
 
+use CodeIgniter\Database\Config;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use Fluent\Orm\Model as Eloquent;
 use Fluent\Orm\SoftDeletes;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group one-of-many
  */
-class DatabaseEloquentHasOneOfManyTest extends CIUnitTestCase
+class DatabaseEloquentHasOneOfManyTest extends TestCase
 {
-    use DatabaseTestTrait;
+    /**
+     * Setup the database schema.
+     *
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        $this->createSchema();
+    }
 
-    /** {@inheritdoc} */
-    protected $namespace = 'Fluent\Orm\Tests';
+    protected function createSchema()
+    {
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('users', true);
 
-    /** {@inheritdoc} */
-    protected $refresh = true;
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'deleted_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('logins', true);
+
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'state' => ['type' => 'varchar', 'constraint' => 255],
+            'type' => ['type' => 'varchar', 'constraint' => 255],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('states', true);
+
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true],
+            'published_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->addPrimaryKey('id')
+        ->createTable('prices', true);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->schema()->dropTable('users', true);
+        $this->schema()->dropTable('logins', true);
+        $this->schema()->dropTable('states', true);
+        $this->schema()->dropTable('prices', true);
+    }
 
     // public function testItGuessesRelationName()
     // {
@@ -337,6 +383,16 @@ class DatabaseEloquentHasOneOfManyTest extends CIUnitTestCase
     //     $user->latest_login_with_soft_deletes;
     //     $this->assertNotNull($user->latest_login_with_soft_deletes);
     // }
+
+    /**
+     * Get a schema builder instance.
+     *
+     * @return \CodeIgniter\Database\Forge
+     */
+    protected function schema()
+    {
+        return Config::forge();
+    }
 }
 
 /**
@@ -344,7 +400,7 @@ class DatabaseEloquentHasOneOfManyTest extends CIUnitTestCase
  */
 class HasOneOfManyTestUser extends Eloquent
 {
-    protected $table = 'users_3';
+    protected $table = 'users';
     protected $guarded = [];
     public $timestamps = false;
 

@@ -2,21 +2,69 @@
 
 namespace Fluent\Orm\Tests;
 
-use CodeIgniter\Test\CIUnitTestCase;
-use CodeIgniter\Test\DatabaseTestTrait;
+use CodeIgniter\Database\Config;
 use Fluent\Orm\Model as Eloquent;
 use Fluent\Orm\Exceptions\ModelNotFoundException;
 use Fluent\Orm\SoftDeletes;
+use PHPUnit\Framework\TestCase;
 
-class DatabaseEloquentHasOneThroughIntegrationTest extends CIUnitTestCase
+class DatabaseEloquentHasOneThroughIntegrationTest extends TestCase
 {
-    use DatabaseTestTrait;
+    protected function setUp(): void
+    {
+        $this->createSchema();
+    }
 
-    /** {@inheritdoc} */
-    protected $namespace = 'Fluent\Orm\Tests';
+    /**
+     * Setup the database schema.
+     *
+     * @return void
+     */
+    public function createSchema()
+    {
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'email' => ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
+            'position_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'unique' => true, 'null' => true],
+            'position_short' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+            'deleted_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->createTable('users', true);
 
-    /** {@inheritdoc} */
-    protected $refresh = true;
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'user_id' => ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
+            'title' => ['type' => 'varchar', 'constraint' => 255],
+            'body' => ['type' => 'varchar', 'constraint' => 255],
+            'email' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->createTable('contracts', true);
+
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'name' => ['type' => 'varchar', 'constraint' => 255],
+            'shortname' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->createTable('positions', true);
+    }
+
+    /**
+     * Tear down the database schema.
+     *
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        $this->schema()->dropTable('users');
+        $this->schema()->dropTable('contracts');
+        $this->schema()->dropTable('positions');
+    }
 
     public function testItLoadsAHasOneThroughRelationWithCustomKeys()
     {
@@ -28,11 +76,14 @@ class DatabaseEloquentHasOneThroughIntegrationTest extends CIUnitTestCase
 
     public function testItLoadsADefaultHasOneThroughRelation()
     {
+        $this->migrateDefault();
         $this->seedDefaultData();
 
         $contract = HasOneThroughDefaultTestPosition::first()->contract;
         $this->assertSame('A title', $contract->title);
         $this->assertArrayNotHasKey('email', $contract->getAttributes());
+
+        $this->resetDefault();
     }
 
     public function testItLoadsARelationWithCustomIntermediateAndLocalKey()
@@ -51,15 +102,15 @@ class DatabaseEloquentHasOneThroughIntegrationTest extends CIUnitTestCase
         $this->assertSame('A title', $contract->title);
     }
 
-    // public function testWhereHasOnARelationWithCustomIntermediateAndLocalKey()
-    // {
-    //     $this->seedData();
-    //     $position = HasOneThroughIntermediateTestPosition::whereHas('contract', function ($query) {
-    //         $query->where('title', 'A title');
-    //     })->get();
+    public function testWhereHasOnARelationWithCustomIntermediateAndLocalKey()
+    {
+        $this->seedData();
+        $position = HasOneThroughIntermediateTestPosition::whereHas('contract', function ($query) {
+            $query->where('title', 'A title');
+        })->get();
 
-    //     $this->assertCount(1, $position);
-    // }
+        $this->assertCount(1, $position);
+    }
 
     public function testFirstOrFailThrowsAnException()
     {
@@ -139,26 +190,26 @@ class DatabaseEloquentHasOneThroughIntegrationTest extends CIUnitTestCase
         });
     }
 
-    // public function testCursorReturnsCorrectModels()
-    // {
-    //     $this->seedData();
-    //     $this->seedDataExtended();
-    //     $position = HasOneThroughTestPosition::find(1);
+    public function testCursorReturnsCorrectModels()
+    {
+        $this->seedData();
+        $this->seedDataExtended();
+        $position = HasOneThroughTestPosition::find(1);
 
-    //     $contracts = $position->contract()->cursor();
+        $contracts = $position->contract()->cursor();
 
-    //     foreach ($contracts as $contract) {
-    //         $this->assertEquals([
-    //             'id',
-    //             'user_id',
-    //             'title',
-    //             'body',
-    //             'email',
-    //             'created_at',
-    //             'updated_at',
-    //             'laravel_through_key', ], array_keys($contract->getAttributes()));
-    //     }
-    // }
+        foreach ($contracts as $contract) {
+            $this->assertEquals([
+                'id',
+                'user_id',
+                'title',
+                'body',
+                'email',
+                'created_at',
+                'updated_at',
+                'laravel_through_key', ], array_keys($contract->getAttributes()));
+        }
+    }
 
     public function testEachReturnsCorrectModels()
     {
@@ -245,6 +296,59 @@ class DatabaseEloquentHasOneThroughIntegrationTest extends CIUnitTestCase
             ->user()->create(['id' => 1, 'email' => 'taylorotwell@gmail.com'])
             ->contract()->create(['title' => 'A title', 'body' => 'A body']);
     }
+
+    /**
+     * Drop the default tables.
+     */
+    protected function resetDefault()
+    {
+        $this->schema()->dropTable('users_default');
+        $this->schema()->dropTable('contracts_default');
+        $this->schema()->dropTable('positions_default');
+    }
+
+    /**
+     * Migrate tables for classes with a Laravel "default" HasOneThrough setup.
+     */
+    protected function migrateDefault()
+    {
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'email' => ['type' => 'varchar', 'constraint' => 255, 'unique' => true],
+            'has_one_through_default_test_position_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'unique' => true, 'null' => true],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->createTable('users_default', true);
+
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'has_one_through_default_test_user_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'unique' => true],
+            'title' => ['type' => 'varchar', 'constraint' => 255],
+            'body' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->createTable('contracts_default', true);
+
+        $this->schema()->addField([
+            'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'name' => ['type' => 'varchar', 'constraint' => 255],
+            'created_at' => ['type' => 'datetime', 'null' => true],
+            'updated_at' => ['type' => 'datetime', 'null' => true],
+        ])
+        ->createTable('positions_default', true);
+    }
+
+    /**
+     * Get a schema builder instance.
+     *
+     * @return \CodeIgniter\Database\Forge
+     */
+    protected function schema()
+    {
+        return Config::forge();
+    }
 }
 
 /**
@@ -252,7 +356,7 @@ class DatabaseEloquentHasOneThroughIntegrationTest extends CIUnitTestCase
  */
 class HasOneThroughTestUser extends Eloquent
 {
-    protected $table = 'users_4';
+    protected $table = 'users';
     protected $guarded = [];
 
     public function contract()
@@ -296,7 +400,7 @@ class HasOneThroughTestPosition extends Eloquent
  */
 class HasOneThroughDefaultTestUser extends Eloquent
 {
-    protected $table = 'users_4_default';
+    protected $table = 'users_default';
     protected $guarded = [];
 
     public function contract()
@@ -355,7 +459,7 @@ class HasOneThroughSoftDeletesTestUser extends Eloquent
 {
     use SoftDeletes;
 
-    protected $table = 'users_4';
+    protected $table = 'users';
     protected $guarded = [];
 
     public function contract()

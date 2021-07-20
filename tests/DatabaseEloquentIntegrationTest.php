@@ -1246,8 +1246,8 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
         $array = $model->toArray();
 
-        $this->assertSame('2012-12-04T06:00:00.000000Z', $array['created_at']);
-        $this->assertSame('2012-12-05T06:00:00.000000Z', $array['updated_at']);
+        $this->assertSame('2012-12-04T00:00:00.000000Z', $array['created_at']);
+        $this->assertSame('2012-12-05T00:00:00.000000Z', $array['updated_at']);
     }
 
     public function testToArrayIncludesCustomFormattedTimestamps()
