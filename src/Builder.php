@@ -1192,9 +1192,9 @@ class Builder
             $values
         );
 
-        $segments = preg_split('/\s+as\s+/i', last((fn () => $this->QBFrom)->call($this->query)));
+        $segments = preg_split('/\s+as\s+/i', $this->query->getTable());
 
-        $qualifiedColumn = last($segments) . '.' . $column;
+        $qualifiedColumn = end($segments) . '.' . $column;
 
         $values[$qualifiedColumn] = $values[$column];
 

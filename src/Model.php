@@ -1541,7 +1541,7 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
     /**
      * Get the connection resolver instance.
      *
-     * @return \CodeIgniter\Database\ConnectionInterface
+     * @return \CodeIgniter\Database\BaseConnection
      */
     public static function getConnectionResolver()
     {
