@@ -186,7 +186,8 @@ class Factory implements ArrayAccess
     public function raw($class, array $attributes = [])
     {
         return array_merge(
-            call_user_func($this->definitions[$class], $this->faker), $attributes
+            call_user_func($this->definitions[$class], $this->faker),
+            $attributes
         );
     }
 

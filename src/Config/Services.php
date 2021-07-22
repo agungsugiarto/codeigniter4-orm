@@ -17,7 +17,7 @@ class Services extends BaseService
 
     /**
      * Service faker instance.
-     * 
+     *
      * @param string $locale
      * @param bool $getShared
      * @return \Faker\Generator
@@ -39,7 +39,7 @@ class Services extends BaseService
 
     /**
      * Service orm factory instance.
-     * 
+     *
      * @param string $pathToFactories
      * @param string $locale
      * @param bool $getShared
