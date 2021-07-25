@@ -664,7 +664,7 @@ class Builder
      */
     public function getModels($columns = [])
     {
-        return $this->model->hydrate(
+        return $this->hydrate(
             $this->query->select($columns)->get()->getResult()
         )->all();
     }
