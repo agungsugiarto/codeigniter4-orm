@@ -194,7 +194,7 @@ class FactoryBuilder
      */
     public function createMany(iterable $records)
     {
-        return (new $this->class)->newCollection(array_map(function ($attribute) {
+        return (new $this->class())->newCollection(array_map(function ($attribute) {
             return $this->create($attribute);
         }, $records));
     }
@@ -231,10 +231,10 @@ class FactoryBuilder
         }
 
         if ($this->amount < 1) {
-            return (new $this->class)->newCollection();
+            return (new $this->class())->newCollection();
         }
 
-        $instances = (new $this->class)->newCollection(array_map(function () use ($attributes) {
+        $instances = (new $this->class())->newCollection(array_map(function () use ($attributes) {
             return $this->makeInstance($attributes);
         }, range(1, $this->amount)));
 
@@ -280,7 +280,8 @@ class FactoryBuilder
 
         $definition = call_user_func(
             $this->definitions[$this->class],
-            $this->faker, $attributes
+            $this->faker,
+            $attributes
         );
 
         return $this->expandAttributes(
