@@ -888,7 +888,7 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
 
             if (
                 ! $this->getConnectionName() &&
-                $connection = $query->getQuery()->db()
+                $connection = array_keys(Config::getConnections())[0]
             ) {
                 $this->setConnection($connection);
             }
