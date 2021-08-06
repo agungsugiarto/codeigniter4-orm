@@ -1386,7 +1386,8 @@ class Builder
         // scope so that we can properly group the added scope constraints in the
         // query as their own isolated nested where statement and avoid issues.
         $originalWhereCount = is_null($query->getCompiledQBWhere())
-                    ? 0 : count($query->getCompiledQBWhere());
+            ? 0
+            : count($query->getCompiledQBWhere());
 
         $result = $scope(...array_values($parameters)) ?? $this;
 
@@ -1453,12 +1454,12 @@ class Builder
         // booleans and in this case create a nested where expression. That way
         // we don't add any unnecessary nesting thus keeping the query clean.
         if ($whereBooleans->contains('or')) {
-            $query->wheres[] = $this->createNestedWhere(
+            (fn () => $this->QBWhere[] = $this->createNestedWhere(
                 $whereSlice,
                 $whereBooleans->first()
-            );
+            ))->call($query);
         } else {
-            $query->wheres = array_merge($query->getCompiledQBWhere(), $whereSlice);
+            (fn () => $this->QBWhere = array_merge($query->getCompiledQBWhere(), $whereSlice))->call($query);
         }
     }
 
@@ -1555,10 +1556,10 @@ class Builder
                 $name = $constraints;
 
                 [$name, $constraints] = Str::contains($name, ':')
-                            ? $this->createSelectWithConstraint($name)
-                            : [$name, static function () {
-                                //
-                            }];
+                    ? $this->createSelectWithConstraint($name)
+                    : [$name, static function () {
+                        //
+                    }];
             }
 
             // We need to separate out any nested includes, which allows the developers
@@ -1587,8 +1588,8 @@ class Builder
                 }
 
                 return $query instanceof BelongsToMany
-                        ? $query->getRelated()->getTable().'.'.$column
-                        : $column;
+                    ? $query->getRelated()->getTable().'.'.$column
+                    : $column;
             }, explode(',', explode(':', $name)[1])));
         }];
     }

@@ -15,9 +15,9 @@ trait ExplainsQueries
     {
         $sql = $this->toSql();
 
-        $bindings = $this->getBindings();
+        $bindings = $this->query->getBinds();
 
-        $explanation = $this->getConnection()->select('EXPLAIN ' . $sql, $bindings);
+        $explanation = $this->fromQuery('EXPLAIN ' . $sql, $bindings);
 
         return new Collection($explanation);
     }

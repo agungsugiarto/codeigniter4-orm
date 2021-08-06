@@ -132,7 +132,7 @@ trait BuildsQueries
      */
     public function toSql()
     {
-        return $this->query->getCompiledSelect();
+        return $this->toBase()->getCompiledSelect();
     }
 
     /**

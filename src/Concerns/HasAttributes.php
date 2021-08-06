@@ -252,7 +252,7 @@ trait HasAttributes
             }
 
             if ($attributes[$key] && $this->isCustomDateTimeCast($value)) {
-                $attributes[$key] = $attributes[$key]->format(explode(':', $value, 2)[1]);
+                $attributes[$key] = $attributes[$key]->translatedFormat(explode(':', $value, 2)[1]);
             }
 
             if (
