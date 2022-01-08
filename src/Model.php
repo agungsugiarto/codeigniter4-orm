@@ -457,15 +457,15 @@ class Model implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
         return $instance->newQuery();
     }
 
-    // /**
-    //  * Begin querying the model on the write connection.
-    //  *
-    //  * @return \CodeIgniter\Database\BaseBuilder
-    //  */
-    // public static function onWriteConnection()
-    // {
-    //     return static::query()->useWritePdo();
-    // }
+    /**
+     * Begin querying the model on the write connection.
+     *
+     * @return \CodeIgniter\Database\BaseBuilder
+     */
+    public static function onWriteConnection()
+    {
+        return static::query()->useWritePdo();
+    }
 
     /**
      * Get all of the models from the database.

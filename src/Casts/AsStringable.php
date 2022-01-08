@@ -4,8 +4,9 @@ namespace Fluent\Orm\Casts;
 
 use Fluent\Orm\Contracts\Castable;
 use Fluent\Orm\Contracts\CastsAttributes;
+use Fluent\Orm\Support\Str;
 
-class AsArrayObject implements Castable
+class AsStringable implements Castable
 {
     /**
      * Get the caster class to use when casting from / to this cast target.
@@ -18,17 +19,12 @@ class AsArrayObject implements Castable
         return new class () implements CastsAttributes {
             public function get($model, $key, $value, $attributes)
             {
-                return isset($attributes[$key]) ? new ArrayObject(json_decode($attributes[$key], true)) : null;
+                return isset($value) ? Str::of($value) : null;
             }
 
             public function set($model, $key, $value, $attributes)
             {
-                return [$key => json_encode($value)];
-            }
-
-            public function serialize($model, string $key, $value, array $attributes)
-            {
-                return $value->getArrayCopy();
+                return isset($value) ? (string) $value : null;
             }
         };
     }
