@@ -16,8 +16,7 @@ class AsStringable implements Castable
      */
     public static function castUsing(array $arguments)
     {
-        return new class implements CastsAttributes
-        {
+        return new class () implements CastsAttributes {
             public function get($model, $key, $value, $attributes)
             {
                 return isset($value) ? Str::of($value) : null;
