@@ -164,7 +164,7 @@ trait HasEvents
         if (isset(static::$dispatcher)) {
             $name = static::class;
 
-            static::$dispatcher->listen("eloquent.{$event}: {$name}", $callback);
+            static::$dispatcher->listen("orm.{$event}: {$name}", $callback);
         }
     }
 
@@ -194,10 +194,9 @@ trait HasEvents
             return false;
         }
 
-        return ! empty($result) ? $result : static::$dispatcher->{$method}(
-            "eloquent.{$event}: ".static::class,
-            $this
-        );
+        return ! empty($result)
+            ? $result
+            : static::$dispatcher->{$method}("orm.{$event}: ".static::class, $this);
     }
 
     /**
@@ -213,7 +212,7 @@ trait HasEvents
             return;
         }
 
-        $result = static::$dispatcher->$method(new $this->dispatchesEvents[$event]($this));
+        $result = static::$dispatcher->{$method}(new $this->dispatchesEvents[$event]($this));
 
         if (! is_null($result)) {
             return $result;
@@ -361,7 +360,7 @@ trait HasEvents
         $instance = new static();
 
         foreach ($instance->getObservableEvents() as $event) {
-            static::$dispatcher->forget("eloquent.{$event}: ".static::class);
+            static::$dispatcher->forget("orm.{$event}: ".static::class);
         }
 
         foreach (array_values($instance->dispatchesEvents) as $event) {
