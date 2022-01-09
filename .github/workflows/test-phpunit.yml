@@ -1,0 +1,89 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php-versions }} - ${{ matrix.db-platforms }}
+    runs-on: ubuntu-20.04
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.4', '8.0', '8.1']
+        db-platforms: ['MySQLi', 'Postgre', 'SQLite3', 'SQLSRV']
+        mysql-versions: ['5.7']
+        include:
+          - php-versions: '7.4'
+            db-platforms: MySQLi
+            mysql-versions: '8.0'
+
+    services:
+      mysql:
+        image: mysql:${{ matrix.mysql-versions }}
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
+
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-CU10-ubuntu-20.04
+        env:
+          SA_PASSWORD: 1Secure*Password1
+          ACCEPT_EULA: Y
+          MSSQL_PID: Developer
+        ports:
+          - 1433:1433
+        options: --health-cmd="/opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -U sa -P 1Secure*Password1 -Q 'SELECT @@VERSION'" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Create database for MSSQL Server
+        if: matrix.db-platforms == 'SQLSRV'
+        run: sqlcmd -S 127.0.0.1 -U sa -P 1Secure*Password1 -Q "CREATE DATABASE test"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          tools: composer, pecl
+          extensions: imagick, sqlsrv, gd, sqlite3, redis, memcached, pgsql
+          coverage: xdebug
+        env:
+          update: true
+
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer update --ansi --no-interaction
+
+      - name: Test with PHPUnit
+        run: script -e -c "vendor/bin/phpunit --color=always"
+        env:
+          DB: ${{ matrix.db-platforms }}
+          TERM: xterm-256color
