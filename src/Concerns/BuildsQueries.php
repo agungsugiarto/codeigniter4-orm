@@ -23,13 +23,9 @@ trait BuildsQueries
      */
     public function mergeWheres($wheres, $bindings)
     {
-        $whereBind = $this->query->getCompiledQBWhere() ?? [];
+        invade($this->query)->QBWhere = array_merge($this->query->getCompiledQBWhere(), (array) $wheres);
 
-        (fn () => $this->QBWhere = array_merge($whereBind, (array) $wheres))->call($this->query);
-
-        (fn () => $this->QBWhere = array_values(
-            array_merge($this->getCompiledQBWhere(), (array) $bindings)
-        ))->call($this->query);
+        invade($this->query)->binds = array_merge($this->query->getBinds(), (array) $bindings);
     }
 
     /**

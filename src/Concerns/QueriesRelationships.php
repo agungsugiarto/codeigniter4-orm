@@ -367,8 +367,8 @@ trait QueriesRelationships
             return $this;
         }
 
-        if (is_null((fn () => $this->QBSelect)->call($this->query))) {
-            $this->query->select([$this->query->getTable . '.*']);
+        if (! invade($this->query)->QBSelect) {
+            $this->query->select("{$this->query->getTable()}.*");
         }
 
         $relations = is_array($relations) ? $relations : [$relations];

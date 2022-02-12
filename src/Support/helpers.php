@@ -1,5 +1,7 @@
 <?php
 
+use Fluent\Orm\Support\Invader;
+
 if (! function_exists('last')) {
     /**
      * Get the last element from an array.
@@ -31,5 +33,21 @@ if (! function_exists('factory')) {
         }
 
         return $factory->of($class);
+    }
+}
+
+if (! function_exists('invade')) {
+    /**
+     * This class offers an invade function that will allow you to read/write private properties of an object.
+     * It will also allow you to set, get and call private methods.
+     *
+     * @param object $object
+     * @return Invader
+     *
+     * @see https://github.com/spatie/invade/blob/main/src/Invader.php
+     */
+    function invade(object $object)
+    {
+        return new Invader($object);
     }
 }

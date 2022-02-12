@@ -267,7 +267,7 @@ class Builder
     {
         $type = $not ? 'IS NOT NULL' : 'IS NULL';
 
-        (fn () => $this->whereHaving('QBWhere', "{$columns} {$type}", null, "{$boolean} ", false))->call($this->query);
+        invade($this->query)->whereHaving('QBWhere', "{$columns} {$type}", null, "{$boolean} ", false);
 
         return $this;
     }
@@ -304,7 +304,7 @@ class Builder
             func_num_args() === 2
         );
 
-        (fn () => $this->whereHaving('QBWhere', "{$first} {$operator}", $second, "{$boolean} ", false))->call($this->query);
+        invade($this->query)->whereHaving('QBWhere', "{$first} {$operator}", $second, "{$boolean} ", false);
 
         return $this;
     }
@@ -344,7 +344,7 @@ class Builder
 
         $columnAndOperator = is_array($column) ? $column : "{$column} {$operator}";
 
-        (fn () => $this->whereHaving('QBWhere', $columnAndOperator, $value, "{$boolean} ", true))->call($this->query);
+        invade($this->query)->whereHaving('QBWhere', $columnAndOperator, $value, "{$boolean} ", true);
 
         return $this;
     }
@@ -866,15 +866,15 @@ class Builder
      */
     protected function onceWithColumns($columns, $callback)
     {
-        $original = (fn () => $this->QBSelect)->call($this->query);
+        $original = invade($this->query)->QBSelect;
 
         if (empty($original)) {
-            (fn () => $this->QBSelect = $columns)->call($this->query);
+            invade($this->query)->QBSelect = $columns;
         }
 
         $result = $callback();
 
-        (fn () => $this->QBSelect = $original)->call($this->query);
+        invade($this->query)->QBSelect = $original;
 
         return $result;
     }
@@ -1426,7 +1426,7 @@ class Builder
         // their own sections. This is to prevent any confusing logic order.
         $allWheres = $query->getCompiledQBWhere();
 
-        (fn () => $query->QBWhere = [])->call($query);
+        invade($this->query)->QBWhere = [];
 
         $this->groupWhereSliceForScope(
             $query,
@@ -1454,12 +1454,12 @@ class Builder
         // booleans and in this case create a nested where expression. That way
         // we don't add any unnecessary nesting thus keeping the query clean.
         if ($whereBooleans->contains('or')) {
-            (fn () => $this->QBWhere[] = $this->createNestedWhere(
+            invade($query)->QBWhere[] = $this->createNestedWhere(
                 $whereSlice,
                 $whereBooleans->first()
-            ))->call($query);
+            );
         } else {
-            (fn () => $this->QBWhere = array_merge($query->getCompiledQBWhere(), $whereSlice))->call($query);
+            invade($query)->QBWhere = array_merge($query->getCompiledQBWhere(), $whereSlice);
         }
     }
 

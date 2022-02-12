@@ -789,7 +789,7 @@ class BelongsToMany extends Relation
         // models with the result of those columns as a separate model relation.
         $builder = $this->query->applyScopes();
 
-        $columns = (fn () => $this->QBSelect)->call($builder->getQuery()) ? [] : $columns;
+        $columns = invade($builder->getQuery())->QBSelect ?: $columns;
 
         $models = $builder->select(
             $this->shouldSelect($columns)
@@ -1194,7 +1194,7 @@ class BelongsToMany extends Relation
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        if ((fn () => $this->QBFrom)->call($parentQuery->getQuery()) == (fn () => $this->QBFrom)->call($query->getQuery())) {
+        if (invade($parentQuery->getQuery())->QBFrom == invade($query->getQuery())->QBFrom) {
             return $this->getRelationExistenceQueryForSelfJoin($query, $parentQuery, $columns);
         }
 

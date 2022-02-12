@@ -548,7 +548,7 @@ class HasManyThrough extends Relation
         $builder = $this->query->applyScopes();
 
         return $builder->select(
-            $this->shouldSelect((fn () => $this->QBSelect)->call($builder->getQuery()) ? [] : $columns)
+            $this->shouldSelect(invade($builder->getQuery())->QBSelect ?: $columns)
         );
     }
 
