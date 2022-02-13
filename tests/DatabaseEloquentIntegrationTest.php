@@ -72,6 +72,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('users_with_space_in_colum_name', true);
 
         foreach (['default', 'tests'] as $connection) {
