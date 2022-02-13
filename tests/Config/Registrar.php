@@ -81,6 +81,25 @@ class Registrar
             'failover' => [],
             'port'     => 3306,
         ],
+        'second_connection' => [
+            'DSN'      => '',
+            'hostname' => '127.0.0.1',
+            'username' => '',
+            'password' => '',
+            'database' => ':memory:',
+            'DBDriver' => 'SQLite3',
+            'DBPrefix' => '',
+            'pConnect' => false,
+            'DBDebug'  => (ENVIRONMENT !== 'production'),
+            'charset'  => 'utf8',
+            'DBCollat' => 'utf8_general_ci',
+            'swapPre'  => '',
+            'encrypt'  => false,
+            'compress' => false,
+            'strictOn' => false,
+            'failover' => [],
+            'port'     => 3306,
+        ],
         'SQLSRV' => [
             'DSN'      => '',
             'hostname' => 'localhost',
@@ -136,6 +155,8 @@ class Registrar
                 $config['tests'] = self::$dbConfig[$group];
             }
         }
+
+        $config['second_connection'] = self::$dbConfig['second_connection'];
 
         return $config;
     }
