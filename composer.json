@@ -51,6 +51,6 @@
         }
     },
     "scripts": {
-        "test": "phpunit --dont-report-useless-tests --colors=always"
+        "test": "phpunit --dont-report-useless-tests --colors=always --verbose"
     }
 }

@@ -82,7 +82,7 @@ jobs:
           composer update --ansi --no-interaction
 
       - name: Test with PHPUnit
-        run: script -e -c "vendor/bin/phpunit --color=always"
+        run: script -e -c "vendor/bin/phpunit --color=always --verbose"
         env:
           DB: ${{ matrix.db-platforms }}
           TERM: xterm-256color
