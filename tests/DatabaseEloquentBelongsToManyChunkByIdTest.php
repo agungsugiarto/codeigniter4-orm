@@ -4,11 +4,14 @@ namespace Fluent\Orm\Tests;
 
 use CodeIgniter\Database\Config;
 use CodeIgniter\Test\CIUnitTestCase;
+use CodeIgniter\Test\DatabaseTestTrait;
 use Fluent\Orm\Model;
 use Tightenco\Collect\Support\Collection;
 
 class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
 {
+    use DatabaseTestTrait;
+
     /**
      * Setup the database schema.
      *
