@@ -322,6 +322,7 @@ class DatabaseEloquentHasOneThroughIntegrationTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('users_default', true);
 
         $this->schema()->addField([
@@ -332,6 +333,7 @@ class DatabaseEloquentHasOneThroughIntegrationTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('contracts_default', true);
 
         $this->schema()->addField([
@@ -340,6 +342,7 @@ class DatabaseEloquentHasOneThroughIntegrationTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('positions_default', true);
     }
 
