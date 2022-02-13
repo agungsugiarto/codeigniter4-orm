@@ -52,7 +52,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
         $this->schema('tests')->addField([
             'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'json' => ['type' => 'text', 'default' => json_encode([])],
+            'json' => ['type' => 'text'],
         ])
         ->addPrimaryKey('id')
         ->createTable('with_json', true);
