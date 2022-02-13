@@ -35,7 +35,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
      */
     protected function setUp(): void
     {
-        $default = [
+        $second_connection = [
             'DSN'      => '',
             'hostname' => '127.0.0.1',
             'username' => '',
@@ -55,7 +55,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
             'port'     => 3306,
         ];
 
-        Config::forge($default);
+        Config::forge($second_connection);
 
         $this->createSchema();
     }
@@ -97,7 +97,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
         ->addPrimaryKey('id')
         ->createTable('users_with_space_in_colum_name', true);
 
-        foreach (['default', 'tests'] as $connection) {
+        foreach (['second_connection', 'tests'] as $connection) {
             $this->schema($connection)->addField([
                 'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
                 'name' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
@@ -201,7 +201,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
      */
     protected function tearDown(): void
     {
-        foreach (['tests', 'default'] as $connection) {
+        foreach (['tests', 'second_connection'] as $connection) {
             $this->schema($connection)->dropTable('users', true);
             $this->schema($connection)->dropTable('friends', true);
             $this->schema($connection)->dropTable('posts', true);
