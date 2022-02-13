@@ -185,6 +185,15 @@ class DatabaseEloquentIntegrationTest extends TestCase
             $this->schema($connection)->dropTable('posts', true);
             $this->schema($connection)->dropTable('friend_levels', true);
             $this->schema($connection)->dropTable('photos', true);
+            $this->schema($connection)->dropTable('non_incrementing_users', true);
+            $this->schema($connection)->dropTable('soft_deleted_users', true);
+            $this->schema($connection)->dropTable('taggables', true);
+            $this->schema($connection)->dropTable('tags', true);
+            $this->schema($connection)->dropTable('test_items', true);
+            $this->schema($connection)->dropTable('test_orders', true);
+            $this->schema($connection)->dropTable('users_with_space_in_colum_name', true);
+            $this->schema($connection)->dropTable('with_json', true);
+            $this->schema($connection)->dropTable('comments', true);
         }
 
         Relation::morphMap([], false);

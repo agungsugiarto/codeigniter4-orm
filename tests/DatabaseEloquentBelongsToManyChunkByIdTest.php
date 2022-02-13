@@ -72,11 +72,6 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
         $this->assertSame(3, $i);
     }
 
-    public function testGetDriverDatabase()
-    {
-        $this->markTestSkipped(sprintf("Database driver: %s", config('Database')->tests['DBDriver']));
-    }
-
     /**
      * Helpers...
      */

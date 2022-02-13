@@ -58,6 +58,8 @@ class DatabaseEloquentIrregularPluralTest extends TestCase
         $this->schema()->dropTable('irregular_plural_tokens');
         $this->schema()->dropTable('irregular_plural_humans');
         $this->schema()->dropTable('irregular_plural_human_irregular_plural_token');
+        $this->schema()->dropTable('irregular_plural_mottoes');
+        $this->schema()->dropTable('cool_mottoes');
     }
 
     protected function schema()
