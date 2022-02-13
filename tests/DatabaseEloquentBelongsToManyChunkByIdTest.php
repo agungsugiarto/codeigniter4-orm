@@ -106,7 +106,7 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
      */
     protected function schema()
     {
-        return Config::forge();
+        return Config::forge($this->DBGroup);
     }
 }
 
