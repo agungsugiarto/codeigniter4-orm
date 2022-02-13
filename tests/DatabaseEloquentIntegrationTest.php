@@ -83,6 +83,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
                 'created_at' => ['type' => 'datetime', 'null' => true],
                 'updated_at' => ['type' => 'datetime', 'null' => true],
             ])
+            ->addPrimaryKey('id')
             ->createTable('users', true);
 
             $this->schema($connection)->addField([
@@ -100,6 +101,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
                 'created_at' => ['type' => 'datetime', 'null' => true],
                 'updated_at' => ['type' => 'datetime', 'null' => true],
             ])
+            ->addPrimaryKey('id')
             ->createTable('posts', true);
 
             $this->schema($connection)->addField([
@@ -1934,23 +1936,13 @@ class DatabaseEloquentIntegrationTest extends TestCase
      */
 
     /**
-     * Get a database connection instance.
-     *
-     * @return \CodeIgniter\Database\BaseConnection
-     */
-    protected function connection($connection = 'tests')
-    {
-        return Config::connect($connection);
-    }
-
-    /**
      * Get a schema builder instance.
      *
      * @return \CodeIgniter\Database\Forge
      */
     protected function schema($connection = 'tests')
     {
-        return Config::forge($this->connection($connection));
+        return Config::forge($connection);
     }
 }
 
