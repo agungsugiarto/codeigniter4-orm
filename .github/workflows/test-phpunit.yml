@@ -91,5 +91,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: failure()
         with:
-          name: Logs
-          path: ./writable/logs
+          name: my-artifact
+          path: my_files.zip
