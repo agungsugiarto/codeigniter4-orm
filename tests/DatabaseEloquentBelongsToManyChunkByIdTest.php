@@ -3,12 +3,11 @@
 namespace Fluent\Orm\Tests;
 
 use CodeIgniter\Database\Config;
-use Config\Database;
+use CodeIgniter\Test\CIUnitTestCase;
 use Fluent\Orm\Model;
-use PHPUnit\Framework\TestCase;
 use Tightenco\Collect\Support\Collection;
 
-class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
+class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
 {
     /**
      * Setup the database schema.
@@ -17,6 +16,8 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
      */
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->createSchema();
     }
 
@@ -53,6 +54,8 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
      */
     protected function tearDown(): void
     {
+        parent::tearDown();
+
         $this->schema()->dropTable('users', true);
         $this->schema()->dropTable('articles', true);
         $this->schema()->dropTable('article_user', true);
@@ -75,7 +78,7 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
 
     public function testGetDriverDatabase()
     {
-        $this->markTestSkipped(sprintf("Database driver for default: %s, test: %s", config('Database')->default['DBDriver'], config('Database')->tests['DBDriver']));
+        $this->markTestSkipped(sprintf("Database driver: %s", $this->db->DBDriver));
     }
 
     /**
