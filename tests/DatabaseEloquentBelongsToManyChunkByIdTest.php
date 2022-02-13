@@ -3,6 +3,7 @@
 namespace Fluent\Orm\Tests;
 
 use CodeIgniter\Database\Config;
+use Config\Database;
 use Fluent\Orm\Model;
 use PHPUnit\Framework\TestCase;
 use Tightenco\Collect\Support\Collection;
@@ -70,6 +71,11 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
         });
 
         $this->assertSame(3, $i);
+    }
+
+    public function testGetDriverDatabase()
+    {
+        $this->markTestSkipped("Database driver: " . config(Database::class)->tests['DBDriver']);
     }
 
     /**
