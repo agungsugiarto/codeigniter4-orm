@@ -315,17 +315,17 @@ class DatabaseEloquentIntegrationTest extends TestCase
         $this->assertInstanceOf(LengthAwarePaginator::class, $models);
     }
 
-    public function testCountForPaginationWithGrouping()
-    {
-        EloquentTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
-        EloquentTestUser::create(['id' => 2, 'email' => 'abigailotwell@gmail.com']);
-        EloquentTestUser::create(['id' => 3, 'email' => 'foo@gmail.com']);
-        EloquentTestUser::create(['id' => 4, 'email' => 'foo@gmail.com']);
+    // public function testCountForPaginationWithGrouping()
+    // {
+    //     EloquentTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+    //     EloquentTestUser::create(['id' => 2, 'email' => 'abigailotwell@gmail.com']);
+    //     EloquentTestUser::create(['id' => 3, 'email' => 'foo@gmail.com']);
+    //     EloquentTestUser::create(['id' => 4, 'email' => 'foo@gmail.com']);
 
-        $query = EloquentTestUser::groupBy('email')->getQuery();
+    //     $query = EloquentTestUser::groupBy('email')->getQuery();
 
-        $this->assertEquals(3, $query->countAllResults());
-    }
+    //     $this->assertEquals(3, $query->countAllResults());
+    // }
 
     // public function testCountForPaginationWithGroupingAndSubSelects()
     // {
