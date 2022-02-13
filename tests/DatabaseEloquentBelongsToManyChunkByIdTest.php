@@ -3,15 +3,12 @@
 namespace Fluent\Orm\Tests;
 
 use CodeIgniter\Database\Config;
-use CodeIgniter\Test\CIUnitTestCase;
-use CodeIgniter\Test\DatabaseTestTrait;
 use Fluent\Orm\Model;
+use PHPUnit\Framework\TestCase;
 use Tightenco\Collect\Support\Collection;
 
-class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
+class DatabaseEloquentBelongsToManyChunkByIdTest extends TestCase
 {
-    use DatabaseTestTrait;
-
     /**
      * Setup the database schema.
      *
@@ -19,8 +16,6 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
      */
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->createSchema();
     }
 
@@ -57,8 +52,6 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
      */
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         $this->schema()->dropTable('users', true);
         $this->schema()->dropTable('articles', true);
         $this->schema()->dropTable('article_user', true);
@@ -106,7 +99,7 @@ class DatabaseEloquentBelongsToManyChunkByIdTest extends CIUnitTestCase
      */
     protected function schema()
     {
-        return Config::forge($this->DBGroup);
+        return Config::forge();
     }
 }
 
