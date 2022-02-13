@@ -86,3 +86,10 @@ jobs:
         env:
           DB: ${{ matrix.db-platforms }}
           TERM: xterm-256color
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        if: failure()
+        with:
+          name: Logs
+          path: ./writable/logs
