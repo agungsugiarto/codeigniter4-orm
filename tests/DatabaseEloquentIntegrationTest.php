@@ -52,12 +52,12 @@ class DatabaseEloquentIntegrationTest extends TestCase
 
         $this->schema('tests')->addField([
             'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'json' => ['type' => 'text', 'default' => json_encode([])],
+            'json' => ['type' => 'text'],
         ])
         ->addPrimaryKey('id')
         ->createTable('with_json', true);
 
-        $this->schema('default')->addField([
+        $this->schema('second_connection')->addField([
             'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
@@ -72,9 +72,10 @@ class DatabaseEloquentIntegrationTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('users_with_space_in_colum_name', true);
 
-        foreach (['default', 'tests'] as $connection) {
+        foreach (['second_connection', 'tests'] as $connection) {
             $this->schema($connection)->addField([
                 'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
                 'name' => ['type' => 'varchar', 'constraint' => 255, 'null' => true],
@@ -83,6 +84,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
                 'created_at' => ['type' => 'datetime', 'null' => true],
                 'updated_at' => ['type' => 'datetime', 'null' => true],
             ])
+            ->addPrimaryKey('id')
             ->createTable('users', true);
 
             $this->schema($connection)->addField([
@@ -100,6 +102,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
                 'created_at' => ['type' => 'datetime', 'null' => true],
                 'updated_at' => ['type' => 'datetime', 'null' => true],
             ])
+            ->addPrimaryKey('id')
             ->createTable('posts', true);
 
             $this->schema($connection)->addField([
@@ -176,12 +179,21 @@ class DatabaseEloquentIntegrationTest extends TestCase
      */
     protected function tearDown(): void
     {
-        foreach (['tests', 'default'] as $connection) {
-            $this->schema($connection)->dropTable('users', true);
+        foreach (['tests', 'second_connection'] as $connection) {
             $this->schema($connection)->dropTable('friends', true);
             $this->schema($connection)->dropTable('posts', true);
+            $this->schema($connection)->dropTable('users', true);
             $this->schema($connection)->dropTable('friend_levels', true);
             $this->schema($connection)->dropTable('photos', true);
+            $this->schema($connection)->dropTable('non_incrementing_users', true);
+            $this->schema($connection)->dropTable('soft_deleted_users', true);
+            $this->schema($connection)->dropTable('taggables', true);
+            $this->schema($connection)->dropTable('tags', true);
+            $this->schema($connection)->dropTable('test_items', true);
+            $this->schema($connection)->dropTable('test_orders', true);
+            $this->schema($connection)->dropTable('users_with_space_in_colum_name', true);
+            $this->schema($connection)->dropTable('with_json', true);
+            $this->schema($connection)->dropTable('comments', true);
         }
 
         Relation::morphMap([], false);
@@ -228,7 +240,7 @@ class DatabaseEloquentIntegrationTest extends TestCase
         // $models = EloquentTestUser::where('id', 1)->cursor();
         // foreach ($models as $model) {
         //     $this->assertEquals(1, $model->id);
-        //     $this->assertSame('default', $model->getConnectionName());
+        //     $this->assertSame('second_connection', $model->getConnectionName());
         // }
 
         // $records = DB::table('users')->where('id', 1)->cursor();
@@ -312,17 +324,17 @@ class DatabaseEloquentIntegrationTest extends TestCase
         $this->assertInstanceOf(LengthAwarePaginator::class, $models);
     }
 
-    public function testCountForPaginationWithGrouping()
-    {
-        EloquentTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
-        EloquentTestUser::create(['id' => 2, 'email' => 'abigailotwell@gmail.com']);
-        EloquentTestUser::create(['id' => 3, 'email' => 'foo@gmail.com']);
-        EloquentTestUser::create(['id' => 4, 'email' => 'foo@gmail.com']);
+    // public function testCountForPaginationWithGrouping()
+    // {
+    //     EloquentTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
+    //     EloquentTestUser::create(['id' => 2, 'email' => 'abigailotwell@gmail.com']);
+    //     EloquentTestUser::create(['id' => 3, 'email' => 'foo@gmail.com']);
+    //     EloquentTestUser::create(['id' => 4, 'email' => 'foo@gmail.com']);
 
-        $query = EloquentTestUser::groupBy('email')->getQuery();
+    //     $query = EloquentTestUser::groupBy('email')->getQuery();
 
-        $this->assertEquals(3, $query->countAllResults());
-    }
+    //     $this->assertEquals(3, $query->countAllResults());
+    // }
 
     // public function testCountForPaginationWithGroupingAndSubSelects()
     // {
@@ -491,30 +503,30 @@ class DatabaseEloquentIntegrationTest extends TestCase
     public function testCheckAndCreateMethodsOnMultiConnections()
     {
         EloquentTestUser::create(['id' => 1, 'email' => 'taylorotwell@gmail.com']);
-        EloquentTestUser::on('default')->find(
-            EloquentTestUser::on('default')->insert(['id' => 2, 'email' => 'themsaid@gmail.com'])
+        EloquentTestUser::on('second_connection')->find(
+            EloquentTestUser::on('second_connection')->insert(['id' => 2, 'email' => 'themsaid@gmail.com'])
         );
 
-        $user1 = EloquentTestUser::on('default')->findOrNew(1);
-        $user2 = EloquentTestUser::on('default')->findOrNew(2);
+        $user1 = EloquentTestUser::on('second_connection')->findOrNew(1);
+        $user2 = EloquentTestUser::on('second_connection')->findOrNew(2);
         $this->assertFalse($user1->exists);
         $this->assertTrue($user2->exists);
-        $this->assertSame('default', $user1->getConnectionName());
-        $this->assertSame('default', $user2->getConnectionName());
+        $this->assertSame('second_connection', $user1->getConnectionName());
+        $this->assertSame('second_connection', $user2->getConnectionName());
 
-        $user1 = EloquentTestUser::on('default')->firstOrNew(['email' => 'taylorotwell@gmail.com']);
-        $user2 = EloquentTestUser::on('default')->firstOrNew(['email' => 'themsaid@gmail.com']);
+        $user1 = EloquentTestUser::on('second_connection')->firstOrNew(['email' => 'taylorotwell@gmail.com']);
+        $user2 = EloquentTestUser::on('second_connection')->firstOrNew(['email' => 'themsaid@gmail.com']);
         $this->assertFalse($user1->exists);
         $this->assertTrue($user2->exists);
-        $this->assertSame('default', $user1->getConnectionName());
-        $this->assertSame('default', $user2->getConnectionName());
+        $this->assertSame('second_connection', $user1->getConnectionName());
+        $this->assertSame('second_connection', $user2->getConnectionName());
 
-        $this->assertEquals(1, EloquentTestUser::on('default')->count());
-        $user1 = EloquentTestUser::on('default')->firstOrCreate(['email' => 'taylorotwell@gmail.com']);
-        $user2 = EloquentTestUser::on('default')->firstOrCreate(['email' => 'themsaid@gmail.com']);
-        $this->assertSame('default', $user1->getConnectionName());
-        $this->assertSame('default', $user2->getConnectionName());
-        $this->assertEquals(2, EloquentTestUser::on('default')->count());
+        $this->assertEquals(1, EloquentTestUser::on('second_connection')->count());
+        $user1 = EloquentTestUser::on('second_connection')->firstOrCreate(['email' => 'taylorotwell@gmail.com']);
+        $user2 = EloquentTestUser::on('second_connection')->firstOrCreate(['email' => 'themsaid@gmail.com']);
+        $this->assertSame('second_connection', $user1->getConnectionName());
+        $this->assertSame('second_connection', $user2->getConnectionName());
+        $this->assertEquals(2, EloquentTestUser::on('second_connection')->count());
     }
 
     public function testCreatingModelWithEmptyAttributes()
@@ -1934,23 +1946,13 @@ class DatabaseEloquentIntegrationTest extends TestCase
      */
 
     /**
-     * Get a database connection instance.
-     *
-     * @return \CodeIgniter\Database\BaseConnection
-     */
-    protected function connection($connection = 'tests')
-    {
-        return Config::connect($connection);
-    }
-
-    /**
      * Get a schema builder instance.
      *
      * @return \CodeIgniter\Database\Forge
      */
     protected function schema($connection = 'tests')
     {
-        return Config::forge($this->connection($connection));
+        return Config::forge($connection);
     }
 }
 

@@ -30,6 +30,7 @@ class DatabaseEloquentIntegrationWithTablePrefixTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('users', true);
 
         $this->schema('tests')->addField([
@@ -46,6 +47,7 @@ class DatabaseEloquentIntegrationWithTablePrefixTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('posts', true);
 
         $this->schema('tests')->addField([
@@ -56,6 +58,7 @@ class DatabaseEloquentIntegrationWithTablePrefixTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('photos', true);
     }
 

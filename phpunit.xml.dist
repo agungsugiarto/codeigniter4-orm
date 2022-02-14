@@ -29,13 +29,5 @@
     <const name="HOMEPATH" value="./"/>
     <const name="CONFIGPATH" value="./vendor/codeigniter4/framework/app/Config/"/>
     <const name="PUBLICPATH" value="./vendor/codeigniter4/framework/public/"/>
-
-    <env name="database.tests.database" value=":memory:"/>
-    <env name="database.tests.DBDriver" value="SQLite3"/>
-    <env name="database.tests.DBPrefix" value=""/>
-
-    <env name="database.default.database" value=":memory:"/>
-    <env name="database.default.DBDriver" value="SQLite3"/>
-    <env name="database.default.DBPrefix" value=""/>
   </php>
 </phpunit>

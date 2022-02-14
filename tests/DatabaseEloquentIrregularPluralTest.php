@@ -22,12 +22,14 @@ class DatabaseEloquentIrregularPluralTest extends TestCase
             'created_at' => ['type' => 'datetime', 'null' => true],
             'updated_at' => ['type' => 'datetime', 'null' => true],
         ])
+        ->addPrimaryKey('id')
         ->createTable('irregular_plural_humans', true);
 
         $this->schema()->addField([
             'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'title' => ['type' => 'varchar', 'constraint' => 255],
         ])
+        ->addPrimaryKey('id')
         ->createTable('irregular_plural_tokens', true);
 
         $this->schema()->addField([
@@ -40,6 +42,7 @@ class DatabaseEloquentIrregularPluralTest extends TestCase
             'id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'name' => ['type' => 'varchar', 'constraint' => 255],
         ])
+        ->addPrimaryKey('id')
         ->createTable('irregular_plural_mottoes', true);
 
         $this->schema()->addField([
@@ -55,6 +58,8 @@ class DatabaseEloquentIrregularPluralTest extends TestCase
         $this->schema()->dropTable('irregular_plural_tokens');
         $this->schema()->dropTable('irregular_plural_humans');
         $this->schema()->dropTable('irregular_plural_human_irregular_plural_token');
+        $this->schema()->dropTable('irregular_plural_mottoes');
+        $this->schema()->dropTable('cool_mottoes');
     }
 
     protected function schema()
