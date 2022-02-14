@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         php-versions: ['7.4', '8.0', '8.1']
-        db-platforms: ['MySQLi', 'Postgre', 'SQLite3', 'SQLSRV']
+        db-platforms: ['MySQLi', 'SQLite3',]
         mysql-versions: ['5.7']
         include:
           - php-versions: '7.4'
@@ -82,14 +82,7 @@ jobs:
           composer update --ansi --no-interaction
 
       - name: Test with PHPUnit
-        run: script -e -c "vendor/bin/phpunit --color=always --verbose"
+        run: script -e -c "vendor/bin/phpunit"
         env:
           DB: ${{ matrix.db-platforms }}
           TERM: xterm-256color
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@master
-        if: failure()
-        with:
-          name: my-artifact
-          path: my_files.zip
