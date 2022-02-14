@@ -180,9 +180,9 @@ class DatabaseEloquentIntegrationTest extends TestCase
     protected function tearDown(): void
     {
         foreach (['tests', 'second_connection'] as $connection) {
-            $this->schema($connection)->dropTable('users', true);
             $this->schema($connection)->dropTable('friends', true);
             $this->schema($connection)->dropTable('posts', true);
+            $this->schema($connection)->dropTable('users', true);
             $this->schema($connection)->dropTable('friend_levels', true);
             $this->schema($connection)->dropTable('photos', true);
             $this->schema($connection)->dropTable('non_incrementing_users', true);
