@@ -366,16 +366,16 @@ class DatabaseEloquentHasManyThroughIntegrationTest extends TestCase
         $this->assertEquals(6, $i);
     }
 
-    // public function testIntermediateSoftDeletesAreIgnored()
-    // {
-    //     $this->seedData();
-    //     HasManyThroughSoftDeletesTestUser::first()->delete();
+    public function testIntermediateSoftDeletesAreIgnored()
+    {
+        $this->seedData();
+        HasManyThroughSoftDeletesTestUser::first()->delete();
 
-    //     $posts = HasManyThroughSoftDeletesTestCountry::first()->posts;
+        $posts = HasManyThroughSoftDeletesTestCountry::first()->posts;
 
-    //     $this->assertSame('A title', $posts[0]->title);
-    //     $this->assertCount(2, $posts);
-    // }
+        $this->assertSame('A title', $posts[0]->title);
+        $this->assertCount(2, $posts);
+    }
 
     public function testEagerLoadingLoadsRelatedModelsCorrectly()
     {

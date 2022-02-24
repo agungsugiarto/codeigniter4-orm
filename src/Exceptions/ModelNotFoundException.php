@@ -2,10 +2,10 @@
 
 namespace Fluent\Orm\Exceptions;
 
-use CodeIgniter\Database\Exceptions\DatabaseException;
+use CodeIgniter\Exceptions\PageNotFoundException;
 use Tightenco\Collect\Support\Arr;
 
-class ModelNotFoundException extends DatabaseException
+class ModelNotFoundException extends PageNotFoundException
 {
     /**
      * Name of the affected Eloquent model.
