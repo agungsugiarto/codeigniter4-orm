@@ -1194,7 +1194,15 @@ class Builder
 
         $segments = preg_split('/\s+as\s+/i', $this->query->getTable());
 
-        $qualifiedColumn = end($segments) . '.' . $column;
+        switch ($this->query->db()->DBDriver) {
+            case 'SQLite3':
+                $qualifiedColumn = $column;
+                break;
+            
+            default:
+                $qualifiedColumn = end($segments) . '.' . $column;
+                break;
+        }
 
         $values[$qualifiedColumn] = $values[$column];
 
