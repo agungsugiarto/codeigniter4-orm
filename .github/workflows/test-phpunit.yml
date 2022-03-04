@@ -92,4 +92,4 @@ jobs:
         if: failure()
         with:
           name: Logs
-          path: ./storage/logs
+          path: ./writeable/logs
