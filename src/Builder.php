@@ -1198,7 +1198,7 @@ class Builder
             case 'SQLite3':
                 $qualifiedColumn = $column;
                 break;
-            
+
             default:
                 $qualifiedColumn = end($segments) . '.' . $column;
                 break;
