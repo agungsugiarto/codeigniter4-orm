@@ -2,10 +2,11 @@
 
 namespace Fluent\Orm\Relations;
 
-use BadMethodCallException;
+use Fluent\Orm\Model;
 use Fluent\Orm\Builder;
 use Fluent\Orm\Collection;
-use Fluent\Orm\Model;
+use BadMethodCallException;
+use CodeIgniter\Database\Config;
 use Fluent\Orm\Relations\Concerns\InteractsWithDictionary;
 
 class MorphTo extends BelongsTo
@@ -186,7 +187,7 @@ class MorphTo extends BelongsTo
 
         return tap(new $class(), function ($instance) {
             if (! $instance->getConnectionName()) {
-                $instance->setConnection($this->getConnection()->getName());
+                $instance->setConnection(array_keys(Config::getConnections())[0]);
             }
         });
     }
