@@ -2,11 +2,11 @@
 
 namespace Fluent\Orm\Relations;
 
-use Fluent\Orm\Model;
-use Fluent\Orm\Builder;
-use Fluent\Orm\Collection;
 use BadMethodCallException;
 use CodeIgniter\Database\Config;
+use Fluent\Orm\Builder;
+use Fluent\Orm\Collection;
+use Fluent\Orm\Model;
 use Fluent\Orm\Relations\Concerns\InteractsWithDictionary;
 
 class MorphTo extends BelongsTo
