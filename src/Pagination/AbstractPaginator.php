@@ -617,6 +617,7 @@ abstract class AbstractPaginator implements Htmlable
      *
      * @return \ArrayIterator
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->items->getIterator();
@@ -647,6 +648,7 @@ abstract class AbstractPaginator implements Htmlable
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->items->count();
